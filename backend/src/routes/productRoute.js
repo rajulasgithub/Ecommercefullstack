@@ -16,14 +16,18 @@ const upload= multer({storage});
 
 
 productRoute.post('/addproduct', upload.single("image"),async(req,res)=>{
+    console.log(req.body);
+    
     try{
     const data={
         prdName:req.body.prdName,
-        image:req.file.filename,
+        image: req.file.filename,
         prize:req.body.prize,
         size:req.body.size,
         material:req.body.material,
     }
+    console.log(data);
+    
     const result= await productDB(data).save();
     if(result){
         

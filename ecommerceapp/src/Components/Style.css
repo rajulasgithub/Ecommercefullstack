@@ -55,30 +55,44 @@
    /* margin: 8px 0px 0px; */
    color: red;
 }
-.addproducmaindiv{
+/* .addproducmaindiv{
     width: 400px;
-}
+} */
 .addproducmaindiv{
     padding-top: 100px;
     width: 100%;
+
 }
 .addprdtsubdiv{
     width: 500px;
     margin: auto;
+    /* background-color: white; */
 }
 .addprdformstyle{
-    border: 1px solid blue;
+    border: 1px solid lightblue;
+
+
     border-radius: 8px;
     font-family: 'Courier New', Courier, monospace;
     
 }
 .addprdformstyle:hover{
+    border: 1px solid blue;
     
-    border: 1px solid lightblue;
 }
 .addprdbtnstyle{
     font-family: 'Courier New', Courier, monospace;
 }
+.addprdform{
+    background-color:#F5DEB3;
+    /* height: auto; */
+    padding-bottom: 100%;
+}
+/* .formfilestyle{
+    width: 500px;
+    
+} */
+ 
 @media screen and (max-width: 600px) {
     .formdiv{
         width: 300px;
@@ -113,5 +127,13 @@
     }
     .formtext{
         /* font-size: 5px; */
+    }
+    .addprdformstyle{
+      margin-left: 50px;
+      margin-right: 50px;
+    }
+    .addformfile{
+        margin-left: 50px;
+        margin-right: 50px;
     }
   }
