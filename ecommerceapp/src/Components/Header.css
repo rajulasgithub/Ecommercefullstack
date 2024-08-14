@@ -1,0 +1,13 @@
+.navtext{
+    font-size: 13px;
+    color:black;
+}
+.navtext:hover{
+    color:white;
+    border-radius: 10px;
+    background-color:lightblue;
+
+}
+.navclr{
+    background-color: #FFD700;
+}

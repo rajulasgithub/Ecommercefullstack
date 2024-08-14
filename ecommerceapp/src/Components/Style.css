@@ -1,0 +1,117 @@
+.signupbg{
+    background-image: url('../../public/images/signupback.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    /* width: 100%; */
+    height: 700px;
+    font-family:'Aleo';
+    
+}
+
+
+.forminnerdiv{
+    width: 100%;  
+
+}
+.formdiv{
+    margin: auto;
+    width: 50%;
+    /* border:1px solid black; */
+    padding-top: 150px;
+ 
+   
+}
+.formborder:hover{
+    border: 1px solid blue;
+   
+}
+.signuphead{
+    font-size: 30px;
+}
+.btnstyle:hover{
+    font-size: 15px;
+    border:2px solid blue
+    /* background-color: pink; */
+    
+}
+.loginformdiv{
+    margin: auto;
+    width: 50%;
+    padding-top: 150px;
+ 
+}
+.companysignupformdiv{
+    margin: auto;
+    width: 50%;
+    padding-top: 150px;
+}
+.formtext{
+    font-size: 50px;
+}
+.navclr{
+    background-color: yellow;
+}
+.labelstyle{
+   /* margin: 8px 0px 0px; */
+   color: red;
+}
+.addproducmaindiv{
+    width: 400px;
+}
+.addproducmaindiv{
+    padding-top: 100px;
+    width: 100%;
+}
+.addprdtsubdiv{
+    width: 500px;
+    margin: auto;
+}
+.addprdformstyle{
+    border: 1px solid blue;
+    border-radius: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    
+}
+.addprdformstyle:hover{
+    
+    border: 1px solid lightblue;
+}
+.addprdbtnstyle{
+    font-family: 'Courier New', Courier, monospace;
+}
+@media screen and (max-width: 600px) {
+    .formdiv{
+        width: 300px;
+        /* height: 100px; */
+        padding-top:50px;
+        
+    }
+    .signuphead{
+        font-size: 20px;
+        /* margin-bottom: 0px; */
+    }
+    .loginformdiv{
+        width: 300px;
+        padding-top:150px;
+    }
+    .gridone{
+        margin-bottom: 10px;
+    }
+    .logingridone{
+        margin-bottom: 20px;
+    }
+    .gridend{
+        margin-bottom: -15px;
+    }
+    .compsigngridend{
+        margin-bottom: -8px;
+    }
+    .companysignupformdiv{
+        width:300px;
+       padding-top: 50px;
+       /* font-size: px; */
+    }
+    .formtext{
+        /* font-size: 5px; */
+    }
+  }
