@@ -44,6 +44,7 @@ const Login = () => {
         console.log(response);
         localStorage.setItem("loginId",response.data.loginId)
         localStorage.setItem("role",response.data.role)
+        localStorage.setItem("token",response.data.token)
       })
       .catch((error) => {
         console.log(error);

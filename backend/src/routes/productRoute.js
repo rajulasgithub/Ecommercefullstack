@@ -5,6 +5,7 @@ const multer = require('multer');
 const cloudinary=require('cloudinary').v2;
 const {CloudinaryStorage}=require('multer-storage-cloudinary');
 const cartDB = require("../model/cartSchema");
+const checkauth = require("../middleware/checkauth");
 require('dotenv').config();
 cloudinary.config({
     cloud_name:process.env.CLOUD_NAME,
@@ -205,11 +206,14 @@ catch(error){
 }
 })
 
-productRoute.post('/addtocart',async(req,res)=>{
+//add to cart
+
+productRoute.post('/addtocart',checkauth,async(req,res)=>{
+    console.log(req.body)
     try{
       const data={
-        userId:req.params.userId,
-        prdId:req.body.prdId,
+        loginId:req.userData.loginId,
+        prdId:req.body.productId,
         quantity:1,
         // status:
       }
@@ -237,6 +241,35 @@ productRoute.post('/addtocart',async(req,res)=>{
         errorMessage:error.message,
         message:"something went wrong"
       })
+    }
+})
+
+productRoute.get('/viewcart',async(req,res)=>{
+    try{
+        const result= await cartDB.find().populate('prdId')
+        if(result){
+            return  res.status(200).json({
+                success:true,
+                error:false,
+                data:result,
+                message:"successfully viewed ",
+            }) 
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"not viewed",
+            })
+        }
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
     }
 })
 

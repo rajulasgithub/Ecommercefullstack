@@ -10,6 +10,7 @@ import Addproduct from './Components/Addproduct';
 import Viewproduct from './Components/Viewproduct';
 import Home from './Components/Home';
 import Order from './Components/Order';
+import Cart from './Components/Cart';
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
         <Route path='/viewproduct' element={<Viewproduct/>} />
         <Route path='/home' element={<Home/>} />
         <Route path='/order' element={<Order/>} />
+        <Route path='/cart' element={<Cart/>} />
+
 
 
 
