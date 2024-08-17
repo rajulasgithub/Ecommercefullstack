@@ -7,6 +7,8 @@ import Login from './Components/Login';
 import Companysignup from './Components/Companysignup';
 import Header from './Components/Header';
 import Addproduct from './Components/Addproduct';
+import Viewproduct from './Components/Viewproduct';
+import Home from './Components/Home';
 
 function App() {
   return (
@@ -18,6 +20,11 @@ function App() {
         <Route path='/login' element={<Login/>} />
         <Route path='/companysignup' element={<Companysignup/>} />
         <Route path='/addproduct' element={<Addproduct/>} />
+        <Route path='/viewproduct' element={<Viewproduct/>} />
+        <Route path='/home' element={<Home/>} />
+        <Route path='/order' element={<Home/>} />
+
+
 
 
 

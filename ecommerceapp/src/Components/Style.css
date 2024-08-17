@@ -88,6 +88,32 @@
     /* height: auto; */
     padding-bottom: 100%;
 }
+.productcard{
+    width: 200px;
+    height: 200px;
+    border: 2px solid black;
+    /* height: 100px; */
+}
+.producttext{
+    font-size: 8px;
+}
+.prdbodyStyle{
+    /* height: 100px; */
+
+}
+.prdtextspace{
+    margin-bottom: 0px;
+    font-family: 'Courier New', Courier, monospace;
+}
+.homecolone{
+    height: 350px;
+}
+.homecoltwo{
+    height: 200px;
+}
+/* .productimage{
+    width: 100px;
+} */
 /* .formfilestyle{
     width: 500px;
     

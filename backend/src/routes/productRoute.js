@@ -2,26 +2,45 @@ const express= require("express");
 const productDB = require("../model/addproductsSchema");
 const productRoute=express.Router();
 const multer = require('multer');
-const storage= multer.diskStorage({
-    destination:function(req,file,cb){
-        cb(null,'../ecommerceapp/public/uploads')
-    },
-    filename:function(req,file,cb){
-        cb(null,file.originalname)
-    },
-
+const cloudinary=require('cloudinary').v2;
+const {CloudinaryStorage}=require('multer-storage-cloudinary');
+require('dotenv').config();
+cloudinary.config({
+    cloud_name:process.env.CLOUD_NAME,
+    api_key:process.env.CLOUD_KEY,
+    api_secret:process.env.CLOUD_SECKEY,
 });
 
-const upload= multer({storage});
+const storageImage=new CloudinaryStorage({
+    cloudinary:cloudinary,
+    params:{
+        folder:'ecommerceapp',
+    },
+});
+const uploadImage=multer({storage:storageImage});
+// const storage= multer.diskStorage({
+//     destination:function(req,file,cb){
+//         cb(null,'../ecommerceapp/public/uploads')
+//     },
+//     filename:function(req,file,cb){
+//         cb(null,file.originalname)
+//     },
+
+// });
+
+// const upload= multer({storage});
 
 
-productRoute.post('/addproduct', upload.single("image"),async(req,res)=>{
+
+
+
+productRoute.post('/addproduct', uploadImage.array('image',1),async(req,res)=>{
     console.log(req.body);
     
     try{
     const data={
         prdName:req.body.prdName,
-        image: req.file.filename,
+        image: req.files?req.files.map((file)=>file.path):null,
         prize:req.body.prize,
         size:req.body.size,
         material:req.body.material,
@@ -148,12 +167,12 @@ catch(error){
 })
 
 
-productRoute.put('/updateproduct/:id',upload.single("image"),async(req,res)=>{
+productRoute.put('/updateproduct/:id',uploadImage.array("image"),async(req,res)=>{
     try{
     const oldData= await productDB.findOne({_id:req.params.id});
     const data={
         prdName:req.body.prdName? req.body.prdName: oldData.prdName,
-        image:req.file? req.file.filename: oldData.filename,
+        image:req.files? req.files.map((file)=>file.path):oldData.image,
         prize:req.body.prize? req.body.prize: oldData.prize,
         size:req.body.size? req.body.size: oldData.size,
         material:req.body.material? req.body.material: oldData.material,

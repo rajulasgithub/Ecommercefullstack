@@ -18,6 +18,8 @@ const Header = () => {
             <Nav.Link href="/login" className='navtext'>Login</Nav.Link>
             <Nav.Link href="/companysignup" className='navtext'>Company Register</Nav.Link>
             <Nav.Link href="/addproduct" className='navtext'>Add product</Nav.Link>
+            <Nav.Link href="/viewproduct" className='navtext'>View product</Nav.Link>
+
           </Nav>
         </Navbar.Collapse>
       </Container>
