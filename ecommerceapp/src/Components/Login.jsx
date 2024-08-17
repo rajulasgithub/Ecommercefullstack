@@ -42,10 +42,13 @@ const Login = () => {
       .post("http://localhost:8080/auth/login", login)
       .then((response) => {
         console.log(response);
+        localStorage.setItem("loginId",response.data.loginId)
+        localStorage.setItem("role",response.data.role)
       })
       .catch((error) => {
         console.log(error);
       });
+      
   };
 
   return (

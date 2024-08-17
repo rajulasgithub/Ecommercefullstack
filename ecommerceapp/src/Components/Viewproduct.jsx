@@ -22,6 +22,15 @@ const Viewproduct = () => {
     
   })
   console.log(product)
+
+  const handleSubmit=(id)=>{
+    axios.get(`http://localhost:8080/viewone/${id}`).then((response)=>{
+      console.log(response);  
+    }).catch((error)=>{
+      console.log(error);
+      
+    })
+  }
   return (
     <div>
       <div>
@@ -45,7 +54,7 @@ const Viewproduct = () => {
   bulk of the card's content.
 </Card.Text> */}
 <div className='text-center'>
-<Nav.Link href="/order" className='navtext'><Button variant="primary" size="sm">Buy Now</Button></Nav.Link>
+< Card.Link href="" className='navtext'><Button variant="primary" size="sm" onClick={()=>handleSubmit(item._id)}>Add to cart</Button></Card.Link>
 </div>
 </Card.Body>
 </Card>
@@ -56,6 +65,10 @@ const Viewproduct = () => {
        
       </Row>
       </Container>
+
+      <div>
+        
+      </div>
         
       </div>
     </div>

@@ -9,6 +9,7 @@ import Header from './Components/Header';
 import Addproduct from './Components/Addproduct';
 import Viewproduct from './Components/Viewproduct';
 import Home from './Components/Home';
+import Order from './Components/Order';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
         <Route path='/addproduct' element={<Addproduct/>} />
         <Route path='/viewproduct' element={<Viewproduct/>} />
         <Route path='/home' element={<Home/>} />
-        <Route path='/order' element={<Home/>} />
+        <Route path='/order' element={<Order/>} />
 
 
 

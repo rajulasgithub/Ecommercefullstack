@@ -111,6 +111,9 @@
 .homecoltwo{
     height: 200px;
 }
+.orderflex{
+    display: flex;
+}
 /* .productimage{
     width: 100px;
 } */

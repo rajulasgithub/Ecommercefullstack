@@ -4,6 +4,7 @@ const productRoute=express.Router();
 const multer = require('multer');
 const cloudinary=require('cloudinary').v2;
 const {CloudinaryStorage}=require('multer-storage-cloudinary');
+const cartDB = require("../model/cartSchema");
 require('dotenv').config();
 cloudinary.config({
     cloud_name:process.env.CLOUD_NAME,
@@ -202,6 +203,41 @@ catch(error){
         message:"something went wrong",
     })
 }
+})
+
+productRoute.post('/addtocart',async(req,res)=>{
+    try{
+      const data={
+        userId:req.params.userId,
+        prdId:req.body.prdId,
+        quantity:1,
+        // status:
+      }
+      const result= await cartDB(data).save();
+      if(result){
+        return  res.status(200).json({
+            success:true,
+            error:false,
+            data:result,
+            message:"successfully added to cart",
+        }) 
+    }
+    else{
+        return res.status(400).json({
+            success:false,
+            error:true,
+            message:"not added to cart",
+        })
+    }
+    }
+    catch(error){
+      return res.status(500).json({
+        success:false,
+        error:true,
+        errorMessage:error.message,
+        message:"something went wrong"
+      })
+    }
 })
 
 
