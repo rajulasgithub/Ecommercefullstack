@@ -167,7 +167,66 @@
 .cartcardstyle{
     margin: auto;
     border: 1px solid white;
+    /* margin-bottom: 2rem; */
+    /* margin: 15px; */
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+.carttitlebar{
+    display: flex;
+    margin-left: 5rem;
+    justify-content: space-around;
+
+}
+.carttitlebartop{
+    width: 50rem;
+    display: flex;
+    justify-content: space-between;
+
+}
+.cartitle{
+
+}
+.cartbtnstyle{
+    border: 1px solid blue;
+    border-radius: 10px;
+    /* margin-left: 10px; */
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+
+}
+.counterflex{
+    display: flex;
+}
+.decrement{
+    
+    /* height: 6px; */
+    /* margin-top: 6px; */
+    /* margin-bottom: 15px; */
+}
+.carttxtare{
+    background-color: grey;
+    border: 1px solid lavender;
+}
+.formflex{
+  display: flex;
+}
+.carttotaldivflex{
+    display: flex;
+    justify-content: space-between;
+}
+.carttotalstyle{
+    /* border: 2px solid black; */
+    border-radius: 20px;
+    background-color: rgba(244, 164, 96,0.6);
+}
+.cartinnerdiv{
+    margin: 10px;
+}
+/* .cardflex{
+    padding-top: 1rem;
+} */
 /* .productimage{
     width: 100px;
 } */

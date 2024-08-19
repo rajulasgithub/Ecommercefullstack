@@ -6,6 +6,8 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import axios from 'axios'
+import Form from 'react-bootstrap/Form';
+
 
 const Cart = () => {
 
@@ -45,35 +47,55 @@ console.log(cartitem);
       <Row >
          
         <Col sm={8} className='cartcolstyleone me-5' >
+        <div className='carttitlebartop'>
+          <div className='carttitlebar'>
+           <h6>Product</h6>
+          </div>
+          <div className='carttitlebar'>
+          <h6 className=''>Prize</h6>
+          
+          <h6 className=''>Quantity</h6>
+          <h6 className=''>Total Prize</h6>
+        </div>
+        </div>
       {cartitem.map((item)=>(
 
-            <Card style={{ width: '50rem',height:'10rem' }} className='mt-5 cartcardstyle'>
+            <Card style={{ maxwidth: '50rem',height:'10rem' }} className='mt-5 cartcardstyle'>
          
             <div className='cardflex'>
             <div>
-            <Card.Img variant="top" src={item.prdId.image[0]} style={{width:'6rem',height:'10rem'}} />
+            <Card.Img variant="top" src={item.prdId.image[0]} style={{width:'7rem',height:'10rem'}} className="img-rounded"/>
             </div>
             
             <Card.Body>
-              <div>
-            <Card.Title>{item.prdId.prdName}</Card.Title>
-            <Card.Text>Size:{item.prdId.size}</Card.Text>
+              <div className='cardhead'>
+            <Card.Title style={{fontFamily:'monospace'}}>{item.prdId.prdName}</Card.Title>
+            <Card.Text style={{fontFamily:'monospace'}}>Size:{item.prdId.size}</Card.Text>
             </div>
             
-           
             <div className='cardflexone'>
             <div>
-            <Card.Text>prize:{item.prdId.prize}</Card.Text>
+            <Card.Text style={{fontFamily:'monospace'}}>{item.prdId.prize}</Card.Text>
+            </div>
+            <div className='counterflex'>
+              {/* <div className='counterflex'> */}
+              <button className='decrement'>-</button>
+            <Card.Text style={{fontFamily:'monospace'}}>{item.quantity}</Card.Text>
+            <button>+</button>
+            {/* </div> */}
             </div>
             <div>
-            <Card.Text>Quantity:{item.quantity}</Card.Text>
-            </div>
-            <div>
-            <Card.Text>totalprize:{item.prdId.prize}</Card.Text>
+            <Card.Text style={{fontFamily:'monospace'}}>{item.prdId.prize}</Card.Text>
             </div>
             </div>
            
-            {/* <Button variant="primary">Go somewhere</Button> */}
+            <div>
+            <Button variant="success" size="sm" className='cartbtnstyle me-2'>Buy Now</Button>
+            <Button variant="success"  size="sm" className='cartbtnstyle'>Remove</Button>
+
+
+            </div>
+           
            </Card.Body>
            
            </div>
@@ -83,9 +105,78 @@ console.log(cartitem);
       </Col>
 
         
-        <Col sm={3} className='cartcolstyle'  ></Col>
-    
-       
+        <Col sm={3} className='cartcolstyle'>
+        <h5 className='text-center mt-3'>Shipping Address</h5>
+        <Form.Control
+          as="textarea" className='carttxtare mt-3 '
+          placeholder="Enter Address"
+          style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
+        />
+        <div className='formflex gap-3'>
+        <Form.Control
+          type='input' className='mt-3'
+          placeholder="State"
+          style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
+        />
+        <Form.Control
+          type='input' className='mt-3'
+          placeholder="District"
+          style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
+        />
+        
+           </div> 
+           <div className='formflex gap-2'>
+           <Form.Control
+          type='input' className='mt-3'
+          placeholder="District"
+          style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
+        />
+         <Form.Control
+          type='input' className='mt-3'
+          placeholder="District"
+          style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
+        />
+        </div>
+       <div className='text-center d-grid mt-3'>
+       <Button variant="dark" size="lg" >Update</Button>
+
+       </div>
+       <hr className='mt-4'></hr>
+       <div className='carttotalstyle'>
+        <div className='carttotalinner'>
+        <div>
+        <h4>Cart total</h4>
+        </div>
+       <div>
+        <div className='carttotaldivflex'>
+        <>
+        <h6>Cart Subtotal</h6>
+        </>
+        <>
+        <h6>...</h6>
+        </>
+        </div>
+        <div className='carttotaldivflex'>
+        <>
+        <h6>Discount</h6>
+        </>
+        <>
+        <h6>...</h6>
+        </>
+        </div>
+        <div className='carttotaldivflex'>
+        <>
+        <h6>Cart total</h6>
+        </>
+        <>
+        <h6>...</h6>
+        </>
+        </div>
+
+       </div>
+       </div>
+       </div>
+        </Col> 
       </Row>
       </Container>
 
