@@ -5,8 +5,12 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import axios from "axios";
+import { useNavigate} from 'react-router-dom'
+
 
 const Login = () => {
+  const navigate=useNavigate();
+
   const [login, setLogin] = useState({
     email: "",
     password: "",
@@ -45,6 +49,7 @@ const Login = () => {
         localStorage.setItem("loginId",response.data.loginId)
         localStorage.setItem("role",response.data.role)
         localStorage.setItem("token",response.data.token)
+        navigate('/viewproduct')
       })
       .catch((error) => {
         console.log(error);

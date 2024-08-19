@@ -244,9 +244,9 @@ productRoute.post('/addtocart',checkauth,async(req,res)=>{
     }
 })
 
-productRoute.get('/viewcart',async(req,res)=>{
+productRoute.get('/viewcart',checkauth,async(req,res)=>{
     try{
-        const result= await cartDB.find().populate('prdId')
+        const result= await cartDB.find({loginId:req.userData.loginId}).populate('prdId')
         if(result){
             return  res.status(200).json({
                 success:true,

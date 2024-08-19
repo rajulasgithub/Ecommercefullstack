@@ -114,6 +114,60 @@
 .orderflex{
     display: flex;
 }
+.cartimg{
+    width: 50px;
+    height: 150px;
+}
+/* .cartback{
+    background-color: rgba(255, 215, 0,0.5);
+    height: 100rem;
+} */
+.cartinnerdiv{
+    max-width: 100rem;
+    margin: auto;
+    height: 90rem;
+    background-color:rgb(230, 230, 250);
+    /* border-radius: 20px; */
+    /* padding-top: 100px; */
+    /* padding-left: 100px; */
+    /* justify-content: center; */
+}
+.cartcolstyleone{
+    border: 1px solid white;
+    max-width: 400px;
+    /* margin: auto; */
+    height: auto;
+    background-color: white;
+    border-radius: 20px;
+    
+}
+.cartcolstyle{
+    border: 1px solid white;
+    height: 700px;
+    background-color: white;
+    border-radius: 20px;
+    margin-top: 3rem;
+    
+
+}.carthead{
+   padding-top: 3rem;
+   padding-left: 6rem;
+   margin-bottom:2rem ;
+}
+.cardflex{
+    display: flex;
+    /* align-content: center; */
+}
+.cardflexone{
+    display: flex;
+    justify-content: space-around;
+    margin-left: 15rem;
+
+}
+.cartcardstyle{
+    margin: auto;
+    border: 1px solid white;
+}
 /* .productimage{
     width: 100px;
 } */
