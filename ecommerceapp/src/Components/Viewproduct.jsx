@@ -55,8 +55,8 @@ const Viewproduct = () => {
   }
   return (
     <div>
-      <div>
-      <Container>
+      <div className='viewproductback'>
+      {/* <Container>
       <Row>
         {product.map((item)=>(
 
@@ -71,10 +71,7 @@ const Viewproduct = () => {
 
 
 
-{/* <Card.Text>
-  Some quick example text to build on the card title and make up the
-  bulk of the card's content.
-</Card.Text> */}
+
 <div className='text-center'>
 <Button variant="primary" size="sm" onClick={()=>handleSubmit(item._id)}>Add to cart</Button>
 </div>
@@ -86,11 +83,7 @@ const Viewproduct = () => {
         ))}
        
       </Row>
-      </Container>
-
-      <div>
-        
-      </div>
+      </Container> */}
         
       </div>
     </div>

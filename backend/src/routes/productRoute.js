@@ -215,7 +215,7 @@ productRoute.post('/addtocart',checkauth,async(req,res)=>{
         loginId:req.userData.loginId,
         prdId:req.body.productId,
         quantity:1,
-        // status:
+        status:1,
       }
       const result= await cartDB(data).save();
       if(result){
@@ -271,6 +271,116 @@ productRoute.get('/viewcart',checkauth,async(req,res)=>{
             message:"something went wrong",
         })
     }
+})
+
+productRoute.put('/incrcart/:id',async(req,res)=>{
+    try{
+    console.log(req.params.id)
+       
+        const oldData= await cartDB.findOne({_id:req.params.id});
+        console.log(oldData);
+        
+        const quantity=oldData.quantity+1;
+       
+        const result= await cartDB.updateOne({_id:req.params.id},{$set:{quantity:quantity}})
+        if(result){
+            return  res.status(200).json({
+                success:true,
+                error:false,
+                data:result,
+                message:"successfully updated ",
+            }) 
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"not updated",
+            })
+        }
+
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
+    }
+    
+})
+
+productRoute.put('/decrcart/:id',async(req,res)=>{
+    try{
+    console.log(req.params.id)
+      
+        const oldData= await cartDB.findOne({_id:req.params.id});
+        console.log(oldData);
+        
+        const quantity=oldData.quantity-1
+       
+        const result= await cartDB.updateOne({_id:req.params.id},{$set:{quantity:quantity}})
+        if(result){
+            return  res.status(200).json({
+                success:true,
+                error:false,
+                data:result,
+                message:"successfully updated ",
+            }) 
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"not updated",
+            })
+        }
+
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
+    }
+    
+})
+
+
+productRoute.get('/cartlenth',async(req,res)=>{
+    try{
+        const data=await cartDB.find()
+        const datalen= data.length;
+        console.log(data);
+        if(data){
+           return  res.status(200).json({
+                success:true,
+                error:false,
+                data:datalen,
+                message:"success ",
+            })
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"false",
+            })
+        }
+    }
+    catch(error){
+            return res.status(500).json({
+                success:false,
+                error:true,
+                errorMessage:error.message,
+                message:"something went wrong",
+            })
+        }
+        
+    
 })
 
 

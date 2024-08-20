@@ -13,6 +13,16 @@ const Cart = () => {
 
    
     const[cartitem,setCartitem]=useState([]);
+    const[totalprize,setTotalprize]= useState(1);
+    const[cartcount,setCartcount]=useState(0);
+
+    axios.get('http://localhost:8080/product/cartlenth').then((response)=>{
+      console.log(response.data.data)
+      setCartcount(response.data.data)
+    }).catch((error)=>{
+      console.log(error);
+      
+    })
     
 useEffect(() => {
     const token= localStorage.getItem('token')
@@ -30,9 +40,45 @@ useEffect(() => {
   }).catch((error)=>{
     console.log(error); 
   })
+  console.log(cartitem);
 }, [])
 
-console.log(cartitem);
+
+
+const decrement=(id)=>{
+  console.log(id);
+  axios.put(`http://localhost:8080/product/decrcart/${id}`).then((response)=>{
+    console.log(response);  
+    const filter=cartitem.filter((data)=>{
+
+      if(data._id==id){
+        data.quantity-=1
+      }
+      return data
+    })
+    setCartitem(filter)
+    
+  }).catch((error)=>{
+    console.log(error)
+  })
+}
+const increment=(id)=>{
+  axios.put(`http://localhost:8080/product/incrcart/${id}`).then((response)=>{
+    console.log(response);  
+    const filter=cartitem.filter((data)=>{
+
+      if(data._id==id){
+        data.quantity+=1
+      }
+      return data
+    })
+    setCartitem(filter)
+    
+  }).catch((error)=>{
+    console.log(error)
+  })
+}
+
 
   return (
     <div>
@@ -41,7 +87,7 @@ console.log(cartitem);
      <div className='cartinnerdiv '>
       <div className='carthead'>
       <h4 style={{fontFamily:'monospace'}} className=''>Shopping Bag</h4>
-      <h6 style={{fontFamily:'monospace'}} className=''>6 items in your bag</h6>
+      <h6 style={{fontFamily:'monospace'}} className=''>{cartcount +" "}items in your bag</h6>
       </div>
       <Container>
       <Row >
@@ -79,13 +125,13 @@ console.log(cartitem);
             </div>
             <div className='counterflex'>
               {/* <div className='counterflex'> */}
-              <button className='decrement'>-</button>
+              <button className='decrement' onClick={()=>decrement(item._id)}>-</button>
             <Card.Text style={{fontFamily:'monospace'}}>{item.quantity}</Card.Text>
-            <button>+</button>
+            <button onClick={()=>increment(item._id)}>+</button>
             {/* </div> */}
             </div>
             <div>
-            <Card.Text style={{fontFamily:'monospace'}}>{item.prdId.prize}</Card.Text>
+            <Card.Text style={{fontFamily:'monospace'}} >{item.prdId.prize*item.quantity}</Card.Text>
             </div>
             </div>
            
@@ -137,15 +183,15 @@ console.log(cartitem);
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
         </div>
-       <div className='text-center d-grid mt-3'>
-       <Button variant="dark" size="lg" >Update</Button>
+       <div className=' text-center d-grid mt-3 carttotalbtn' >
+       <Button variant="dark" size="sm" >Update</Button>
 
        </div>
        <hr className='mt-4'></hr>
        <div className='carttotalstyle'>
         <div className='carttotalinner'>
         <div>
-        <h4>Cart total</h4>
+        <h4 className='mb-3'>Cart total</h4>
         </div>
        <div>
         <div className='carttotaldivflex'>
@@ -164,7 +210,7 @@ console.log(cartitem);
         <h6>...</h6>
         </>
         </div>
-        <div className='carttotaldivflex'>
+        <div className='carttotaldivflex mb-3'>
         <>
         <h6>Cart total</h6>
         </>
@@ -174,9 +220,16 @@ console.log(cartitem);
         </div>
 
        </div>
+       <div className='d-grid'>
+       <Button variant="light" size="sm"  >Apply</Button>
+
        </div>
+      
        </div>
-        </Col> 
+       
+       </div>
+       </Col> 
+       
       </Row>
       </Container>
 
