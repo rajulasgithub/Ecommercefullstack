@@ -15,6 +15,7 @@ const Cart = () => {
     const[cartitem,setCartitem]=useState([]);
     const[totalprize,setTotalprize]= useState(1);
     const[cartcount,setCartcount]=useState(0);
+    const[address,setAddress]=useState('')
 
     axios.get('http://localhost:8080/product/cartlenth').then((response)=>{
       console.log(response.data.data)
@@ -79,6 +80,20 @@ const increment=(id)=>{
   })
 }
 
+const handlehange=(event)=>{
+  console.log(event.target.name)
+  setAddress({...address,[event.target.name]:event.target.value})
+  console.log(address);
+}
+const handleSubmit=async()=>{
+  axios.post('http://localhost:8080/address/addAddress',address).then((response)=>{
+    console.log(response);
+    
+  }).catch((error)=>{
+    console.log(error);
+    
+  })
+}
 
   return (
     <div>
@@ -153,38 +168,39 @@ const increment=(id)=>{
         
         <Col sm={3} className='cartcolstyle'>
         <h5 className='text-center mt-3'>Shipping Address</h5>
-        <Form.Control
-          as="textarea" className='carttxtare mt-3 '
+        <Form  encType="multipart/form-data" onSubmit={handleSubmit}>
+        <Form.Control onChange={handlehange}
+          as="textarea" className='carttxtare mt-3 ' name='address'
           placeholder="Enter Address"
-          style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
+          style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }} 
         />
         <div className='formflex gap-3'>
-        <Form.Control
-          type='input' className='mt-3'
+        <Form.Control  onChange={handlehange}
+          type='input' className='mt-3' name='state'
           placeholder="State"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
-        <Form.Control
-          type='input' className='mt-3'
+        <Form.Control  onChange={handlehange}
+          type='input' className='mt-3'  name='district'
           placeholder="District"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
         
            </div> 
            <div className='formflex gap-2'>
-           <Form.Control
-          type='input' className='mt-3'
-          placeholder="District"
+           <Form.Control  onChange={handlehange}
+          type='input' className='mt-3' name='pincode'
+          placeholder="pincode"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
-         <Form.Control
-          type='input' className='mt-3'
-          placeholder="District"
+         <Form.Control  onChange={handlehange}
+          type='input' className='mt-3' name='buildingNumber'
+          placeholder="Building Number"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
         </div>
        <div className=' text-center d-grid mt-3 carttotalbtn' >
-       <Button variant="dark" size="sm" >Update</Button>
+       <Button variant="dark" size="sm" type='submit' >Update</Button>
 
        </div>
        <hr className='mt-4'></hr>
@@ -222,12 +238,13 @@ const increment=(id)=>{
        </div>
        <div className='d-grid'>
        <Button variant="light" size="sm"  >Apply</Button>
-
+      
        </div>
       
        </div>
        
        </div>
+       </Form>
        </Col> 
        
       </Row>

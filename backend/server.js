@@ -4,6 +4,7 @@ const cors=require("cors");
 const mongoose=require("mongoose");
 const authroutes = require("./src/routes/authRoute");
 const productRoute = require("./src/routes/productRoute");
+const addressRoute = require("./src/routes/addressRoute");
 require('dotenv').config();
 
 
@@ -23,7 +24,7 @@ mongoose.connect(process.env.MONGO_URL).then((response)=>{
 
 app.use('/auth',authroutes)
 app.use('/product',productRoute)
-
+app.use('/address',addressRoute)
 app.get('/',(req,res)=>{
     res.send('hiiii')
 })

@@ -56,7 +56,7 @@ const Viewproduct = () => {
   return (
     <div>
       <div className='viewproductback'>
-      {/* <Container>
+      <Container>
       <Row>
         {product.map((item)=>(
 
@@ -83,7 +83,7 @@ const Viewproduct = () => {
         ))}
        
       </Row>
-      </Container> */}
+      </Container>
         
       </div>
     </div>
