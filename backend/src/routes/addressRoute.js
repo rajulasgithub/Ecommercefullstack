@@ -1,10 +1,13 @@
 const express=require("express");
 const addressDB = require("../model/addressSchema");
+const checkauth = require("../middleware/checkauth");
+const productDB = require("../model/addproductsSchema");
 const  addressRoute= express.Router();
 
-addressRoute.post('/addAddress',async(req,res)=>{
+addressRoute.post('/addAddress',checkauth,async(req,res)=>{
     try{
         const data={
+    loginId:req.userData.loginId,
     address:req.body.address,
     state:req.body.state,
     district:req.body.district,
@@ -17,14 +20,14 @@ if(result){
         success:true,
         error:false,
         data:result,
-        message:"successfully view product",
+        message:"address added",
     }) 
 }
 else{
     return res.status(400).json({
         success:false,
         error:true,
-        message:"not viewed",
+        message:"address not added",
     })
 }
 
@@ -40,6 +43,22 @@ else{
         }   
     
 })
+
+// addressRoute.get('/carttotal',async(req,res)=>{
+//     try{
+//    const cart= await cartdb.find();
+//    const product=await productDB.find();
+
+
+//     catch(error){
+//         return res.status(500).json({
+//             success:false,
+//             error:true,
+//             errorMessage:error.message,
+//             message:"something went wrong",
+//         })
+//     }
+// })
 
 
 

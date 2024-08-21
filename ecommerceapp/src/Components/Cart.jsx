@@ -13,9 +13,12 @@ const Cart = () => {
 
    
     const[cartitem,setCartitem]=useState([]);
-    const[totalprize,setTotalprize]= useState(1);
+    // const[totalprize,setTotalprize]= useState(1);
     const[cartcount,setCartcount]=useState(0);
-    const[address,setAddress]=useState('')
+    const[address,setAddress]=useState({})
+// console.log(address)
+ const[value,setValue]=useState({})
+
 
     axios.get('http://localhost:8080/product/cartlenth').then((response)=>{
       console.log(response.data.data)
@@ -63,6 +66,12 @@ const decrement=(id)=>{
     console.log(error)
   })
 }
+
+// const carttotal=0;
+// for(let x in cartitem){
+//   carttotal+= cartitem.prdId.prize*cartitem.quantity;
+// }
+// console.log(carttotal)
 const increment=(id)=>{
   axios.put(`http://localhost:8080/product/incrcart/${id}`).then((response)=>{
     console.log(response);  
@@ -80,20 +89,32 @@ const increment=(id)=>{
   })
 }
 
-const handlehange=(event)=>{
-  console.log(event.target.name)
+const handlehange=async(event)=>{
+  // console.log(event.target.name)
   setAddress({...address,[event.target.name]:event.target.value})
-  console.log(address);
+  
 }
-const handleSubmit=async()=>{
-  axios.post('http://localhost:8080/address/addAddress',address).then((response)=>{
-    console.log(response);
-    
+console.log(address)
+
+const handleSubmit=async(event)=>{
+  const token= localStorage.getItem('token')
+  const headers={
+    'Authorization':`bearer ${token}`,
+    // 'Content-Type':'application/json'
+  }
+  axios.post('http://localhost:8080/address/addAddress',address,{
+    headers:headers}).then((response)=>{
+    console.log(response.data.data); 
+    setValue(response.data.data)
+
   }).catch((error)=>{
     console.log(error);
     
   })
+
 }
+console.log(address)
+
 
   return (
     <div>
@@ -168,9 +189,9 @@ const handleSubmit=async()=>{
         
         <Col sm={3} className='cartcolstyle'>
         <h5 className='text-center mt-3'>Shipping Address</h5>
-        <Form  encType="multipart/form-data" onSubmit={handleSubmit}>
-        <Form.Control onChange={handlehange}
-          as="textarea" className='carttxtare mt-3 ' name='address'
+      
+        <Form.Control onChange={handlehange} 
+          as="textarea" className='carttxtare mt-3 ' name='address' 
           placeholder="Enter Address"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }} 
         />
@@ -194,13 +215,13 @@ const handleSubmit=async()=>{
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
          <Form.Control  onChange={handlehange}
-          type='input' className='mt-3' name='buildingNumber'
+          type='input' className='mt-3' name='BuildingNumber'
           placeholder="Building Number"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
         </div>
        <div className=' text-center d-grid mt-3 carttotalbtn' >
-       <Button variant="dark" size="sm" type='submit' >Update</Button>
+       <Button variant="dark" size="sm" onClick={handleSubmit} >Update</Button>
 
        </div>
        <hr className='mt-4'></hr>
@@ -215,7 +236,9 @@ const handleSubmit=async()=>{
         <h6>Cart Subtotal</h6>
         </>
         <>
-        <h6>...</h6>
+        <h6>{
+         
+          }</h6>
         </>
         </div>
         <div className='carttotaldivflex'>
@@ -244,7 +267,7 @@ const handleSubmit=async()=>{
        </div>
        
        </div>
-       </Form>
+      
        </Col> 
        
       </Row>
