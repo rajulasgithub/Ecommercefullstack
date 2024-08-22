@@ -14,19 +14,20 @@ const Cart = () => {
    
     const[cartitem,setCartitem]=useState([]);
     // const[totalprize,setTotalprize]= useState(1);
-    const[cartcount,setCartcount]=useState(0);
+    // const[cartcount,setCartcount]=useState(0);
     const[address,setAddress]=useState({})
+    console.log(address.pincode)
 // console.log(address)
  const[value,setValue]=useState({})
 
 
-    axios.get('http://localhost:8080/product/cartlenth').then((response)=>{
-      console.log(response.data.data)
-      setCartcount(response.data.data)
-    }).catch((error)=>{
-      console.log(error);
+    // axios.get('http://localhost:8080/product/cartlenth').then((response)=>{
+    //   console.log(response.data.data)
+    //   setCartcount(response.data.data)
+    // }).catch((error)=>{
+    //   console.log(error);
       
-    })
+    // })
     
 useEffect(() => {
     const token= localStorage.getItem('token')
@@ -67,11 +68,7 @@ const decrement=(id)=>{
   })
 }
 
-// const carttotal=0;
-// for(let x in cartitem){
-//   carttotal+= cartitem.prdId.prize*cartitem.quantity;
-// }
-// console.log(carttotal)
+
 const increment=(id)=>{
   axios.put(`http://localhost:8080/product/incrcart/${id}`).then((response)=>{
     console.log(response);  
@@ -111,9 +108,39 @@ const handleSubmit=async(event)=>{
     console.log(error);
     
   })
-
+ 
 }
+
+const token= localStorage.getItem('token')
+
+    const headers={
+      
+      'Authorization':`bearer ${token}`,
+      // 'Content-Type':'application/json'
+    }
+
+axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
+  console.log(response.data.data);
+  setAddress(response.data.data)
+}).catch((error)=>{
+  console.log(error);
+})
 console.log(address)
+
+const handleUpdate=async(event)=>{
+  const token= localStorage.getItem('token')
+
+    const headers={
+      
+      'Authorization':`bearer ${token}`,
+      // 'Content-Type':'application/json'
+    }
+    axios.put('http://localhost:8080/address/updateaddress',{headers:headers}).then((response)=>{
+      console.log(response); 
+    }).catch((error)=>{
+      console.log(error);  
+    })
+}
 
 
   return (
@@ -123,7 +150,7 @@ console.log(address)
      <div className='cartinnerdiv '>
       <div className='carthead'>
       <h4 style={{fontFamily:'monospace'}} className=''>Shopping Bag</h4>
-      <h6 style={{fontFamily:'monospace'}} className=''>{cartcount +" "}items in your bag</h6>
+      <h6 style={{fontFamily:'monospace'}} className=''>items in your bag</h6>
       </div>
       <Container>
       <Row >
@@ -191,18 +218,18 @@ console.log(address)
         <h5 className='text-center mt-3'>Shipping Address</h5>
       
         <Form.Control onChange={handlehange} 
-          as="textarea" className='carttxtare mt-3 ' name='address' 
+          as="textarea" className='carttxtare mt-3 ' name='address' value={address?.address}
           placeholder="Enter Address"
-          style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }} 
+          style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
         <div className='formflex gap-3'>
         <Form.Control  onChange={handlehange}
-          type='input' className='mt-3' name='state'
+          type='input' className='mt-3' name='state' value={address.state}
           placeholder="State"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
         <Form.Control  onChange={handlehange}
-          type='input' className='mt-3'  name='district'
+          type='input' className='mt-3'  name='district' value={address.district}
           placeholder="District"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
@@ -210,19 +237,29 @@ console.log(address)
            </div> 
            <div className='formflex gap-2'>
            <Form.Control  onChange={handlehange}
-          type='input' className='mt-3' name='pincode'
+          type='input' className='mt-3' name='pincode'  value={address.pincode}
           placeholder="pincode"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
          <Form.Control  onChange={handlehange}
-          type='input' className='mt-3' name='BuildingNumber'
+          type='input' className='mt-3' name='BuildingNumber' value={address.BuildingNumber}
           placeholder="Building Number"
           style={{ height: '30px',backgroundColor:"#E6E6FA",borderRadius:25 }}
         />
         </div>
        <div className=' text-center d-grid mt-3 carttotalbtn' >
-       <Button variant="dark" size="sm" onClick={handleSubmit} >Update</Button>
+        {address?.address ==''?(
+          <Button variant="dark" size="sm" onClick={handleSubmit} >Add</Button>
 
+
+        ):
+        (
+         <Button variant="dark" size="sm" onClick={handleUpdate} >Update</Button>
+
+        )
+        }
+        
+      
        </div>
        <hr className='mt-4'></hr>
        <div className='carttotalstyle'>
