@@ -232,6 +232,19 @@
     background-color: #F0FFF0;
     height: 700px;
 }
+.odrsmryback{
+    background-color:rgb(230, 230, 250);
+    height: 700px;
+}
+.odrmaindiv{
+    width: 80rem;
+    margin: auto;
+    /* border: 1px solid black; */
+    margin-top: 5rem;
+    background-color: white;
+    border-radius: 20px;
+    height: auto;
+}
 /* .cartinnerdiv{
     margin: 10px;
 } */
