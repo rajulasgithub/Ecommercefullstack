@@ -26,6 +26,7 @@ const Cart = () => {
   // console.log(address)
   const [value, setValue] = useState({});
 
+const [totalValue,setTotalValue] = useState(0)
  
 
   useEffect(() => {
@@ -40,25 +41,26 @@ const Cart = () => {
         headers: headers,
       })
       .then((response) => {
-        // console.log(response);
+        let val=0;
+        console.log(val);
+        response.data.data?.map((item)=>{
+          // console.log(item.prdId.prize);
+          
+          val+= (item.prdId.prize*item.quantity);
+          
+           
+         })
+        //  console.log(val)
+        setTotalValue(val)
+       
         setCartitem(response.data.data);
+        // console.log(cartitem);
       })
       .catch((error) => {
         console.log(error);
       });
-    const value=0;
-      // for(let i=0;i<cartitem.length;i++){
-      //   value+=cartitem[i].quantity*cartitem[i].prize;
-      // }
-      // console.log(value)
-    // console.log(cartitem);
-    // const filter = cartitem.filter((data) => {
-    //   data.quantity*data.prize;
-    //   return data;
-    // });
-    // console.log(filter)
-    const sum = cartitem.map((item) => cartitem.quantity * cartitem.prize);
-    console.log(sum)
+    
+    
 
   }, []);
 
@@ -67,7 +69,7 @@ const Cart = () => {
     axios
       .put(`http://localhost:8080/product/decrcart/${id}`)
       .then((response) => {
-        console.log(response);
+        console.log(response.data.data);
         const filter = cartitem.filter((data) => {
           if (data._id == id) {
             data.quantity -= 1;
@@ -75,6 +77,8 @@ const Cart = () => {
           return data;
         });
         setCartitem(filter);
+      console.log(cartitem);
+      
       })
       .catch((error) => {
         console.log(error);
@@ -93,6 +97,7 @@ const Cart = () => {
           return data;
         });
         setCartitem(filter);
+        console.log(cartitem)
       })
       .catch((error) => {
         console.log(error);
@@ -435,11 +440,10 @@ console.log(address);
                     <div>
                       <div className="carttotaldivflex">
                         <>
-                          <h6>{
-                        }</h6>
+                          <h6>Cart Total</h6>
                         </>
                         <>
-                          <h6>{}</h6>
+                        {totalValue}
                         </>
                       </div>
                       <div className="carttotaldivflex">
