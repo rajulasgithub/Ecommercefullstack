@@ -265,6 +265,11 @@
     display: flex;
     justify-content: space-between;
 }
+.adrsdiv{
+    /* margin-right: 10rem; */
+    /* width: 300px; */
+    /* border: 2p solid black; */
+}
 /* .cartinnerdiv{
     margin: 10px;
 } */

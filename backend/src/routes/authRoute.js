@@ -47,6 +47,7 @@ authroutes.post('/signup',async(req,res)=>{
             pincode:req.body.pincode,
             place:req.body.place,   
             
+            
         }
         
         const signupresult= await signupDB(signup).save();
@@ -105,7 +106,7 @@ authroutes.get('/view',async(req,res)=>{
 })
 
 
-authroutes.get('/viewone',checkauth, async(req,res)=>{
+authroutes.get('/viewone',checkauth, async(req,res)=>{3
     try{
         console.log(req.userData);
         

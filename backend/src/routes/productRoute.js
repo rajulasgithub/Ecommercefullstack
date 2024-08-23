@@ -349,6 +349,37 @@ productRoute.put('/decrcart/:id',async(req,res)=>{
     
 })
 
+productRoute.get('/delcartitem/:id',checkauth,async(req,res)=>{
+    try{
+        const result= await cartDB.deleteOne({loginId:req.userData.loginId})
+        if(result){
+            return  res.status(200).json({
+                success:true,
+                error:false,
+                data:result,
+                message:"successfully updated ",
+            }) 
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"not updated",
+            })
+        }
+        
+    }
+    catch(error)
+    {
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
+    }
+})
+
 
 productRoute.get('/cartlenth',async(req,res)=>{
     try{

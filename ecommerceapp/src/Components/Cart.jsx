@@ -7,8 +7,12 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import axios from "axios";
 import Form from "react-bootstrap/Form";
+import {useNavigate} from 'react-router-dom'
+
 
 const Cart = () => {
+  const navigate=useNavigate();
+
   const [cartitem, setCartitem] = useState([]);
   // const[totalprize,setTotalprize]= useState(1);
   // const[cartcount,setCartcount]=useState(0);
@@ -27,7 +31,7 @@ const Cart = () => {
   const [value, setValue] = useState({});
 
 const [totalValue,setTotalValue] = useState(0)
- 
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -44,16 +48,15 @@ const [totalValue,setTotalValue] = useState(0)
         let val=0;
         console.log(val);
         response.data.data?.map((item)=>{
-          // console.log(item.prdId.prize);
-          
-          val+= (item.prdId.prize*item.quantity);
-          
-           
+          // console.log(item.prdId.prize)  
+          val+= (item.prdId.prize*item.quantity); 
          })
         //  console.log(val)
         setTotalValue(val)
        
         setCartitem(response.data.data);
+        
+        
         // console.log(cartitem);
       })
       .catch((error) => {
@@ -174,6 +177,24 @@ console.log(address);
       });
   };
 
+  const removeItem=(id)=>{
+    const token = localStorage.getItem("token");
+    const headers = {
+      Authorization: `bearer ${token}`,
+      // 'Content-Type':'application/json'
+    };
+    axios.get(`http://localhost:8080/product/delcartitem/${id}`,{headers:headers}).then((response)=>{
+      console.log(response);
+      
+    }).catch((error)=>{
+      console.log(error);
+    })
+  }
+
+  const chekOut=()=>{
+    navigate('/ordersummary');
+  }
+
   return (
     <div>
       <div>
@@ -260,6 +281,7 @@ console.log(address);
                             variant="success"
                             size="sm"
                             className="cartbtnstyle"
+                            onClick={()=>removeItem(item._id)}
                           >
                             Remove
                           </Button>
@@ -456,15 +478,15 @@ console.log(address);
                       </div>
                       <div className="carttotaldivflex mb-3">
                         <>
-                          <h6>Cart total</h6>
+                          <h6> total</h6>
                         </>
                         <>
-                          <h6>...</h6>
+                          <h6>{totalValue}</h6>
                         </>
                       </div>
                     </div>
                     <div className="d-grid">
-                      <Button variant="light" size="sm">
+                      <Button variant="light" size="sm" onClick={chekOut}>
                         Check Out
                       </Button>
                     </div>
