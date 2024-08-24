@@ -40,19 +40,28 @@ axios.get('http://localhost:8080/auth/viewone',{headers:headers}).then((response
 })
 
 axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
-  console.log(response.data.data);
+  // console.log(response.data.data);
   // setShippinginfo(response.data.data.address+","+"Building No:"+response.data.data.BuildingNumber+"pincode:"+response.data.data.pincode+","+"district:"+response.data.data.district+","+"state:"+response.data.data.state)
 setShippinginfo(response.data.data);
 }).catch((error)=>{
   console.log(error);
 })
 console.log(shippinginfo)
-
-
-
   }, [])
 
  
+  const conformOrder=()=>{
+    const token=localStorage.getItem('token');
+    const headers = {
+      Authorization: `bearer ${token}`,
+      // 'Content-Type':'application/json'
+    };
+    axios.put('http://localhost:8080/product/updatecart',{headers:headers}).then((response)=>{
+      console.log(response);  
+    }).catch((error)=>{
+      console.log(error);   
+    })
+  }
   
 
   return (
@@ -108,7 +117,8 @@ console.log(shippinginfo)
       <div className='ordercoltwo'>
       <div className=''><h6 className='ps-5 pt-5'>Expected Delivery Date:{""+expdeliverydate}</h6></div>
        <div className='odraddrsflex pt-3 ps-5 pe-5'>
-       <h6>Price(no of item)</h6><h6>....</h6>
+       <h6>Price Of({localStorage.getItem('itemcount')})</h6>
+       <h6>{localStorage.getItem('totalprize')}</h6>
        </div>
        <div className='odraddrsflex pt-3 ps-5 pe-5'>
        <h6>Delivery Charges:</h6>
@@ -116,10 +126,11 @@ console.log(shippinginfo)
        </div>
        <div className='odraddrsflex pt-3 ps-5 pe-5 pb-3'>
        <h6>Total:</h6>
-       <h6>....</h6>
+       <h6>{
+       (localStorage.getItem('totalprize'))}</h6>
        </div>
        <div className='text-center pb-4'>
-       <Button variant="warning" >Conform Order</Button>{' '}
+       <Button variant="warning"  onClick={conformOrder}>Conform Order</Button>{' '}
        </div>
          
         </div>

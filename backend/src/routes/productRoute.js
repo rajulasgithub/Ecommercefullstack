@@ -380,39 +380,44 @@ productRoute.get('/delcartitem/:id',checkauth,async(req,res)=>{
     }
 })
 
-
-productRoute.get('/cartlenth',async(req,res)=>{
+productRoute.put('/updatecart',checkauth,async(req,res)=>{
     try{
-        const data=await cartDB.find()
-        const datalen= data.length;
-        console.log(data);
-        if(data){
-           return  res.status(200).json({
+
+        const oldData=await cartDB.find({loginId:req.userData.loginId})
+      
+        const data={
+            status:2,
+        }
+        const result= await cartDB.updateMany({loginId:req.userData.loginId},{$set:data})
+      
+        
+        if(result){
+            return  res.status(200).json({
                 success:true,
                 error:false,
-                data:datalen,
-                message:"success ",
-            })
+                data:result,
+                message:"successfully updated ",
+            }) 
         }
         else{
             return res.status(400).json({
                 success:false,
                 error:true,
-                message:"false",
+                message:"not updated",
             })
         }
     }
     catch(error){
-            return res.status(500).json({
-                success:false,
-                error:true,
-                errorMessage:error.message,
-                message:"something went wrong",
-            })
-        }
-        
-    
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
+    }
 })
+
+
 
 
 module.exports=productRoute;

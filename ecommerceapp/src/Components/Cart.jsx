@@ -7,31 +7,21 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import axios from "axios";
 import Form from "react-bootstrap/Form";
-import {useNavigate} from 'react-router-dom'
-
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const [cartitem, setCartitem] = useState([]);
   // const[totalprize,setTotalprize]= useState(1);
   // const[cartcount,setCartcount]=useState(0);
-  const [address, setAddress] = useState({
-    address: "",
-    state: "",
-    district: "",
-    pincode: "",
-    BuildingNumber: "",
-  });
-  const[newaddress,setNewaddress]=useState({
-    
-  })
+  const [address, setAddress] = useState({});
+  const [newaddress, setNewaddress] = useState({});
   // console.log(address.pincode);
   // console.log(address)
-  const [value, setValue] = useState({});
+  // const [value, setValue] = useState({});
 
-const [totalValue,setTotalValue] = useState(0)
-
+  const [totalValue, setTotalValue] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -45,26 +35,15 @@ const [totalValue,setTotalValue] = useState(0)
         headers: headers,
       })
       .then((response) => {
-        let val=0;
-        console.log(val);
-        response.data.data?.map((item)=>{
-          // console.log(item.prdId.prize)  
-          val+= (item.prdId.prize*item.quantity); 
-         })
-        //  console.log(val)
-        setTotalValue(val)
        
+
         setCartitem(response.data.data);
-        
-        
+
         // console.log(cartitem);
       })
       .catch((error) => {
         console.log(error);
       });
-    
-    
-
   }, []);
 
   const decrement = (id) => {
@@ -80,13 +59,23 @@ const [totalValue,setTotalValue] = useState(0)
           return data;
         });
         setCartitem(filter);
-      console.log(cartitem);
-      
+     
+        console.log(cartitem);
       })
       .catch((error) => {
         console.log(error);
       });
   };
+  useEffect(()=>{
+    let val = 0;
+    console.log(val);
+    cartitem?.map((item) => {
+      // console.log(item.prdId.prize)
+      val += item.prdId.prize * item.quantity;
+    });
+    //  console.log(val)
+    setTotalValue(val);
+  },[cartitem])
 
   const increment = (id) => {
     axios
@@ -100,7 +89,7 @@ const [totalValue,setTotalValue] = useState(0)
           return data;
         });
         setCartitem(filter);
-        console.log(cartitem)
+        console.log(cartitem);
       })
       .catch((error) => {
         console.log(error);
@@ -111,13 +100,12 @@ const [totalValue,setTotalValue] = useState(0)
     console.log(event.target.name);
     setAddress({ ...address, [event.target.name]: event.target.value });
   };
-console.log(address);
+  console.log(address);
   const handleAdd = async (event) => {
     console.log(event.target.name);
     setNewaddress({ ...newaddress, [event.target.name]: event.target.value });
   };
   console.log(newaddress);
-
 
   const handleSubmit = async (event) => {
     const token = localStorage.getItem("token");
@@ -138,27 +126,25 @@ console.log(address);
       });
   };
 
- useEffect(() => {
-  const token = localStorage.getItem("token");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-  const headers = {
-    Authorization: `bearer ${token}`,
-    // 'Content-Type':'application/json'
-  };
+    const headers = {
+      Authorization: `bearer ${token}`,
+      // 'Content-Type':'application/json'
+    };
 
-  axios
-    .get("http://localhost:8080/address/getaddress", { headers: headers })
-    .then((response) => {
-      console.log(response.data.data);
-      setAddress(response.data.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  console.log(address);
-   
- }, [])
- 
+    axios
+      .get("http://localhost:8080/address/getaddress", { headers: headers })
+      .then((response) => {
+        console.log(response.data.data);
+        setAddress(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    console.log(address);
+  }, []);
 
   const handleUpdate = async (event) => {
     const token = localStorage.getItem("token");
@@ -168,7 +154,9 @@ console.log(address);
       // 'Content-Type':'application/json'
     };
     axios
-      .put("http://localhost:8080/address/updateaddress",address, { headers: headers })
+      .put("http://localhost:8080/address/updateaddress", address, {
+        headers: headers,
+      })
       .then((response) => {
         console.log(response);
       })
@@ -177,23 +165,33 @@ console.log(address);
       });
   };
 
-  const removeItem=(id)=>{
+  const removeItem = (id) => {
     const token = localStorage.getItem("token");
     const headers = {
       Authorization: `bearer ${token}`,
       // 'Content-Type':'application/json'
     };
-    axios.get(`http://localhost:8080/product/delcartitem/${id}`,{headers:headers}).then((response)=>{
-      console.log(response);
-      
-    }).catch((error)=>{
-      console.log(error);
-    })
-  }
+    axios
+      .get(`http://localhost:8080/product/delcartitem/${id}`, {
+        headers: headers,
+      })
+      .then((response) => {
+        console.log(response);
+        const filter = cartitem.filter((data) => {
+          return data._id != id;
+        });
+        setCartitem(filter);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-  const chekOut=()=>{
-    navigate('/ordersummary');
-  }
+  const checkOut = () => {
+  localStorage.setItem('totalprize',totalValue)
+  localStorage.setItem('itemcount',cartitem.length);
+    navigate("/ordersummary");
+  };
 
   return (
     <div>
@@ -204,7 +202,7 @@ console.log(address);
               Shopping Bag
             </h4>
             <h6 style={{ fontFamily: "monospace" }} className="">
-              items in your bag
+              {cartitem.length} items in your bag
             </h6>
           </div>
           <Container>
@@ -276,12 +274,11 @@ console.log(address);
                         </div>
 
                         <div>
-                          
                           <Button
                             variant="success"
                             size="sm"
                             className="cartbtnstyle"
-                            onClick={()=>removeItem(item._id)}
+                            onClick={() => removeItem(item._id)}
                           >
                             Remove
                           </Button>
@@ -294,165 +291,157 @@ console.log(address);
 
               <Col sm={3} className="cartcolstyle">
                 <h5 className="text-center mt-3">Shipping Address</h5>
-                {address.address&&address.state&&address.district&&address.pincode&&address.BuildingNumber?(
-                
-             <>
-                <Form.Control
-                  onChange={handlehange}
-                  as="textarea"
-                  className="carttxtare mt-3 "
-                  name="address"
-                  value={address?.address}
-                  placeholder="Enter Address"
-                  style={{
-                    height: "30px",
-                    backgroundColor: "#E6E6FA",
-                    borderRadius: 25,
-                  }}
-                />
-                <div className="formflex gap-3">
-                  <Form.Control
-                    onChange={handlehange}
-                    type="input"
-                    className="mt-3"
-                    name="state"
-                    value={address?.state}
-                  
-                    placeholder="State"
-                    style={{
-                      height: "30px",
-                      backgroundColor: "#E6E6FA",
-                      borderRadius: 25,
-                    }}
-                  />
-                  <Form.Control
-                    onChange={handlehange}
-                    type="input"
-                    className="mt-3"
-                    name="district"
-                  value={address?.district}
+                {address?.address || address?.state || address?.district ? (
+                  <>
+                    <Form.Control
+                      onChange={handlehange}
+                      as="textarea"
+                      className="carttxtare mt-3 "
+                      name="address"
+                      value={address?.address}
+                      placeholder="Enter Address"
+                      style={{
+                        height: "30px",
+                        backgroundColor: "#E6E6FA",
+                        borderRadius: 25,
+                      }}
+                    />
+                    <div className="formflex gap-3">
+                      <Form.Control
+                        onChange={handlehange}
+                        type="input"
+                        className="mt-3"
+                        name="state"
+                        value={address?.state}
+                        placeholder="State"
+                        style={{
+                          height: "30px",
+                          backgroundColor: "#E6E6FA",
+                          borderRadius: 25,
+                        }}
+                      />
+                      <Form.Control
+                        onChange={handlehange}
+                        type="input"
+                        className="mt-3"
+                        name="district"
+                        value={address?.district}
+                        placeholder="District"
+                        style={{
+                          height: "30px",
+                          backgroundColor: "#E6E6FA",
+                          borderRadius: 25,
+                        }}
+                      />
+                    </div>
+                    <div className="formflex gap-2">
+                      <Form.Control
+                        onChange={handlehange}
+                        type="input"
+                        className="mt-3"
+                        name="pincode"
+                        value={address?.pincode}
+                        placeholder="pincode"
+                        style={{
+                          height: "30px",
+                          backgroundColor: "#E6E6FA",
+                          borderRadius: 25,
+                        }}
+                      />
+                      <Form.Control
+                        onChange={handlehange}
+                        type="input"
+                        className="mt-3"
+                        name="BuildingNumber"
+                        value={address?.BuildingNumber}
+                        placeholder="Building Number"
+                        style={{
+                          height: "30px",
+                          backgroundColor: "#E6E6FA",
+                          borderRadius: 25,
+                        }}
+                      />
+                    </div>
+                    <div className=" text-center d-grid mt-3 carttotalbtn">
+                      <Button variant="dark" size="sm" onClick={handleUpdate}>
+                        Update
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Form.Control
+                      onChange={handleAdd}
+                      as="textarea"
+                      className="carttxtare mt-3 "
+                      name="address"
+                      placeholder="Enter Address"
+                      style={{
+                        height: "30px",
+                        backgroundColor: "#E6E6FA",
+                        borderRadius: 25,
+                      }}
+                    />
+                    <div className="formflex gap-3">
+                      <Form.Control
+                        onChange={handleAdd}
+                        type="input"
+                        className="mt-3"
+                        name="state"
+                        placeholder="State"
+                        style={{
+                          height: "30px",
+                          backgroundColor: "#E6E6FA",
+                          borderRadius: 25,
+                        }}
+                      />
+                      <Form.Control
+                        onChange={handleAdd}
+                        type="input"
+                        className="mt-3"
+                        name="district"
+                        placeholder="District"
+                        style={{
+                          height: "30px",
+                          backgroundColor: "#E6E6FA",
+                          borderRadius: 25,
+                        }}
+                      />
+                    </div>
+                    <div className="formflex gap-2">
+                      <Form.Control
+                        onChange={handleAdd}
+                        type="input"
+                        className="mt-3"
+                        name="pincode"
+                        placeholder="pincode"
+                        style={{
+                          height: "30px",
+                          backgroundColor: "#E6E6FA",
+                          borderRadius: 25,
+                        }}
+                      />
+                      <Form.Control
+                        onChange={handleAdd}
+                        type="input"
+                        className="mt-3"
+                        name="BuildingNumber"
+                        placeholder="Building Number"
+                        style={{
+                          height: "30px",
+                          backgroundColor: "#E6E6FA",
+                          borderRadius: 25,
+                        }}
+                      />
+                    </div>
+                    <div className=" text-center d-grid mt-3 carttotalbtn">
+                      <Button variant="dark" size="sm" onClick={handleSubmit}>
+                        Add
+                      </Button>
+                    </div>
+                  </>
+                )}
 
-                    placeholder="District"
-                    style={{
-                      height: "30px",
-                      backgroundColor: "#E6E6FA",
-                      borderRadius: 25,
-                    }}
-                  />
-                </div>
-                <div className="formflex gap-2">
-                  <Form.Control
-                    onChange={handlehange}
-                    type="input"
-                    className="mt-3"
-                    name="pincode"
-                  value={address?.pincode}
-
-                    placeholder="pincode"
-                    style={{
-                      height: "30px",
-                      backgroundColor: "#E6E6FA",
-                      borderRadius: 25,
-                    }}
-                  />
-                  <Form.Control
-                    onChange={handlehange}
-                    type="input"
-                    className="mt-3"
-                    name="BuildingNumber"
-                  value={address?.BuildingNumber}
-
-                    placeholder="Building Number"
-                    style={{
-                      height: "30px",
-                      backgroundColor: "#E6E6FA",
-                      borderRadius: 25,
-                    }}
-                  />
-                </div>
-                <div className=" text-center d-grid mt-3 carttotalbtn">
-                   <Button variant="dark" size="sm" onClick={handleUpdate}>
-                      Update
-                    </Button>
-                  </div>
-             </>
-                ):(
-                <>
-                  <Form.Control
-                  onChange={handleAdd}
-                  as="textarea"
-                  className="carttxtare mt-3 "
-                  name="address"
-                  placeholder="Enter Address"
-                  style={{
-                    height: "30px",
-                    backgroundColor: "#E6E6FA",
-                    borderRadius: 25,
-                  }}
-                />
-                <div className="formflex gap-3">
-                  <Form.Control
-                    onChange={handleAdd}
-                    type="input"
-                    className="mt-3"
-                    name="state"
-                    placeholder="State"
-                    style={{
-                      height: "30px",
-                      backgroundColor: "#E6E6FA",
-                      borderRadius: 25,
-                    }}
-                  />
-                  <Form.Control
-                    onChange={handleAdd}
-                    type="input"
-                    className="mt-3"
-                    name="district"
-                    placeholder="District"
-                    style={{
-                      height: "30px",
-                      backgroundColor: "#E6E6FA",
-                      borderRadius: 25,
-                    }}
-                  />
-                </div>
-                <div className="formflex gap-2">
-                  <Form.Control
-                    onChange={handleAdd}
-                    type="input"
-                    className="mt-3"
-                    name="pincode"
-                    placeholder="pincode"
-                    style={{
-                      height: "30px",
-                      backgroundColor: "#E6E6FA",
-                      borderRadius: 25,
-                    }}
-                  />
-                  <Form.Control
-                    onChange={handleAdd}
-                    type="input"
-                    className="mt-3"
-                    name="BuildingNumber"
-                    placeholder="Building Number"
-                    style={{
-                      height: "30px",
-                      backgroundColor: "#E6E6FA",
-                      borderRadius: 25,
-                    }}
-                  />
-                </div>
-                <div className=" text-center d-grid mt-3 carttotalbtn">
-                    
-                    <Button variant="dark" size="sm" onClick={handleSubmit}>
-                      Add
-                    </Button>
-                  </div>
-                </>
-                )
-
-              }
-                
                 <hr className="mt-4"></hr>
                 <div className="carttotalstyle">
                   <div className="carttotalinner">
@@ -464,9 +453,7 @@ console.log(address);
                         <>
                           <h6>Cart Total</h6>
                         </>
-                        <>
-                        {totalValue}
-                        </>
+                        <>{totalValue}</>
                       </div>
                       <div className="carttotaldivflex">
                         <>
@@ -486,11 +473,10 @@ console.log(address);
                       </div>
                     </div>
                     <div className="d-grid">
-                      <Button variant="light" size="sm" onClick={chekOut}>
+                      <Button variant="light" size="sm" onClick={checkOut}>
                         Check Out
                       </Button>
                     </div>
-                    
                   </div>
                 </div>
               </Col>
