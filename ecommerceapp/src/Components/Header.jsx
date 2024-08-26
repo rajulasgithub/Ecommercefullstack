@@ -21,6 +21,9 @@ const Header = () => {
             <Nav.Link href="/viewproduct" className='navtext'>View product</Nav.Link>
             <Nav.Link href="/cart" className='navtext'>View Cart</Nav.Link>
             <Nav.Link href="/ordersummary" className='navtext'>Order Summary</Nav.Link>
+            <Nav.Link href="/vieworders" className='navtext'>View Order</Nav.Link>
+
+            
 
 
           </Nav>

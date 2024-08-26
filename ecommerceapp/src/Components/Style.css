@@ -111,26 +111,18 @@
 .homecoltwo{
     height: 200px;
 }
-.orderflex{
-    display: flex;
-}
+
 .cartimg{
     width: 50px;
     height: 150px;
 }
-/* .cartback{
-    background-color: rgba(255, 215, 0,0.5);
-    height: 100rem;
-} */
+
 .cartinnerdiv{
     max-width: 100rem;
     margin: auto;
     height: 90rem;
     background-color:rgb(230, 230, 250);
-    /* border-radius: 20px; */
-    /* padding-top: 100px; */
-    /* padding-left: 100px; */
-    /* justify-content: center; */
+    
 }
 .cartcolstyleone{
     border: 1px solid white;
@@ -149,7 +141,8 @@
     margin-top: 3rem;
     
 
-}.carthead{
+}
+.carthead{
    padding-top: 3rem;
    padding-left: 6rem;
    margin-bottom:2rem ;
@@ -160,8 +153,14 @@
 }
 .cardflexone{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-left: 15rem;
+
+}
+.cardflexoneviewodr{
+    display: flex;
+    justify-content: space-between;
+    /* margin-left: 15rem; */
 
 }
 .cartcardstyle{
@@ -177,13 +176,15 @@
 .carttitlebar{
     display: flex;
     margin-left: 5rem;
+
     justify-content: space-around;
 
 }
 .carttitlebartop{
+    margin-left: 9rem;
     width: 50rem;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
 
 }
 .cartitle{
@@ -265,25 +266,8 @@
     display: flex;
     justify-content: space-between;
 }
-.adrsdiv{
-    /* margin-right: 10rem; */
-    /* width: 300px; */
-    /* border: 2p solid black; */
-}
-/* .cartinnerdiv{
-    margin: 10px;
-} */
-/* .cardflex{
-    padding-top: 1rem;
-} */
-/* .productimage{
-    width: 100px;
-} */
-/* .formfilestyle{
-    width: 500px;
-    
-} */
- 
+
+
 @media screen and (max-width: 600px) {
     .formdiv{
         width: 300px;

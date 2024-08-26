@@ -7,6 +7,10 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios'
+import Modal from 'react-bootstrap/Modal';
+import Form from "react-bootstrap/Form";
+
+
 
 
 
@@ -14,6 +18,9 @@ const OrderSummary = () => {
   const shippingdays=5;
   const[shippingname,setShippingname]=useState([]);
   const[shippinginfo,setShippinginfo]=useState([]);
+  const [show, setShow] = useState(false);
+  const[address,setAddress]=useState({});
+
 
 const calshippingdays=(shippingdays)=>{
    const today= new Date();
@@ -52,14 +59,40 @@ console.log(shippinginfo)
  
   const conformOrder=()=>{
     const token=localStorage.getItem('token');
+    console.log(token);
     const headers = {
       Authorization: `bearer ${token}`,
       // 'Content-Type':'application/json'
     };
-    axios.put('http://localhost:8080/product/updatecart',{headers:headers}).then((response)=>{
+    axios.put('http://localhost:8080/product/updatecart',{},{headers:headers}).then((response)=>{
       console.log(response);  
     }).catch((error)=>{
       console.log(error);   
+    })
+  }
+
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  
+  const handleChange=(event)=>{
+     console.log(event);
+     setAddress({...address,[event.target.name]:event.target.value});
+  }
+  console.log(address)
+
+  const updateAdrress=(event)=>{
+    const token = localStorage.getItem("token");
+
+    const headers = {
+      Authorization: `bearer ${token}`,
+      // 'Content-Type':'application/json'
+    };
+    axios.put('',address,{headers:headers}).then((response)=>{
+      console.log(response);
+      
+    }).catch((error)=>{
+      console.log(error)
     })
   }
   
@@ -100,18 +133,107 @@ console.log(shippinginfo)
       <div className='ordercolone'>
         <div className='odraddrsflex pt-4 ps-4 pe-4'>
         <h5>deliver to:{" "+shippingname.firstname+" "+shippingname.lastname}</h5>
-        <Button variant="outline-primary">Change</Button>{' '}
+        <Button variant="outline-primary" onClick={handleShow}>Change</Button>{' '}
+        <Modal show={show} onHide={handleClose} backdrop="static"
+        >
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label>Name</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Enter Name"
+                autoFocus
+                name='firstname' 
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group
+              className="mb-3"
+              controlId="exampleForm.ControlTextarea1"
+            >
+              {/* <Form.Label>Enter Delivery Address</Form.Label> */}
+              <Form.Control as="textarea" rows={2} placeholder='Enter Address'  name='address' />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label> Building Number</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Enter Building Number"
+                autoFocus 
+                name='BuildingNumber'
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label> State</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Enter State"
+                autoFocus
+                name='state'
+                onChange={handleChange}
+                
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label> District</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Enter District"
+                autoFocus
+                name='district'
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label> Pincode</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Enter Pincode "
+                autoFocus
+                name='pincode'
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label> Phone</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Enter phone Number"
+                autoFocus
+                name='number'
+                onChange={handleChange}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={updateAdrress}>
+            Update
+          </Button>
+        </Modal.Footer>
+      </Modal>
         </div>
         <div className=' ps-4 pe-4'>
        <h5>Address:</h5>
        <div className='adrsdiv pe-5'>
-        {shippinginfo.address+","+""+"Building No:"+shippinginfo.BuildingNumber}
+       <p>{shippinginfo.address} </p>
+
+       <p>{"Building No:"+shippinginfo.BuildingNumber}</p>
+
         </div>
        <p>{shippinginfo.district+','+shippinginfo.state+','+shippinginfo.pincode}</p>
        </div>
        <h6 className='ps-4 pb-5'>Phone:{shippingname.number}</h6>
 
       </div>
+      
       </Col>
       <Col>
       <div className='ordercoltwo'>
@@ -127,7 +249,7 @@ console.log(shippinginfo)
        <div className='odraddrsflex pt-3 ps-5 pe-5 pb-3'>
        <h6>Total:</h6>
        <h6>{
-       (localStorage.getItem('totalprize'))}</h6>
+       (JSON.parse(localStorage.getItem('totalprize')))+40}</h6>
        </div>
        <div className='text-center pb-4'>
        <Button variant="warning"  onClick={conformOrder}>Conform Order</Button>{' '}

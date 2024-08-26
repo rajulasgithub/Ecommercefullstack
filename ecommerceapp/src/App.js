@@ -12,6 +12,7 @@ import Home from './Components/Home';
 import Order from './Components/Order';
 import Cart from './Components/Cart';
 import OrderSummary from './Components/OrderSummary';
+import Vieworders from './Components/Vieworders';
 
 function App() {
   return (
@@ -28,14 +29,7 @@ function App() {
         <Route path='/order' element={<Order/>} />
         <Route path='/cart' element={<Cart/>} />
         <Route path='/ordersummary' element={<OrderSummary/>} />
-
-        
-
-
-
-
-
-
+        <Route path='/vieworders' element={<Vieworders/>} />
       </Routes>
       </BrowserRouter>
       

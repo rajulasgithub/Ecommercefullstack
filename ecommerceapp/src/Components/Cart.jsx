@@ -247,7 +247,7 @@ const Cart = () => {
                         <div className="cardflexone">
                           <div>
                             <Card.Text style={{ fontFamily: "monospace" }}>
-                              {item.prdId.prize}
+                            {item.prdId.prize}
                             </Card.Text>
                           </div>
                           <div className="counterflex">
