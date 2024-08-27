@@ -10,6 +10,7 @@ import axios from 'axios'
 import Modal from 'react-bootstrap/Modal';
 import Form from "react-bootstrap/Form";
 
+import InputGroup from 'react-bootstrap/InputGroup';
 
 
 
@@ -88,13 +89,19 @@ console.log(shippinginfo)
       Authorization: `bearer ${token}`,
       // 'Content-Type':'application/json'
     };
-    axios.put('',address,{headers:headers}).then((response)=>{
+    axios.put('http://localhost:8080/address/changedeliveryaddress',address,{headers:headers}).then((response)=>{
       console.log(response);
       
     }).catch((error)=>{
       console.log(error)
     })
   }
+  
+  useEffect(() => {
+    
+  // axios.get().then('http://localhost:8080/address')
+    
+  }, [])
   
 
   return (
@@ -133,7 +140,7 @@ console.log(shippinginfo)
       <div className='ordercolone'>
         <div className='odraddrsflex pt-4 ps-4 pe-4'>
         <h5>deliver to:{" "+shippingname.firstname+" "+shippingname.lastname}</h5>
-        <Button variant="outline-primary" onClick={handleShow}>Change</Button>{' '}
+        <Button variant="outline-primary" onClick={handleShow} >Change</Button>{' '}
         <Modal show={show} onHide={handleClose} backdrop="static"
         >
         <Modal.Header closeButton>
@@ -155,7 +162,7 @@ console.log(shippinginfo)
               controlId="exampleForm.ControlTextarea1"
             >
               {/* <Form.Label>Enter Delivery Address</Form.Label> */}
-              <Form.Control as="textarea" rows={2} placeholder='Enter Address'  name='address' />
+              <Form.Control as="textarea" rows={2} placeholder='Enter Address'  name='address'  onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               {/* <Form.Label> Building Number</Form.Label> */}
@@ -251,6 +258,37 @@ console.log(shippinginfo)
        <h6>{
        (JSON.parse(localStorage.getItem('totalprize')))+40}</h6>
        </div>
+       <div>
+        <h4 className='ps-5'>Payment Method</h4>
+        <div className='radioflex ps-5'>
+     <label class="form-check-label" for="flexRadioDefault1">
+       Default radio
+     </label>
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" className='me-5'/>
+
+        </div>
+        <div className='radioflex ps-5'>
+     <label class="form-check-label" for="flexRadioDefault1">
+       Default radio
+     </label>
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"  className='me-5'/>
+
+        </div>
+        <div className='radioflex ps-5'>
+     <label class="form-check-label" for="flexRadioDefault1">
+       Default radio
+     </label>
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"  className='me-5'/>
+
+        </div>
+        <div className='radioflex ps-5'>
+     <label class="form-check-label" for="flexRadioDefault1">
+       Default radio
+     </label>
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" className='me-5'/>
+
+        </div>
+        </div>
        <div className='text-center pb-4'>
        <Button variant="warning"  onClick={conformOrder}>Conform Order</Button>{' '}
        </div>

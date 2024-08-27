@@ -265,9 +265,28 @@
 .odraddrsflex{
     display: flex;
     justify-content: space-between;
+
 }
-
-
+.radioflex{
+    display: flex;
+    justify-content: space-between;
+}
+.homepage{
+    background-image: url('../../../ecommerceapp/public/images/hompage.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    height: 900px;
+}
+.hometxt{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    color: white;
+}
+.homepagehead{
+    padding-top: 8rem;
+    background-color: lightcoral;
+    width: 500px;
+    margin: auto;
+}
 @media screen and (max-width: 600px) {
     .formdiv{
         width: 300px;
