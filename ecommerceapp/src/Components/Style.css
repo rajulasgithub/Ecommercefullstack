@@ -55,6 +55,7 @@
    /* margin: 8px 0px 0px; */
    color: red;
 }
+
 /* .addproducmaindiv{
     width: 400px;
 } */
@@ -161,6 +162,7 @@
     display: flex;
     justify-content: space-between;
     /* margin-left: 15rem; */
+    margin-left: 5rem;
 
 }
 .cartcardstyle{
@@ -287,6 +289,10 @@
     width: 500px;
     margin: auto;
 }
+.homecardflex{
+    display: flex;
+    
+}
 @media screen and (max-width: 600px) {
     .formdiv{
         width: 300px;
@@ -330,4 +336,8 @@
         margin-left: 50px;
         margin-right: 50px;
     }
+    .cardflexoneviewodr{
+        /* margin-left: 5rem; */
+    }
+    
   }

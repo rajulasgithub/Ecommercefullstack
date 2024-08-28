@@ -22,9 +22,7 @@ const Header = () => {
             <Nav.Link href="/cart" className='navtext'>View Cart</Nav.Link>
             <Nav.Link href="/ordersummary" className='navtext'>Order Summary</Nav.Link>
             <Nav.Link href="/vieworders" className='navtext'>View Order</Nav.Link>
-
-            
-
+            <Nav.Link href="/payment" className='navtext'>Payment</Nav.Link>
 
           </Nav>
         </Navbar.Collapse>

@@ -13,6 +13,7 @@ import Order from './Components/Order';
 import Cart from './Components/Cart';
 import OrderSummary from './Components/OrderSummary';
 import Vieworders from './Components/Vieworders';
+import Payment from './Components/Payment';
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
         <Route path='/cart' element={<Cart/>} />
         <Route path='/ordersummary' element={<OrderSummary/>} />
         <Route path='/vieworders' element={<Vieworders/>} />
+        <Route path='/payment' element={<Payment/>} />
+
       </Routes>
       </BrowserRouter>
       

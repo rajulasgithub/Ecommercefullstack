@@ -24,6 +24,7 @@ const Cart = () => {
   const [totalValue, setTotalValue] = useState(0);
 
   useEffect(() => {
+    
     const token = localStorage.getItem("token");
 
     const headers = {

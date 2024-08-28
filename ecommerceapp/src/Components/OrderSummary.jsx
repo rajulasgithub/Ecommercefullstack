@@ -9,6 +9,9 @@ import Button from 'react-bootstrap/Button';
 import axios from 'axios'
 import Modal from 'react-bootstrap/Modal';
 import Form from "react-bootstrap/Form";
+import { useNavigate } from "react-router-dom";
+
+
 
 import InputGroup from 'react-bootstrap/InputGroup';
 
@@ -16,6 +19,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 
 
 const OrderSummary = () => {
+  const navigate = useNavigate();
   const shippingdays=5;
   const[shippingname,setShippingname]=useState([]);
   const[shippinginfo,setShippinginfo]=useState([]);
@@ -33,6 +37,7 @@ const calshippingdays=(shippingdays)=>{
 const[expdeliverydate,setExpdeliverydate]=useState(calshippingdays(shippingdays))
 
   useEffect(() => {
+    const total=localStorage.setItem('total',(JSON.parse(localStorage.getItem('totalprize')))+40)
     const token=localStorage.getItem('token');
     const headers = {
       Authorization: `bearer ${token}`,
@@ -73,12 +78,23 @@ console.log(shippinginfo)
   }
 
 
-  const handleClose = () => setShow(false);
+  const handleClose = () =>
+    { 
+      // const token = localStorage.getItem("token");
+
+      // const headers = {
+      //   Authorization: `bearer ${token}`,
+      //   // 'Content-Type':'application/json'
+      // };
+      
+      setShow(false);
+    }
   const handleShow = () => setShow(true);
   
   const handleChange=(event)=>{
      console.log(event);
      setAddress({...address,[event.target.name]:event.target.value});
+
   }
   console.log(address)
 
@@ -90,18 +106,40 @@ console.log(shippinginfo)
       // 'Content-Type':'application/json'
     };
     axios.put('http://localhost:8080/address/changedeliveryaddress',address,{headers:headers}).then((response)=>{
-      console.log(response);
-      
+      console.log(response.data.data);
     }).catch((error)=>{
       console.log(error)
     })
+
+    
+
   }
+ 
+  // useEffect(() => {
+  //   const token=localStorage.getItem('token');
+  //   const headers = {
+  //     Authorization: `bearer ${token}`,
+  //     // 'Content-Type':'application/json'
+  //   };
+   
+  //   axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
+  //     console.log(response.data.data);
+  //     setShippingname(response.data.data)
+  //   }).catch((error)=>{
+  //     console.log(error);
+      
+  //   })
   
-  useEffect(() => {
+  //   axios.get('http://localhost:8080/auth/viewone',{headers:headers}).then((response)=>{
+  //     console.log(response.data.data);
+  //     setShippinginfo(response.data.data)
+  //   }).catch((error)=>{
+  //     console.log(error);
+      
+  //   })
     
-  // axios.get().then('http://localhost:8080/address')
-    
-  }, [])
+  // }, [])
+  
   
 
   return (
@@ -260,30 +298,31 @@ console.log(shippinginfo)
        </div>
        <div>
         <h4 className='ps-5'>Payment Method</h4>
+        
         <div className='radioflex ps-5'>
      <label class="form-check-label" for="flexRadioDefault1">
-       Default radio
+       Cash On delivery
      </label>
       <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" className='me-5'/>
 
         </div>
         <div className='radioflex ps-5'>
      <label class="form-check-label" for="flexRadioDefault1">
-       Default radio
+       UPI
      </label>
       <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"  className='me-5'/>
 
         </div>
         <div className='radioflex ps-5'>
      <label class="form-check-label" for="flexRadioDefault1">
-       Default radio
+      Net Banking
      </label>
       <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"  className='me-5'/>
 
         </div>
         <div className='radioflex ps-5'>
      <label class="form-check-label" for="flexRadioDefault1">
-       Default radio
+       Credit/Debit/ATM Card
      </label>
       <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" className='me-5'/>
 

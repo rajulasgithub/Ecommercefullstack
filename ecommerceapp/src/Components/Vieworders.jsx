@@ -1,17 +1,63 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Style.css'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
+import axios from 'axios';
+import Form from 'react-bootstrap/Form';
+
+
 
 
 
 
 const Vieworders = () => {
- 
+ const[order,setOrder]=useState([]);
+ const [status, setStatus] = useState('');
+ const[address,setAddress]=useState({})
+  useEffect(() => {
+    const token=localStorage.getItem('token');
+    const headers = {
+      Authorization: `bearer ${token}`,
+      // 'Content-Type':'application/json'
+    };
+   
+    axios.get('http://localhost:8080/product/vieworder',{headers:headers}).then((response)=>{
+      console.log(response.data.data);
+      setOrder(response.data.data)
+
+    }).catch((error)=>{
+      console.log(error);
+      
+    })
+
+    axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
+      console.log(response.data.data);
+     setAddress(response.data.data)
+    }).catch((error)=>{
+      console.log(error);
+    })
+  
+    
+  }, [])
+  
+  console.log(order);
+  console.log(address)
+
+  const statusUpdate=(event)=>{
+    setStatus(event.target.value)
+  }
+
+  const deleteOrder=()=>{
+    axios.put('').then((response)=>{
+      console.log(response);
+    }).catch((error)=>{
+      console.log(error);
+      
+    })
+  }
 
   return (
     <div>
@@ -46,16 +92,16 @@ const Vieworders = () => {
 
                   {/* </div> */}
                 </div>
-                {/* {cartitem.map((item) => ( */}
+                {order.map((item) => (
                   <Card
-                    style={{ maxwidth: "50rem", height: "10rem" }}
+                    style={{ maxwidth: "50rem", height: "auto" }}
                     className="mt-5 cartcardstyle"
                   >
                     <div className="cardflex">
                       <div>
                         <Card.Img
                           variant="top"
-                          src=''
+                          src={item.prdId.image[0]}
                           style={{ width: "7rem", height: "10rem" }}
                           className="img-rounded"
                         />
@@ -65,64 +111,90 @@ const Vieworders = () => {
                         <div className="cardhead">
                           
                         </div>
-
-                        <div className="cardflexoneviewodr">
+                        <div className="cardflexoneviewodr ">
+                        <Container>
+                        <Row>
+                      
+                          <Col >
                         <Card.Text style={{ fontFamily: "monospace" }}>
-                          Item
+                          {/* Item */}
+                          {item.prdId.prdName}
                           </Card.Text>
+                          </Col>
+                          <Col  >
                           <Card.Text style={{ fontFamily: "monospace" }}>
-                            Size:{}
+                            {/* Size */}
+                            {item.prdId.size}
                           </Card.Text>
-                          <div>
+                          </Col>
+                          <Col  >
                             <Card.Text style={{ fontFamily: "monospace" }}>
-                              prize
+                              {/* prize */}
+                              {item.prdId.prize}
                             </Card.Text>
-                          </div>
-                          <div>
+                            </Col>
+                            <Col  >
                             <Card.Text style={{ fontFamily: "monospace" }}>
-                              Quantity
+                              {/* Qnty */}
+                              {item.quantity}
                             </Card.Text>
-                          </div>
+                            </Col>
                           
-                          <div>
+                            <Col  >
                             <Card.Text style={{ fontFamily: "monospace" }}>
                               {/* {item.prdId.prize * item.quantity} */}
-                              total 
-                            </Card.Text>
-                          </div>
-                          <div>
-                            <Card.Text style={{ fontFamily: "monospace" }}>
-                              {/* {item.prdId.prize * item.quantity} */}
-                              Address 
-                            </Card.Text>
-                          </div>
-                          <div>
-                            <Card.Text style={{ fontFamily: "monospace" }}>
-                              {/* {item.prdId.prize * item.quantity} */}
-                              paymentmode
-                            </Card.Text>
-                            </div>
-                            <div>
-                            <Card.Text style={{ fontFamily: "monospace" }}>
-                              {/* {item.prdId.prize * item.quantity} */}
-                              Status
-                            </Card.Text>
-                          </div>
-                        </div>
+                              {/* total */}
+                              {localStorage.getItem('total')}
 
-                        <div>
+                            </Card.Text>
+                            </Col>
+                            <Col  >
+                            <Card.Text style={{ fontFamily: "monospace" }}>
+                              {/* {item.prdId.prize * item.quantity} */}
+                              {/* Address */}
+                              {address.address}
+                              {address.district}
+                              {address.state}
+                              {address.pincode}
+                              {address.BuildingNumber}
+                            </Card.Text>
+                          </Col>
+                          <Col  >
+                            <Card.Text style={{ fontFamily: "monospace" }}>
+                              {/* {item.prdId.prize * item.quantity} */}
+                              payment
+                            </Card.Text>
+                            </Col>
+                            <Col  >
+                            
+      <select value={status} onChange={statusUpdate}>
+        <option value="" >Status</option>
+        <option value="option1">Processing</option>
+        <option value="option2">Out For Delivery</option>
+        <option value="option3">Deliverd</option>
+      </select>
+                          </Col>
+                          <Col  >
                           <Button
                             variant="success"
                             size="sm"
                             className="cartbtnstyle"
+                            onChange={deleteOrder}
                           >
-                            Remove
+                            Delete
                           </Button>
+                          </Col>
+                       
+                        </Row>
+                        </Container>
+                        </div>
+                        <div>
+                          
                         </div>
                       </Card.Body>
                     </div>
                   </Card>
-                {/* ))} */}
+                 ))} 
               </Col> 
             </Row>
           </Container>

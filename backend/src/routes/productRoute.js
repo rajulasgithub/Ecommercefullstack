@@ -418,6 +418,38 @@ productRoute.put('/updatecart',checkauth,async(req,res)=>{
 })
 
 
+productRoute.get('/vieworder',checkauth,async(req,res)=>{
+    try{
+        const result=await cartDB.find({loginId:req.userData.loginId}).populate("prdId")
+        if(result){
+            return  res.status(200).json({
+                success:true,
+                error:false,
+                data:result,
+                message:"successfully Viewed ",
+            }) 
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"not Viewed",
+            })
+        }
+
+    }
+    catch(error){
+
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
+    }
+})
+
+
 
 
 module.exports=productRoute;
