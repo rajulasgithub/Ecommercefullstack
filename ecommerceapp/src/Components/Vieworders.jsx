@@ -17,47 +17,47 @@ const Vieworders = () => {
  const[order,setOrder]=useState([]);
  const [status, setStatus] = useState('');
  const[address,setAddress]=useState({})
-  useEffect(() => {
-    const token=localStorage.getItem('token');
-    const headers = {
-      Authorization: `bearer ${token}`,
+  // useEffect(() => {
+    // const token=localStorage.getItem('token');
+    // const headers = {
+    //   Authorization: `bearer ${token}`,
       // 'Content-Type':'application/json'
-    };
+    // };
    
-    axios.get('http://localhost:8080/product/vieworder',{headers:headers}).then((response)=>{
-      console.log(response.data.data);
-      setOrder(response.data.data)
+  //   axios.get('http://localhost:8080/product/vieworder',{headers:headers}).then((response)=>{
+  //     console.log(response.data.data);
+  //     setOrder(response.data.data)
 
-    }).catch((error)=>{
-      console.log(error);
+  //   }).catch((error)=>{
+  //     console.log(error);
       
-    })
+  //   })
 
-    axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
-      console.log(response.data.data);
-     setAddress(response.data.data)
-    }).catch((error)=>{
-      console.log(error);
-    })
+  //   axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
+  //     console.log(response.data.data);
+  //    setAddress(response.data.data)
+  //   }).catch((error)=>{
+  //     console.log(error);
+  //   })
   
     
-  }, [])
+  // }, [])
   
-  console.log(order);
-  console.log(address)
+  // console.log(order);
+  // console.log(address)
 
-  const statusUpdate=(event)=>{
-    setStatus(event.target.value)
-  }
+  // const statusUpdate=(event)=>{
+  //   setStatus(event.target.value)
+  // }
 
-  const deleteOrder=()=>{
-    axios.put('').then((response)=>{
-      console.log(response);
-    }).catch((error)=>{
-      console.log(error);
+  // const deleteOrder=()=>{
+  //   axios.put('').then((response)=>{
+  //     console.log(response);
+  //   }).catch((error)=>{
+  //     console.log(error);
       
-    })
-  }
+  //   })
+  // }
 
   return (
     <div>
@@ -92,7 +92,7 @@ const Vieworders = () => {
 
                   {/* </div> */}
                 </div>
-                {order.map((item) => (
+                {/* {order.map((item) => ( */}
                   <Card
                     style={{ maxwidth: "50rem", height: "auto" }}
                     className="mt-5 cartcardstyle"
@@ -101,7 +101,7 @@ const Vieworders = () => {
                       <div>
                         <Card.Img
                           variant="top"
-                          src={item.prdId.image[0]}
+                          // src={item.prdId.image[0]}
                           style={{ width: "7rem", height: "10rem" }}
                           className="img-rounded ms-3"
                         />
@@ -117,48 +117,48 @@ const Vieworders = () => {
                       
                           <Col >
                         <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
-                          {/* Item */}
-                          {item.prdId.prdName}
+                          Item
+                          {/* {item.prdId.prdName} */}
                           </Card.Text>
                           </Col>
                           <Col  >
                           <Card.Text style={{ fontFamily: "monospace" }}className='mt-5'>
-                            {/* Size */}
-                            {item.prdId.size}
+                            Size
+                            {/* {item.prdId.size} */}
                           </Card.Text>
                           </Col>
                           <Col  >
                             <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
-                              {/* prize */}
-                              {item.prdId.prize}
+                              prize
+                              {/* {item.prdId.prize} */}
                             </Card.Text>
                             </Col>
                             <Col  >
                             <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
-                              {/* Qnty */}
-                              {item.quantity}
+                              Qnty
+                              {/* {item.quantity} */}
                             </Card.Text>
                             </Col>
                           
                             <Col  >
                             <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                               {/* {item.prdId.prize * item.quantity} */}
-                              {/* total */}
-                              {localStorage.getItem('total')}
+                              total
+                              {/* {localStorage.getItem('total')} */}
 
                             </Card.Text>
                             </Col>
                             <Col  >
                             <Card.Text style={{ fontFamily: "monospace" }} >
                               {/* {item.prdId.prize * item.quantity} */}
-                              {/* Address */}
-                              {address.address}
+                              Address
+                              {/* {address.address}
                               <br/>
                               {address.district}
                               {address.state}
                               <br/>
                               {address.pincode}
-                              {address.BuildingNumber}
+                              {address.BuildingNumber} */}
                               <br/>
                               876564567
                               
@@ -172,7 +172,7 @@ const Vieworders = () => {
                             </Col>
                             <Col  >
                             
-      <select value={status} onChange={statusUpdate} className='mt-5'>
+      <select value={status}  className='mt-5'>
         <option value="" >Status</option>
         <option value="option1">Processing</option>
         <option value="option2">Out For Delivery</option>
@@ -184,7 +184,7 @@ const Vieworders = () => {
                             variant="primary"
                             size="sm"
                             className="cartbtnstyle mt-5"
-                            onChange={deleteOrder}
+                            // onChange={deleteOrder}
                           >
                             Delete
                           </Button>
@@ -199,7 +199,7 @@ const Vieworders = () => {
                       </Card.Body>
                     </div>
                   </Card>
-                 ))} 
+                 {/* ))}  */}
               </Col> 
             </Row>
           </Container>
