@@ -144,32 +144,45 @@ console.log(shippinginfo)
 
   return (
     <div className='odrsmryback'>
-      <div>
-        {/* <div>
+      <div className='pgstopflex'>
+        <div className='progressflex'>
+        <div>
       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"blue"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
   <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
 </svg>
 </div>
-<div>
-  <h5>Order Summary</h5>
+
+  <div>
+    <div className='progressbar'>
+      .
+    </div>
   </div>
+  </div>
+
+  <div className='progressflex'>
   <div>
       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"blue"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
   <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
 </svg>
 </div>
 <div>
-  <h5>Order Summary</h5>
+    <div className='progressbarone'>
+      .
+    </div>
   </div>
-  <div className='line '><h6>_</h6></div>
+</div>
+
+ 
+  <div >
   <div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"blue"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"grey"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
   <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
 </svg>
 </div>
-<div>
-  <h5>Order Summary</h5>
-  </div> */}
+
+</div>
+
+
   </div>
         <div>
         <Container>
@@ -177,7 +190,7 @@ console.log(shippinginfo)
       <Col>
       <div className='ordercolone'>
         <div className='odraddrsflex pt-4 ps-4 pe-4'>
-        <h5>deliver to:{" "+shippingname.firstname+" "+shippingname.lastname}</h5>
+        <h3>deliver to:{" "+shippingname.firstname+" "+shippingname.lastname}</h3>
         <Button variant="outline-primary" onClick={handleShow} >Change</Button>{' '}
         <Modal show={show} onHide={handleClose} backdrop="static"
         >
@@ -266,61 +279,61 @@ console.log(shippinginfo)
       </Modal>
         </div>
         <div className=' ps-4 pe-4'>
-       <h5>Address:</h5>
+       <h4>Address:</h4>
        <div className='adrsdiv pe-5'>
-       <p>{shippinginfo.address} </p>
+       <p className='fw-bold'>{shippinginfo.address} </p>
 
-       <p>{"Building No:"+shippinginfo.BuildingNumber}</p>
+       <p className='fw-bold'>{"Building No:"+shippinginfo.BuildingNumber}</p>
 
         </div>
-       <p>{shippinginfo.district+','+shippinginfo.state+','+shippinginfo.pincode}</p>
+       <p className='fw-bold'>{shippinginfo.district+','+shippinginfo.state+','+shippinginfo.pincode}</p>
        </div>
-       <h6 className='ps-4 pb-5'>Phone:{shippingname.number}</h6>
+       <h6 className='ps-4 pb-5 fw-bold'>Phone:{shippingname.number}</h6>
 
       </div>
       
       </Col>
       <Col>
       <div className='ordercoltwo'>
-      <div className=''><h6 className='ps-5 pt-5'>Expected Delivery Date:{""+expdeliverydate}</h6></div>
+      <div className=''><h6 className='ps-5 pt-5 fw-bold'>Expected Delivery Date:{""+expdeliverydate}</h6></div>
        <div className='odraddrsflex pt-3 ps-5 pe-5'>
-       <h6>Price Of({localStorage.getItem('itemcount')})</h6>
-       <h6>{localStorage.getItem('totalprize')}</h6>
+       <h6 className='fw-bold'>Price Of({localStorage.getItem('itemcount')})</h6>
+       <h6 className='fw-bold'>{localStorage.getItem('totalprize')}</h6>
        </div>
        <div className='odraddrsflex pt-3 ps-5 pe-5'>
-       <h6>Delivery Charges:</h6>
-       <h6>RS.40</h6>
+       <h6 className='fw-bold'>Delivery Charges:</h6>
+       <h6 className='fw-bold'>RS.40</h6>
        </div>
        <div className='odraddrsflex pt-3 ps-5 pe-5 pb-3'>
-       <h6>Total:</h6>
-       <h6>{
+       <h6 className='fw-bold'>Total:</h6>
+       <h6 className='fw-bold'>{
        (JSON.parse(localStorage.getItem('totalprize')))+40}</h6>
        </div>
        <div>
-        <h4 className='ps-5'>Payment Method</h4>
+        <h4 className='ps-5 fw-bold'>Payment Method</h4>
         
-        <div className='radioflex ps-5'>
+        <div className='radioflex ps-5 fw-bold'>
      <label class="form-check-label" for="flexRadioDefault1">
        Cash On delivery
      </label>
       <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" className='me-5'/>
 
         </div>
-        <div className='radioflex ps-5'>
+        <div className='radioflex ps-5 fw-bold'>
      <label class="form-check-label" for="flexRadioDefault1">
        UPI
      </label>
       <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"  className='me-5'/>
 
         </div>
-        <div className='radioflex ps-5'>
+        <div className='radioflex ps-5 fw-bold'>
      <label class="form-check-label" for="flexRadioDefault1">
       Net Banking
      </label>
       <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"  className='me-5'/>
 
         </div>
-        <div className='radioflex ps-5'>
+        <div className='radioflex ps-5 fw-bold'>
      <label class="form-check-label" for="flexRadioDefault1">
        Credit/Debit/ATM Card
      </label>

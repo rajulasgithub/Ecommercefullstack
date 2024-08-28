@@ -103,7 +103,7 @@ const Vieworders = () => {
                           variant="top"
                           src={item.prdId.image[0]}
                           style={{ width: "7rem", height: "10rem" }}
-                          className="img-rounded"
+                          className="img-rounded ms-3"
                         />
                       </div>
 
@@ -111,37 +111,37 @@ const Vieworders = () => {
                         <div className="cardhead">
                           
                         </div>
-                        <div className="cardflexoneviewodr ">
+                        <div className="cardtext ">
                         <Container>
                         <Row>
                       
                           <Col >
-                        <Card.Text style={{ fontFamily: "monospace" }}>
+                        <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                           {/* Item */}
                           {item.prdId.prdName}
                           </Card.Text>
                           </Col>
                           <Col  >
-                          <Card.Text style={{ fontFamily: "monospace" }}>
+                          <Card.Text style={{ fontFamily: "monospace" }}className='mt-5'>
                             {/* Size */}
                             {item.prdId.size}
                           </Card.Text>
                           </Col>
                           <Col  >
-                            <Card.Text style={{ fontFamily: "monospace" }}>
+                            <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                               {/* prize */}
                               {item.prdId.prize}
                             </Card.Text>
                             </Col>
                             <Col  >
-                            <Card.Text style={{ fontFamily: "monospace" }}>
+                            <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                               {/* Qnty */}
                               {item.quantity}
                             </Card.Text>
                             </Col>
                           
                             <Col  >
-                            <Card.Text style={{ fontFamily: "monospace" }}>
+                            <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                               {/* {item.prdId.prize * item.quantity} */}
                               {/* total */}
                               {localStorage.getItem('total')}
@@ -149,25 +149,30 @@ const Vieworders = () => {
                             </Card.Text>
                             </Col>
                             <Col  >
-                            <Card.Text style={{ fontFamily: "monospace" }}>
+                            <Card.Text style={{ fontFamily: "monospace" }} >
                               {/* {item.prdId.prize * item.quantity} */}
                               {/* Address */}
                               {address.address}
+                              <br/>
                               {address.district}
                               {address.state}
+                              <br/>
                               {address.pincode}
                               {address.BuildingNumber}
+                              <br/>
+                              876564567
+                              
                             </Card.Text>
                           </Col>
                           <Col  >
-                            <Card.Text style={{ fontFamily: "monospace" }}>
+                            <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                               {/* {item.prdId.prize * item.quantity} */}
                               payment
                             </Card.Text>
                             </Col>
                             <Col  >
                             
-      <select value={status} onChange={statusUpdate}>
+      <select value={status} onChange={statusUpdate} className='mt-5'>
         <option value="" >Status</option>
         <option value="option1">Processing</option>
         <option value="option2">Out For Delivery</option>
@@ -176,9 +181,9 @@ const Vieworders = () => {
                           </Col>
                           <Col  >
                           <Button
-                            variant="success"
+                            variant="primary"
                             size="sm"
-                            className="cartbtnstyle"
+                            className="cartbtnstyle mt-5"
                             onChange={deleteOrder}
                           >
                             Delete

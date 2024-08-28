@@ -151,6 +151,8 @@
 .cardflex{
     display: flex;
     /* align-content: center; */
+    align-items: center;
+    /* align-content: center; */
 }
 .cardflexone{
     display: flex;
@@ -158,18 +160,19 @@
     margin-left: 15rem;
 
 }
-.cardflexoneviewodr{
-    display: flex;
-    justify-content: space-between;
+.cardtext{
+    /* display: flex;
+    justify-content: space-between; */
     /* margin-left: 15rem; */
-    margin-left: 5rem;
-
+    margin-left: 2rem;
+    
 }
 .cartcardstyle{
     margin: auto;
     border: 1px solid white;
     /* margin-bottom: 2rem; */
     /* margin: 15px; */
+    font-weight: bold;
     margin-left: 20px;
     margin-right: 20px;
     margin-bottom: 20px;
@@ -292,6 +295,26 @@
 .homecardflex{
     display: flex;
     
+}
+.progressbar{
+    background-color: blue;
+    width: 10rem;
+    height: 3px;
+}
+.progressbarone{
+    background-color: grey;
+    width: 10rem;
+    height: 3px;
+}
+.progressflex{
+    display: flex;
+    align-items: center;
+}
+.pgstopflex{
+    display: flex;
+    justify-content: center;
+    padding-top: 4rem;
+    /* padding-bottom: 2rem; */
 }
 @media screen and (max-width: 600px) {
     .formdiv{
