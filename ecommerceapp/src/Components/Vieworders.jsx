@@ -14,6 +14,7 @@ import Form from 'react-bootstrap/Form';
 
 
 const Vieworders = () => {
+  const role=localStorage.getItem('role')
  const[order,setOrder]=useState([]);
  const [status, setStatus] = useState('');
  const[address,setAddress]=useState({})
@@ -71,6 +72,7 @@ const Vieworders = () => {
               {} No Of Orders
             </h6>
           </div>
+          {
           <Container>
             <Row>
               <Col sm={12} className="cartcolstyleone me-5">
@@ -203,6 +205,7 @@ const Vieworders = () => {
               </Col> 
             </Row>
           </Container>
+}
         </div>
 
       </div>

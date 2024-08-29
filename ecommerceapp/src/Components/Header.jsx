@@ -28,6 +28,8 @@ const Header = () => {
             <Nav.Link href="/cart" className='navtext'>View Cart</Nav.Link>
             <Nav.Link href="/viewproduct" className='navtext'>View product</Nav.Link>
             <Nav.Link href="/ordersummary" className='navtext'>Order Summary</Nav.Link>
+            <Nav.Link href="/vieworders" className='navtext'>My Orders</Nav.Link>
+
             <Nav.Link href="/home" className='navtext' onClick={logout}>Logout</Nav.Link>
 
             {/* <Nav.Link href="/payment" className='navtext'>Payment</Nav.Link> */}

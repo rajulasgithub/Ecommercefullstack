@@ -13,11 +13,12 @@ import {useNavigate} from 'react-router-dom'
 
 
 const Viewproduct = () => {
+  const role= localStorage.getItem("role");
+
   const navigate=useNavigate();
   const[product,setProduct]=useState([]);
   // const[cart,setAddtocart]=useState("");
  useEffect(() => {
-   
   axios.get('http://localhost:8080/product/viewproduct').then((response)=>{
     // console.log(response.data.data); 
     setProduct(response.data.data);
@@ -53,11 +54,19 @@ const Viewproduct = () => {
       
     })
   }
+
+const dltproduct=()=>{
+
+}
+const updateproduct=()=>{
+  
+}
+
   return (
     <div>
       <div className='viewproductback'>
-      <Container>
-      <Row>
+      {/* <Container>
+      <Row className=''>
         {product.map((item)=>(
 
 <Col>
@@ -83,7 +92,51 @@ const Viewproduct = () => {
         ))}
        
       </Row>
+      </Container> */}
+        <div>
+      <div className='viewprdtdiv'>
+      <Container >
+      <Row style={{columnGap:30}}>
+      {product.map((item)=>(
+
+      <Card style={{ width: '15rem',paddingTop:15,marginBottom:30 }} className='viewprdctcards'>
+      <Col sm>
+      <Card.Img variant="top" src={item.image[0]} style={{width:180,height:150,marginLeft:15}}/>
+      <Card.Body>
+        <Card.Title className='text-success'>{item.prdName}</Card.Title>
+        <Card.Text className='text-danger '>
+       Prize: {item.prize}
+       
+        </Card.Text>
+        <Card.Text>
+        Size:{item.size}
+        </Card.Text>
+        <Card.Text>
+       Material: {item.material}
+       
+        </Card.Text>
+        {role==3?
+        <>
+        <div className='viewprdctbtn'>
+        <Button  size="sm" variant="outline-success" onClick={dltproduct}>Delete</Button>
+        <Button  size="sm" variant="outline-success" onClick={updateproduct}>Update</Button>
+        </div>
+        </>:
+         <>
+        <Button  size="sm" variant="outline-success" onClick={()=>handleSubmit(item._id)}>Add to Cart</Button>
+        </>
+       }
+      </Card.Body>
+      </Col>
+    </Card>
+        
+       
+      ))}
+      </Row>
       </Container>
+
+      </div>
+      </div>
         
       </div>
     </div>
