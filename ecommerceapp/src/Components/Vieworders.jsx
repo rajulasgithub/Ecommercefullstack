@@ -45,25 +45,28 @@ const Vieworders = () => {
     console.log(error);
     
   })
+
+  
+
  },[])
 
  useEffect(()=>{
    
    
-  const filtered = order.filter(item => item.status === 2);
+  const filtered = order.filter(item => item.status == 2 || item.status==3);
   setFilteredData(filtered);
  },[order])
  console.log(filteredData)
 
-
- const cancelOrder=()=>{
-  const token=localStorage.getItem('token');
-  // console.log(token);
-  const headers = {
-    Authorization: `bearer ${token}`,
-    // 'Content-Type':'application/json'
-  };
-   axios.put('http://localhost:8080/product/cancelorder',{},{headers:headers}).then((response)=>{
+ 
+ const cancelOrder=(id)=>{
+  // const token=localStorage.getItem('token');
+  // // console.log(token);
+  // const headers = {
+  //   Authorization: `bearer ${token}`,
+  //   // 'Content-Type':'application/json'
+  // };
+   axios.put(`http://localhost:8080/product/cancelorder/${id}`).then((response)=>{
     console.log(response); 
   
    }).catch((error)=>{
@@ -73,16 +76,22 @@ const Vieworders = () => {
 
 
  const rejectOrder=(id)=>{
-  const token=localStorage.getItem('token');
-  // console.log(token);
-  const headers = {
-    Authorization: `bearer ${token}`,
-    // 'Content-Type':'application/json'
-  };
-   axios.put('http://localhost:8080/product/rejectOrder',{},{headers:headers}).then((response)=>{
-      
-   })
+//   console.log(id);
+  // const token=localStorage.getItem('token');
+  // // console.log(token);
+  // const headers = {
+  //   Authorization: `bearer ${token}`,
+  //   // 'Content-Type':'application/json'
+  // };
+//    axios.put(`http://localhost:8080/product/rejectorder/${id}`).then((response)=>{
+//       console.log(response);  
+//    }).catch((error)=>{
+//     console.log(error);
+    
+//    })
  }
+
+
   
   return (
     <div>
@@ -228,6 +237,28 @@ const Vieworders = () => {
                         
                       </Card.Body>
                     </div>
+                    {item.status===3?
+                    <div>
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      className="cartbtnstyle "
+                     onClick={()=>cancelOrder(item._id)}
+                    >
+                     Cancelled
+                    </Button>
+              </div>:
+                          <div>
+                          <Button
+                            variant="primary"
+                            size="lg"
+                            className="cartbtnstyle "
+                           onClick={()=>cancelOrder(item._id)}
+                          >
+                           Cancel Order
+                          </Button>
+                    </div>
+}
                   </Card>
                  ))}  
               </Col> 
@@ -238,9 +269,9 @@ const Vieworders = () => {
                             variant="primary"
                             size="lg"
                             className="cartbtnstyle mt-5 mb-3"
-                            onClick={cancelOrder}
+                            // onClick={cancelOrders}
                           >
-                            Cancel Order
+                            Cancel orders
                           </Button>
                           </div>
                           <div>
@@ -384,20 +415,27 @@ const Vieworders = () => {
         <option value="" >Status</option>
         <option value="option1">Processing</option>
         <option value="option2">Out For Delivery</option>
-        <option value="option3">Deliverd</option>
+        {/* <option value="option3">Deliverd</option> */}
+        <option value="option3">Out of Stock</option>
+
       </select>
                           </Col>
+                          
                           <Col  >
+                          {item.status===3?
+                          <div>
                           <Button
                             variant="primary"
                             size="sm"
                             className="cartbtnstyle mt-5"
-                            onChange={()=>rejectOrder(item.id)}
+                            // onClick={()=>rejectOrder(item._id)}
                           >
-                            Delete
+                           cancelled
                           </Button>
+                          </div>:
+                          }
                           </Col>
-                       
+
                         </Row>
                         </Container>
                         </div>

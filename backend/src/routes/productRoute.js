@@ -478,15 +478,15 @@ productRoute.put('/updatecart',checkauth,async(req,res)=>{
 
 
 
-productRoute.put('/cancelorder',checkauth,async(req,res)=>{
+productRoute.put('/cancelorder/:id',async(req,res)=>{
     try{
 
-        const oldData=await cartDB.find({loginId:req.userData.loginId})
+        const oldData=await cartDB.find({_id:req.params.id})
       
         const data={
-            status:1,
+            status:3,
         }
-        const result= await cartDB.updateMany({loginId:req.userData.loginId},{$set:data})
+        const result= await cartDB.updateMany({_id:req.params.id},{$set:data})
       
         
         if(result){
@@ -494,14 +494,14 @@ productRoute.put('/cancelorder',checkauth,async(req,res)=>{
                 success:true,
                 error:false,
                 data:result,
-                message:"successfully updated ",
+                message:"successfully cancelled ",
             }) 
         }
         else{
             return res.status(400).json({
                 success:false,
                 error:true,
-                message:"not updated",
+                message:"not cancelled",
             })
         }
     }
@@ -551,15 +551,21 @@ productRoute.get('/vieworder',checkauth,async(req,res)=>{
     }
 })
 
-productRoute.put('/rejectorder',async(req,res)=>{
+productRoute.put('/rejectorder/:id',async(req,res)=>{
 try{
-   const result= await cartDB.find({loginId:req.userData.loginId})
+    // console.log(req.params);
+   const oldData= await cartDB.find({_id:req.params.id})
+//    console.log(oldData.status);
+    const data={
+        status:3,
+    }
+    const result= await cartDB.updateOne({_id:req.params.id},{$set:data})
    if(result){
     return res.status(200).json({
         success:true,
         erorr:false,
         data:result,
-        message:"successfully Viewed ",
+        message:"successfully updated ",
 
     })
    }
@@ -567,7 +573,7 @@ try{
     return res.status(400).json({
         success:false,
         error:true,
-        errorMessage:error.message,
+        Message:"not updated",
     })
    }
 }
