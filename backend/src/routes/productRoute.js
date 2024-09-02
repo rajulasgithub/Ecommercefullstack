@@ -273,6 +273,65 @@ productRoute.get('/viewcart',checkauth,async(req,res)=>{
     }
 })
 
+productRoute.get('/viewcartcmpny',async(req,res)=>{
+    try{
+        const result= await cartDB.find().populate("prdId")
+        if(result){
+            return  res.status(200).json({
+                success:true,
+                error:false,
+                data:result,
+                message:"successfully viewed ",
+            }) 
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"not viewed",
+            })
+        }
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
+    }
+})
+
+
+productRoute.get('/vieworderuser',checkauth,async(req,res)=>{
+    try{
+      const result= await cartDB.find({loginId:req.userData.loginId}).populate("prdId")
+        if(result){
+            return  res.status(200).json({
+                success:true,
+                error:false,
+                data:result,
+                message:"successfully viewed ",
+            }) 
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"not viewed",
+            })
+        }
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
+    }
+})
+
 productRoute.put('/incrcart/:id',async(req,res)=>{
     try{
     console.log(req.params.id)
@@ -418,6 +477,49 @@ productRoute.put('/updatecart',checkauth,async(req,res)=>{
 })
 
 
+
+productRoute.put('/cancelorder',checkauth,async(req,res)=>{
+    try{
+
+        const oldData=await cartDB.find({loginId:req.userData.loginId})
+      
+        const data={
+            status:1,
+        }
+        const result= await cartDB.updateMany({loginId:req.userData.loginId},{$set:data})
+      
+        
+        if(result){
+            return  res.status(200).json({
+                success:true,
+                error:false,
+                data:result,
+                message:"successfully updated ",
+            }) 
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"not updated",
+            })
+        }
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
+    }
+})
+
+
+
+
+
+
 productRoute.get('/vieworder',checkauth,async(req,res)=>{
     try{
         const result=await cartDB.find({loginId:req.userData.loginId}).populate("prdId")
@@ -449,7 +551,35 @@ productRoute.get('/vieworder',checkauth,async(req,res)=>{
     }
 })
 
+productRoute.put('/rejectorder',async(req,res)=>{
+try{
+   const result= await cartDB.find({loginId:req.userData.loginId})
+   if(result){
+    return res.status(200).json({
+        success:true,
+        erorr:false,
+        data:result,
+        message:"successfully Viewed ",
 
+    })
+   }
+   else{
+    return res.status(400).json({
+        success:false,
+        error:true,
+        errorMessage:error.message,
+    })
+   }
+}
+catch(error){
+    return res.status(500).json({
+        success:false,
+        error:true,
+        errorMessage:error.message,
+        message:"something went wrong",
+    })
+}
+})
 
 
 module.exports=productRoute;

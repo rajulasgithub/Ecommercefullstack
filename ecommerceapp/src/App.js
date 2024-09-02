@@ -18,8 +18,10 @@ import Payment from './Components/Payment';
 function App() {
   return (
     <div>
-      <Header/>
+     
       <BrowserRouter>
+      <Header/>
+
       <Routes>
         <Route path='/signup' element={<Signup/>} />
         <Route path='/login' element={<Login/>} />
