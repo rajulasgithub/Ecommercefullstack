@@ -72,6 +72,7 @@ const Vieworders = () => {
    }).catch((error)=>{
     console.log(error);
    })
+   window.location.reload();
  }
 
 
@@ -91,6 +92,11 @@ const Vieworders = () => {
 //    })
  }
 
+ const statusChange=(event)=>{
+  console.log(event.target.value);
+    setStatus(event.target.value);
+ }
+ console.log(status)
 
   
   return (
@@ -184,8 +190,7 @@ const Vieworders = () => {
                             <Card.Text style={{ fontFamily: "monospace" }} className=''>
                               {/* {item.prdId.prize * item.quantity} */}
                               total
-                              {/* {localStorage.getItem('total')} */}
-
+                             {" "+item.quantity*item.prdId.prize}
                             </Card.Text>
                             {/* </Col>
                             <Col  > */}
@@ -219,13 +224,17 @@ const Vieworders = () => {
                             </Card.Text>
                             {/* </Col>
                             <Col  > */}
+
+                           <Card.Text style={{ fontFamily: "monospace" }} className=''>
+                            status: {status}
+                            </Card.Text>
                             
-      <select value={status}  className=''>
+      {/* <select value={status}  className=''>
         <option value="" >Status</option>
         <option value="option1">Processing</option>
         <option value="option2">Out For Delivery</option>
         <option value="option3">Deliverd</option>
-      </select>
+      </select> */}
                           {/* </Col>
                           <Col  > */}
                           
@@ -382,8 +391,8 @@ const Vieworders = () => {
                             <Col  >
                             <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                               {/* {item.prdId.prize * item.quantity} */}
-                              total
-                              {/* {localStorage.getItem('total')} */}
+                              
+                              {item.quantity*item.prdId.prize}
 
                             </Card.Text>
                             </Col>
@@ -391,13 +400,7 @@ const Vieworders = () => {
                             <Card.Text style={{ fontFamily: "monospace" }} >
                               {/* {item.prdId.prize * item.quantity} */}
                               Address
-                              {item.prdId.address}
-                              <br/>
-                              {address.district}
-                              {address.state}
-                              <br/>
-                              {address.pincode}
-                              {address.BuildingNumber}
+                             {localStorage.getItem('address')}
                               <br/>
                               876564567
                               
@@ -411,12 +414,12 @@ const Vieworders = () => {
                             </Col>
                             <Col  >
                             
-      <select value={status}  className='mt-5'>
-        <option value="" >Status</option>
-        <option value="option1">Processing</option>
-        <option value="option2">Out For Delivery</option>
+      <select value={status} name="status" onChange={statusChange} className='mt-5'>
+        <option value="Status" >Status</option>
+        <option value="Processing">Processing</option>
+        <option value="Out For Delivery">Out For Delivery</option>
         {/* <option value="option3">Deliverd</option> */}
-        <option value="option3">Out of Stock</option>
+        <option value="Out of Stock">Out of Stock</option>
 
       </select>
                           </Col>
@@ -433,6 +436,7 @@ const Vieworders = () => {
                            cancelled
                           </Button>
                           </div>:
+                          ""
                           }
                           </Col>
 

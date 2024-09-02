@@ -22,6 +22,7 @@ const Cart = () => {
   // const [value, setValue] = useState({});
 
   const [totalValue, setTotalValue] = useState(0);
+  const [orderPlaced, setOrderPlaced] = useState(false);
 
   useEffect(() => {
     
@@ -189,6 +190,7 @@ const Cart = () => {
   };
 
   const checkOut = () => {
+  setOrderPlaced(true);
   localStorage.setItem('totalprize',totalValue)
   localStorage.setItem('itemcount',cartitem.length);
     navigate("/ordersummary");
@@ -250,6 +252,8 @@ const Cart = () => {
               {cartitem.length} items in your bag
             </h6>
           </div>
+          {!orderPlaced?
+         (
           <Container>
             <Row>
               <Col sm={8} className="cartcolstyleone me-5">
@@ -264,6 +268,7 @@ const Cart = () => {
                     <h6 className="">Total Prize</h6>
                   </div>
                 </div>
+                
                 {cartitem.map((item) => (
                   <Card
                     style={{ maxwidth: "50rem", height: "10rem" }}
@@ -526,7 +531,12 @@ const Cart = () => {
                 </div>
               </Col>
             </Row>
-          </Container>
+          </Container>):(
+        <div>
+          "your cart is empty"
+        </div>
+        )
+           }
         </div>
 
         {/* <Container>

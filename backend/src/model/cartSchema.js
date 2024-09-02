@@ -4,6 +4,7 @@ const cartSchema = new mongoose.Schema({
     prdId:{type:mongoose.Types.ObjectId,ref:'productlist'},
     quantity:{type:Number,required:true},
     status:{type:Number,required:true},
+    date:{}
 })
 
 const cartDB= new mongoose.model('cartlist',cartSchema);

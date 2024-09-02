@@ -56,6 +56,7 @@ axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((re
   // console.log(response.data.data);
   // setShippinginfo(response.data.data.address+","+"Building No:"+response.data.data.BuildingNumber+"pincode:"+response.data.data.pincode+","+"district:"+response.data.data.district+","+"state:"+response.data.data.state)
 setShippinginfo(response.data.data);
+localStorage.setItem('address',shippinginfo.address+" "+shippinginfo.district+" "+shippinginfo.state+" "+shippinginfo.BuildingNumber+" "+shippinginfo.pincode);
 }).catch((error)=>{
   console.log(error);
 })
@@ -110,37 +111,8 @@ console.log(shippinginfo)
     }).catch((error)=>{
       console.log(error)
     })
-
-    
-
   }
  
-  // useEffect(() => {
-  //   const token=localStorage.getItem('token');
-  //   const headers = {
-  //     Authorization: `bearer ${token}`,
-  //     // 'Content-Type':'application/json'
-  //   };
-   
-  //   axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
-  //     console.log(response.data.data);
-  //     setShippingname(response.data.data)
-  //   }).catch((error)=>{
-  //     console.log(error);
-      
-  //   })
-  
-  //   axios.get('http://localhost:8080/auth/viewone',{headers:headers}).then((response)=>{
-  //     console.log(response.data.data);
-  //     setShippinginfo(response.data.data)
-  //   }).catch((error)=>{
-  //     console.log(error);
-      
-  //   })
-    
-  // }, [])
-  
-  
 
   return (
     <div className='odrsmryback'>
