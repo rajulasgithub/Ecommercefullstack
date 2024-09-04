@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios'
+import Header from './Header';
 
 
 
@@ -85,6 +86,8 @@ const [error, setError] = useState({});
  
  
   return (
+    <>
+    <Header/>
     <div className='signupbg'>
         <div className='formdiv'> 
           {/* <div className='signuphead'> */}
@@ -154,6 +157,7 @@ const [error, setError] = useState({});
     </div>
         
     </div>
+    </>
   )
 }
 

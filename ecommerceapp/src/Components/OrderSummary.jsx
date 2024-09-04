@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 
 import InputGroup from 'react-bootstrap/InputGroup';
+import Header from './Header';
 
 
 
@@ -47,13 +48,14 @@ const[expdeliverydate,setExpdeliverydate]=useState(calshippingdays(shippingdays)
 axios.get('http://localhost:8080/auth/viewone',{headers:headers}).then((response)=>{
   console.log(response.data.data);
   setShippingname(response.data.data) 
+  localStorage.setItem("number",shippingname.number)
 }).catch((error)=>{
   console.log(error);
   
 })
 
 axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
-  // console.log(response.data.data);
+  console.log(response.data.data);
   // setShippinginfo(response.data.data.address+","+"Building No:"+response.data.data.BuildingNumber+"pincode:"+response.data.data.pincode+","+"district:"+response.data.data.district+","+"state:"+response.data.data.state)
 setShippinginfo(response.data.data);
 localStorage.setItem('address',shippinginfo.address+" "+shippinginfo.district+" "+shippinginfo.state+" "+shippinginfo.BuildingNumber+" "+shippinginfo.pincode);
@@ -73,9 +75,11 @@ console.log(shippinginfo)
     };
     axios.put('http://localhost:8080/product/updatecart',{},{headers:headers}).then((response)=>{
       console.log(response);  
+      setShippinginfo(shippinginfo);
     }).catch((error)=>{
       console.log(error);   
     })
+    navigate('/vieworders')
   }
 
 
@@ -89,6 +93,8 @@ console.log(shippinginfo)
       // };
       
       setShow(false);
+    window.location.reload();
+
     }
   const handleShow = () => setShow(true);
   
@@ -115,6 +121,8 @@ console.log(shippinginfo)
  
 
   return (
+    <>
+    <Header/>
     <div className='odrsmryback'>
       <div className='pgstopflex'>
         <div className='progressflex'>
@@ -162,7 +170,7 @@ console.log(shippinginfo)
       <Col>
       <div className='ordercolone'>
         <div className='odraddrsflex pt-4 ps-4 pe-4'>
-        <h3>deliver to:{" "+shippingname.firstname+" "+shippingname.lastname}</h3>
+        <h3>deliver to:{" "+shippingname.firstname}</h3>
         <Button variant="outline-primary" onClick={handleShow} >Change</Button>{' '}
         <Modal show={show} onHide={handleClose} backdrop="static"
         >
@@ -327,6 +335,7 @@ console.log(shippinginfo)
 
         </div>
     </div>
+    </>
   )
 }
 

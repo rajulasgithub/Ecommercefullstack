@@ -8,6 +8,7 @@ import Card from "react-bootstrap/Card";
 import axios from "axios";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
+import Header from "./Header";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -22,7 +23,6 @@ const Cart = () => {
   // const [value, setValue] = useState({});
 
   const [totalValue, setTotalValue] = useState(0);
-  const [orderPlaced, setOrderPlaced] = useState(false);
 
   useEffect(() => {
     
@@ -41,7 +41,7 @@ const Cart = () => {
 
         setCartitem(response.data.data);
 
-        // console.log(cartitem);
+        console.log(cartitem);
       })
       .catch((error) => {
         console.log(error);
@@ -190,13 +190,24 @@ const Cart = () => {
   };
 
   const checkOut = () => {
-  setOrderPlaced(true);
   localStorage.setItem('totalprize',totalValue)
   localStorage.setItem('itemcount',cartitem.length);
     navigate("/ordersummary");
   };
 
+  // const clearCart=()=>{
+  //   axios.get('http://localhost:8080/product/deletecart').then((response)=>{
+  //     console.log(response);
+      
+  //   }).catch((error)=>{
+  //     console.log(error);
+      
+  //   })
+  // }
+
   return (
+    <>
+    <Header/>
     <div>
       <div>
         
@@ -251,9 +262,9 @@ const Cart = () => {
             <h6 style={{ fontFamily: "monospace" }} className="">
               {cartitem.length} items in your bag
             </h6>
+            {/* <Button variant="primary" onClick={clearCart}>Clear Cart</Button>{' '} */}
           </div>
-          {!orderPlaced?
-         (
+         
           <Container>
             <Row>
               <Col sm={8} className="cartcolstyleone me-5">
@@ -531,12 +542,7 @@ const Cart = () => {
                 </div>
               </Col>
             </Row>
-          </Container>):(
-        <div>
-          "your cart is empty"
-        </div>
-        )
-           }
+          </Container>
         </div>
 
         {/* <Container>
@@ -578,6 +584,7 @@ const Cart = () => {
       </Container> */}
       </div>
     </div>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 // import Image from 'react-bootstrap/Image';
 // import Col from 'react-bootstrap/Col';
 import axios from 'axios'
+import Header from './Header';
 
 
 
@@ -45,6 +46,8 @@ const handleSubmit= async (event)=>{
 }
   
   return (
+    <>
+    <Header/>
     <div className='addprdform'>
         <div className='addproducmaindiv'>
           <div className='addprdtsubdiv'>
@@ -87,6 +90,7 @@ const handleSubmit= async (event)=>{
     </div>
     </div>
     </div>
+    </>
   )
 }
 

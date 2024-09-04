@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import axios from 'axios'
+import Header from './Header';
 
 const Companysignup = () => {
   const[companysignup,setCompanysignup]=useState({})
@@ -44,6 +45,8 @@ const Companysignup = () => {
   }
   
   return (
+    <>
+    <Header/>
     <div className='signupbg'>
         <div className='companysignupformdiv'>
         <div className='forminnerdiv'>
@@ -118,6 +121,7 @@ const Companysignup = () => {
 
         </div>
     </div>
+    </>
   )
 }
 

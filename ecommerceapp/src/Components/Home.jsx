@@ -4,10 +4,13 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './Style.css'
 import Card from 'react-bootstrap/Card';
+import Header from './Header';
 
 
 const Home = () => {
   return (
+    <>
+    <Header/>
     <div className='homepage'>
         <div className='text-center  homepagehead'>
       <h1 className=' hometxt'>Stay Home.Shop Online..
@@ -57,6 +60,7 @@ const Home = () => {
       </Row>
       </Container>
     </div>
+    </>
   )
 }
 

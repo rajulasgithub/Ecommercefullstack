@@ -8,6 +8,7 @@ import Card from 'react-bootstrap/Card';
 import axios from 'axios'
 import Nav from 'react-bootstrap/Nav';
 import {useNavigate} from 'react-router-dom'
+import Header from './Header';
 
 
 
@@ -64,6 +65,7 @@ const updateproduct=()=>{
 
   return (
     <div>
+      <Header/>
       <div className='viewproductback'>
       {/* <Container>
       <Row className=''>

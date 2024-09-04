@@ -14,13 +14,17 @@ import Cart from './Components/Cart';
 import OrderSummary from './Components/OrderSummary';
 import Vieworders from './Components/Vieworders';
 import Payment from './Components/Payment';
+import React, { useState, useEffect } from "react";
+
 
 function App() {
+
+  
   return (
     <div>
      
       <BrowserRouter>
-      <Header/>
+      {/* <Header/> */}
 
       <Routes>
         <Route path='/signup' element={<Signup/>} />

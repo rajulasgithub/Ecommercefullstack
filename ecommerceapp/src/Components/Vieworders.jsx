@@ -7,6 +7,8 @@ import Button from 'react-bootstrap/Button';
 import Card from "react-bootstrap/Card";
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
+import Header from './Header';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 
 
@@ -15,8 +17,11 @@ import Form from 'react-bootstrap/Form';
 
 const Vieworders = () => {
   const role=localStorage.getItem('role')
+ const adrs= localStorage.getItem('address')
+
  const[order,setOrder]=useState([]);
  const [filteredData, setFilteredData] = useState([]);
+ const[filterstatus,setFilterstatus] = useState([]);
  const [status, setStatus] = useState('');
  const[address,setAddress]=useState({})
 
@@ -46,17 +51,15 @@ const Vieworders = () => {
     
   })
 
-  
-
  },[])
 
  useEffect(()=>{
-   
-   
-  const filtered = order.filter(item => item.status == 2 || item.status==3);
+  const filtered = order.filter(item => item.status == 2 || item.status==3 || item.status==4 || item.status==5);
   setFilteredData(filtered);
  },[order])
  console.log(filteredData)
+
+ 
 
  
  const cancelOrder=(id)=>{
@@ -92,15 +95,31 @@ const Vieworders = () => {
 //    })
  }
 
- const statusChange=(event)=>{
-  console.log(event.target.value);
-    setStatus(event.target.value);
+ const statusChange=(id,value)=>{
+ axios.put(`http://localhost:8080/product/updatecartstatus/${id}/${value}`).then((response)=>{
+  console.log(response);
+ window.location.reload();
+
+ }).catch((error)=>{
+  console.log(error);
+ })
  }
  console.log(status)
+
+
+ const buttonStyle = {
+  backgroundColor:  'green', // Change color if status is 3
+  color: 'white',
+  padding: '10px 20px',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+};
 
   
   return (
     <div>
+      <Header/>
       <div>
       <div className="cartinnerdiv ">
          
@@ -137,6 +156,7 @@ const Vieworders = () => {
 
                   {/* </div> */}
                 </div>
+                
                 {filteredData.map((item) => (
                   <Card
                     style={{ maxwidth: "50rem", height: "auto" }}
@@ -226,7 +246,7 @@ const Vieworders = () => {
                             <Col  > */}
 
                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
-                            status: {status}
+                            status: { item.status==3?("Order Cancelled"): item.status==4? ("Processing"): item.status==5? ("out for delivery"): ("Ordered")}
                             </Card.Text>
                             
       {/* <select value={status}  className=''>
@@ -273,16 +293,7 @@ const Vieworders = () => {
               </Col> 
             </Row>
             <div>
-              <div>
-          <Button
-                            variant="primary"
-                            size="lg"
-                            className="cartbtnstyle mt-5 mb-3"
-                            // onClick={cancelOrders}
-                          >
-                            Cancel orders
-                          </Button>
-                          </div>
+              
                           <div>
                           <Button
                             variant="primary"
@@ -340,6 +351,8 @@ const Vieworders = () => {
 
                   {/* </div> */}
                 </div>
+                <ListGroup as="ol">
+                <ListGroup.Item as="li" >
                 {filteredData.map((item) => (
                   <Card
                     style={{ maxwidth: "50rem", height: "auto" }}
@@ -400,10 +413,11 @@ const Vieworders = () => {
                             <Card.Text style={{ fontFamily: "monospace" }} >
                               {/* {item.prdId.prize * item.quantity} */}
                               Address
-                             {localStorage.getItem('address')}
+                           
+                             
+
                               <br/>
-                              876564567
-                              
+                             Number:
                             </Card.Text>
                           </Col>
                           <Col  >
@@ -413,19 +427,20 @@ const Vieworders = () => {
                             </Card.Text>
                             </Col>
                             <Col  >
-                            
-      <select value={status} name="status" onChange={statusChange} className='mt-5'>
-        <option value="Status" >Status</option>
-        <option value="Processing">Processing</option>
-        <option value="Out For Delivery">Out For Delivery</option>
+                            {
+      <select  style={buttonStyle}  name="status" onChange={(e)=>statusChange(item._id,e.target.value)} className='mt-5'>
+        <option >{item.status==3?("Order Cancelled"): item.status==4? ("Processing"): item.status==5? ("out for delivery"): ("Ordered")}
+        </option>
+        <option value="4" >Processing</option>
+        <option value="5">Out For Delivery</option>
+        {/* <option value="6">Out of Stock</option> */}
         {/* <option value="option3">Deliverd</option> */}
-        <option value="Out of Stock">Out of Stock</option>
 
-      </select>
+      </select>}
                           </Col>
                           
                           <Col  >
-                          {item.status===3?
+                          {/* {item.status===3?
                           <div>
                           <Button
                             variant="primary"
@@ -437,7 +452,7 @@ const Vieworders = () => {
                           </Button>
                           </div>:
                           ""
-                          }
+                          } */}
                           </Col>
 
                         </Row>
@@ -450,6 +465,8 @@ const Vieworders = () => {
                     </div>
                   </Card>
                   ))} 
+                    </ListGroup.Item>
+                 </ListGroup>
               </Col> 
             </Row>
           </Container>

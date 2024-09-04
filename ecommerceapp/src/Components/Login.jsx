@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import axios from "axios";
 import { useNavigate} from 'react-router-dom'
+import Header from "./Header";
 
 
 const Login = () => {
@@ -58,6 +59,8 @@ const Login = () => {
   };
 
   return (
+    <>
+    <Header/>
     <div className="signupbg">
       <div className="loginformdiv">
         <div className="forminnerdiv">
@@ -104,6 +107,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
