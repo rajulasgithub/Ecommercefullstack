@@ -54,7 +54,7 @@ const Vieworders = () => {
  },[])
 
  useEffect(()=>{
-  const filtered = order.filter(item => item.status == 2 || item.status==3 || item.status==4 || item.status==5);
+  const filtered = order.filter(item => item.status == 2 || item.status==3 || item.status==4 || item.status==5 || item.status==6);
   setFilteredData(filtered);
  },[order])
  console.log(filteredData)
@@ -123,7 +123,7 @@ const Vieworders = () => {
       <div>
       <div className="cartinnerdiv ">
          
-          {role==2?
+          {role==2 ?
           <>
            <div className="carthead">
             <h4 style={{ fontFamily: "monospace" }} className="">
@@ -157,25 +157,27 @@ const Vieworders = () => {
                   {/* </div> */}
                 </div>
                 
-                {filteredData.map((item) => (
+                {filteredData.map((item,index) => (
                   <Card
                     style={{ maxwidth: "50rem", height: "auto" }}
                     className="mt-5 cartcardstyle"
                   >
+                    
                     <div className="cardflex">
                       <div>
+                      {index+1}
                         <Card.Img
-                          variant="top"
-                          src={item.prdId.image[0]}
+                          variant="top" 
+                          src={item.prdId?.image[0]}
                           style={{ width: "15rem", height: "15rem",paddingTop:'1rem' }}
                           className="img-rounded ms-3"
                         />
                          <Card.Text style={{ fontFamily: "monospace",marginLeft:'1rem' }} >
                           
-                          {item.prdId.prdName}
+                         {item.prdId?.prdName}
                           </Card.Text>
                       </div>
-
+                      {item.status!=6? (
                       <Card.Body>
                         <div className="cardhead">
                           
@@ -196,7 +198,7 @@ const Vieworders = () => {
                           {/* <Col  > */}
                             <Card.Text style={{ fontFamily: "monospace" }} className=''>
                               prize:
-                              {" "+item.prdId.prize}
+                              {" "+item.prdId?.prize}
                             </Card.Text>
                             {/* </Col> */}
                             {/* <Col  > */}
@@ -210,7 +212,7 @@ const Vieworders = () => {
                             <Card.Text style={{ fontFamily: "monospace" }} className=''>
                               {/* {item.prdId.prize * item.quantity} */}
                               total
-                             {" "+item.quantity*item.prdId.prize}
+                             {" "+item.quantity*item.prdId?.prize}
                             </Card.Text>
                             {/* </Col>
                             <Col  > */}
@@ -246,26 +248,24 @@ const Vieworders = () => {
                             <Col  > */}
 
                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
-                            status: { item.status==3?("Order Cancelled"): item.status==4? ("Processing"): item.status==5? ("out for delivery"): ("Ordered")}
+                            status: { item.status==3?("Order Cancelled"): item.status==4? ("Processing"): item.status==5? ("out for delivery"): item.status==6? ("out of stock"): ("Ordered")}
                             </Card.Text>
                             
-      {/* <select value={status}  className=''>
-        <option value="" >Status</option>
-        <option value="option1">Processing</option>
-        <option value="option2">Out For Delivery</option>
-        <option value="option3">Deliverd</option>
-      </select> */}
-                          {/* </Col>
-                          <Col  > */}
-                          
-                          {/* </Col> */}
-                       
-                        {/* </Row> */}
-                        {/* </Container> */}
-                        </div>
+      </div>
                         
-                      </Card.Body>
-                    </div>
+                      </Card.Body>):
+                      (
+                        <Button
+                        variant="danger"
+                        size="lg"
+                        className="cartbtnstyle "
+                       
+                      >
+                       Out of stock
+                      </Button> 
+                    
+                  )}
+                  </div>
                     {item.status===3?
                     <div>
                     <Button
@@ -362,7 +362,7 @@ const Vieworders = () => {
                       <div>
                         <Card.Img
                           variant="top"
-                          src={item.prdId.image[0]}
+                          src={item.prdId?.image[0]}
                           style={{ width: "7rem", height: "10rem" }}
                           className="img-rounded ms-3"
                         />
@@ -379,19 +379,19 @@ const Vieworders = () => {
                           <Col >
                         <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                           
-                          {item.prdId.prdName}
+                          {item.prdId?.prdName}
                           </Card.Text>
                           </Col>
                           <Col  >
                           <Card.Text style={{ fontFamily: "monospace" }}className='mt-5'>
                             
-                            {item.prdId.size}
+                            {item.prdId?.size}
                           </Card.Text>
                           </Col>
                           <Col  >
                             <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                               
-                              {item.prdId.prize}
+                              {item.prdId?.prize}
                             </Card.Text>
                             </Col>
                             <Col  >
@@ -405,7 +405,7 @@ const Vieworders = () => {
                             <Card.Text style={{ fontFamily: "monospace" }} className='mt-5'>
                               {/* {item.prdId.prize * item.quantity} */}
                               
-                              {item.quantity*item.prdId.prize}
+                              {item.quantity*item.prdId?.prize}
 
                             </Card.Text>
                             </Col>
@@ -429,7 +429,7 @@ const Vieworders = () => {
                             <Col  >
                             {
       <select  style={buttonStyle}  name="status" onChange={(e)=>statusChange(item._id,e.target.value)} className='mt-5'>
-        <option >{item.status==3?("Order Cancelled"): item.status==4? ("Processing"): item.status==5? ("out for delivery"): ("Ordered")}
+        <option >{item.status==3?("Order Cancelled"): item.status==4? ("Processing"): item.status==5? ("out for delivery"): item.status==6? ("out of stock"): ("Ordered")}
         </option>
         <option value="4" >Processing</option>
         <option value="5">Out For Delivery</option>

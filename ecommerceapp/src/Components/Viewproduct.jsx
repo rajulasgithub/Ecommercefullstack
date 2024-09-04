@@ -9,6 +9,8 @@ import axios from 'axios'
 import Nav from 'react-bootstrap/Nav';
 import {useNavigate} from 'react-router-dom'
 import Header from './Header';
+import Modal from 'react-bootstrap/Modal';
+import Form from "react-bootstrap/Form";
 
 
 
@@ -18,10 +20,13 @@ const Viewproduct = () => {
 
   const navigate=useNavigate();
   const[product,setProduct]=useState([]);
+  const[updateprdt,setUpdateprdt]=useState({});
+  const [show, setShow] = useState(false);
+
   // const[cart,setAddtocart]=useState("");
  useEffect(() => {
   axios.get('http://localhost:8080/product/viewproduct').then((response)=>{
-    // console.log(response.data.data); 
+    console.log(response.data.data); 
     setProduct(response.data.data);
   }).catch((error)=>{
     console.log(error);
@@ -56,12 +61,58 @@ const Viewproduct = () => {
     })
   }
 
-const dltproduct=()=>{
+const dltproduct=(id)=>{
+  console.log(id);
+   axios.put(`http://localhost:8080/product/deleteproduct/${id}`).then((response)=>{
+    console.log(response);
+   }).catch((error)=>{
+    console.log(error);  
+   })
+}
+// const updateproduct=(id)=>{
+//   console.log(id);
+//   axios.put(`http://localhost:8080/product/updateproduct/${id}`).then((response)=>{
+//     console.log(response);
+//   }).catch((error)=>{
+//     console.log(error);  
+//   })
+// }
 
+
+const handleChange=(event)=>{
+  console.log(event);
+  setUpdateprdt({...updateprdt,[event.target.name]:event.target.value});
 }
-const updateproduct=()=>{
-  
-}
+
+const fileChange=(event)=>{
+  setUpdateprdt({...updateprdt,image:event.target.files[0]})
+ }
+
+ const formdata= new FormData();
+ formdata.append('prdName',updateprdt.prdName)
+ formdata.append('image',updateprdt.image)
+ formdata.append('prize',updateprdt.prize)
+ formdata.append('size',updateprdt.size)
+ formdata.append('material',updateprdt.material)
+
+
+ const handleUpdate=(id)=>{
+   axios.put(`http://localhost:8080/product/updateproduct/${id}`,formdata).then((response)=>{
+    console.log(response.data.data);  
+   }).catch((error)=>{
+     console.log(error);
+   })
+ }
+
+
+const handleClose = () =>
+  {  
+  setShow(false);
+  window.location.reload();
+  }
+
+
+const handleShow = () => setShow(true);
 
   return (
     <div>
@@ -100,8 +151,7 @@ const updateproduct=()=>{
       <Container >
       <Row style={{columnGap:30}}>
       {product.map((item)=>(
-
-      <Card style={{ width: '15rem',paddingTop:15,marginBottom:30 }} className='viewprdctcards'>
+      <Card style={{ width: '15rem',paddingTop:15,marginBottom:30 }} className='viewprdctcards' >
       <Col sm>
       <Card.Img variant="top" src={item.image[0]} style={{width:180,height:150,marginLeft:15}}/>
       <Card.Body>
@@ -120,8 +170,74 @@ const updateproduct=()=>{
         {role==3?
         <>
         <div className='viewprdctbtn'>
-        <Button  size="sm" variant="outline-success" onClick={dltproduct}>Delete</Button>
-        <Button  size="sm" variant="outline-success" onClick={updateproduct}>Update</Button>
+        <Button  size="sm" variant="outline-success" onClick={()=>dltproduct(item._id)}>Delete</Button>
+        <Button  size="sm" variant="outline-success" onClick={handleShow}>Update</Button>
+        <Modal show={show} onHide={handleClose} backdrop="static"
+        >
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label>Name</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Product Name"
+                autoFocus
+                name='prdName' 
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group
+              className="mb-3"
+              controlId="exampleForm.ControlTextarea1"
+            >
+              {/* <Form.Label>Enter Delivery Address</Form.Label> */}
+              <Form.Control type="file"  placeholder='choose image'  name='image'  onChange={fileChange} />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label> Building Number</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Prize"
+                autoFocus 
+                name='prize'
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label> State</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Size"
+                autoFocus
+                name='size'
+                onChange={handleChange}
+                
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              {/* <Form.Label> District</Form.Label> */}
+              <Form.Control
+                type="text"
+                placeholder="Material"
+                autoFocus
+                name='material'
+                onChange={handleChange}
+              />
+            </Form.Group>
+            
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={()=>handleUpdate(item._id)}>
+            Update
+          </Button>
+        </Modal.Footer>
+      </Modal>
         </div>
         </>:
          <>

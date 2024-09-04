@@ -80,7 +80,7 @@ productRoute.post('/addproduct', uploadImage.array('image',1),async(req,res)=>{
 
 productRoute.get('/viewproduct',async(req,res)=>{
     try{
-    const result= await productDB.find();
+    const result= await productDB.find()
         if(result){
             return  res.status(200).json({
                 success:true,
@@ -139,10 +139,15 @@ catch(error){
 })
 
 
-productRoute.put('/deleteproduct',async(req,res)=>{
+productRoute.put('/deleteproduct/:id',async(req,res)=>{
+    console.log(req.params.id);
     try{
-    const result= await productDB.delete({_id:req.params.id})
-    if(result){
+
+        const data={
+        status:6,
+      }
+     const result= await cartDB.updateMany({prdId:req.params.id},{$set:data})
+    if(result){ 
         return  res.status(200).json({
             success:true,
             error:false,
@@ -170,6 +175,8 @@ catch(error){
 
 
 productRoute.put('/updateproduct/:id',uploadImage.array("image"),async(req,res)=>{
+    console.log(req.params.id);
+
     try{
     const oldData= await productDB.findOne({_id:req.params.id});
     const data={
@@ -179,6 +186,7 @@ productRoute.put('/updateproduct/:id',uploadImage.array("image"),async(req,res)=
         size:req.body.size? req.body.size: oldData.size,
         material:req.body.material? req.body.material: oldData.material,
     }
+    console.log(oldData);
     const result = await productDB.updateOne({_id:req.params.id},{$set:data})
     if(result){
         return  res.status(200).json({
@@ -210,13 +218,23 @@ catch(error){
 
 productRoute.post('/addtocart',checkauth,async(req,res)=>{
     console.log(req.body)
+    const now=new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    console.log(hours)
     try{
       const data={
         loginId:req.userData.loginId,
         prdId:req.body.productId,
         quantity:1,
         status:1,
+        date:now.getDate(),
+        time:hours+ minutes+seconds,
+        // date: new Date(),
       }
+      console.log(data);
+      
       const result= await cartDB(data).save();
       if(result){
         return  res.status(200).json({
