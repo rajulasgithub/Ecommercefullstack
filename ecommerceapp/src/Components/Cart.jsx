@@ -235,8 +235,8 @@ const Cart = () => {
 </svg>
 </div>
 <div>
-    <div className='progressbarone'>
-      .
+    <div className='progressbartwo'>
+      
     </div>
   </div>
 </div>
@@ -266,9 +266,9 @@ const Cart = () => {
           </div>
          
           <Container>
-            <Row>
+            <Row >
               <Col sm={8} className="cartcolstyleone me-5">
-                <div className="carttitlebartop">
+                {/* <div className="carttitlebartop">
                   <div className="carttitlebar">
                     <h6>Product</h6>
                   </div>
@@ -278,7 +278,7 @@ const Cart = () => {
                     <h6 className="">Quantity</h6>
                     <h6 className="">Total Prize</h6>
                   </div>
-                </div>
+                </div> */}
                 
                 {cartitem.map((item) => (
                   <Card
@@ -290,19 +290,26 @@ const Cart = () => {
                         <Card.Img
                           variant="top"
                           src={item.prdId.image[0]}
-                          style={{ width: "7rem", height: "10rem" }}
-                          className="img-rounded"
+                          style={{ width: "7rem" }}
+                          className="img-rounded cartimg"
                         />
                       </div>
-
+                      
+                     <div className="cartcardbody">
                       <Card.Body>
+                        
                         <div className="cardhead">
+                        
                           <Card.Title style={{ fontFamily: "monospace" }}>
                             {item.prdId.prdName}
                           </Card.Title>
+                          
+                          
                           <Card.Text style={{ fontFamily: "monospace" }}>
                             Size:{item.prdId.size}
                           </Card.Text>
+                          
+
                         </div>
 
                         <div className="cardflexone">
@@ -338,19 +345,58 @@ const Cart = () => {
                           <Button
                             variant="success"
                             size="sm"
-                            className="cartbtnstyle"
+                            className="cartbtnstyle "
                             onClick={() => removeItem(item._id)}
                           >
                             Remove
                           </Button>
                         </div>
                       </Card.Body>
+                      </div>
+
+                      {/* nbm */}
+                      <div className="cartbodyres">
+                      <Card.Body>
+                      <h6 style={{ fontFamily: "monospace" }}>
+                            {item.prdId.prdName}
+                        </h6>
+
+                        <h6 style={{ fontFamily: "monospace" }}>
+                            Size:{item.prdId.size}
+                          </h6>
+                          <h6 style={{ fontFamily: "monospace" }}>
+                            Prize:{item.prdId.prize}
+                            </h6>
+                            <div className="counterflex">
+                            {/* <div className='counterflex'> */}
+                            <h6>Qnty:</h6>
+                            <button
+                              className="decrement"
+                              onClick={() => decrement(item._id)}
+                            >
+                              -
+                            </button>
+                            <h6 style={{ fontFamily: "monospace" }}>
+                              {item.quantity}
+                            </h6>
+                            <button onClick={() => increment(item._id)}>
+                              +
+                            </button>
+                            {/* </div> */}
+                          </div>
+                          <h6 style={{ fontFamily: "monospace" }}>
+                           Total:   {item.prdId.prize * item.quantity}
+                            </h6>
+                        
+                      </Card.Body>
+                      </div>
+                      {/* nbmj */}
                     </div>
                   </Card>
                 ))}
               </Col>
 
-              <Col sm={3} className="cartcolstyle">
+              <Col sm={3} className="cartcolstyle mt-5">
                 <h5 className="text-center mt-3">Shipping Address</h5>
                 {address?.address || address?.state || address?.district ? (
                   <>

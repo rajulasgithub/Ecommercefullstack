@@ -146,7 +146,7 @@ console.log(shippinginfo)
 </svg>
 </div>
 <div>
-    <div className='progressbarone'>
+    <div className='progressbartwo'>
       .
     </div>
   </div>
@@ -261,12 +261,13 @@ console.log(shippinginfo)
         <div className=' ps-4 pe-4'>
        <h4>Address:</h4>
        <div className='adrsdiv pe-5'>
-       <p className='fw-bold'>{shippinginfo.address} </p>
+       <p className='fw-bold text-primary'>{shippinginfo.address} </p>
+       <p className='fw-bold text-primary'>{shippinginfo.district+','+shippinginfo.state+','+shippinginfo.pincode}</p>
 
-       <p className='fw-bold'>{"Building No:"+shippinginfo.BuildingNumber}</p>
+
+       <p className='fw-bold text-primary'>{"Building No:"+" "+shippinginfo.BuildingNumber}</p>
 
         </div>
-       <p className='fw-bold'>{shippinginfo.district+','+shippinginfo.state+','+shippinginfo.pincode}</p>
        </div>
        <h6 className='ps-4 pb-5 fw-bold'>Phone:{shippingname.number}</h6>
 
@@ -321,7 +322,7 @@ console.log(shippinginfo)
 
         </div>
         </div>
-       <div className='text-center pb-4'>
+       <div className='text-center pb-4 mt-5'>
        <Button variant="warning"  onClick={conformOrder}>Conform Order</Button>{' '}
        </div>
          

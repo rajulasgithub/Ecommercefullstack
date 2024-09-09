@@ -144,6 +144,7 @@
 
 }
 .carthead{
+    
    padding-top: 3rem;
    padding-left: 6rem;
    margin-bottom:2rem ;
@@ -177,6 +178,7 @@
     margin-right: 20px;
     margin-bottom: 20px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    height: auto;
 }
 .carttitlebar{
     display: flex;
@@ -198,7 +200,7 @@
 .cartbtnstyle{
     border: 1px solid blue;
     border-radius: 10px;
-    width: 250px;
+    width: 100px;
     /* margin-left: 10px; */
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 
@@ -307,6 +309,11 @@
     width: 10rem;
     height: 3px;
 }
+.progressbartwo{
+    background-color: grey;
+    width: 10rem;
+    height: 3px;
+}
 .progressflex{
     display: flex;
     align-items: center;
@@ -322,18 +329,20 @@
 .viewproductback{
     background-color: #DCDCDC;
     width: 100%;
-    height: 100%;
+    height: 900px;
 }
 .viewprdtdiv{
     font-family: 'Courier New', Courier, monospace;
    padding-top: 100px;
    font-weight: bold;
+   /* height: 100%; */
    /* width: 900px; */
    /* margin: auto; */
    /* margin-left: 230px; */
    
 }
 .viewprdctcards{
+
 border: 1px solid black;
  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
@@ -344,6 +353,19 @@ border: 1px solid black;
 }
 .orderbtns{
     display: flex;
+}
+
+.cartbodyres{
+    display: none;
+}
+.cartimg{
+    height: 10rem;
+}
+.viewprdbtnstyle{
+    width: 250px;
+}
+.viewodrres{
+    
 }
 @media screen and (max-width: 600px) {
     .formdiv{
@@ -391,6 +413,37 @@ border: 1px solid black;
     .cardflexoneviewodr{
         /* margin-left: 5rem; */
     }
-    
+    .viewprdctcards{
+        margin-left: 2.5rem;
+    }
+    .cartbtnstyle{
+        width: 80px;
+    /* margin-right: 2rem; */
+    }
+    .progressflex{
+        width: 90px;
+    }
+    .progressbartwo{
+        display: none;
+    }
+    .carthead{
+   padding-left: 3rem;
+        
+    }
+    .cartcardbody{
+        display: none;
+    }
+    .cartbodyres{
+        display: block;
+    }
+    .cartimg{
+        height: 8rem;
+    }
+    .orderbtns{
+        display: none;
+    }
+    .viewodrres{
+        display: block;
+    }
     
   }

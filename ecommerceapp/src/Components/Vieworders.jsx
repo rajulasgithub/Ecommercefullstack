@@ -136,7 +136,7 @@ const Vieworders = () => {
         
           <Container>
              <div className='orderbtns'>
-            <Row>
+            <Row >
               <Col sm={10} className="cartcolstyleone me-5">
                 <div className="carttitlebartop">
                   {/* <div className="carttitlebar"> */}
@@ -172,7 +172,8 @@ const Vieworders = () => {
                           style={{ width: "15rem", height: "15rem",paddingTop:'1rem' }}
                           className="img-rounded ms-3"
                         />
-                         <Card.Text style={{ fontFamily: "monospace",marginLeft:'1rem' }} >
+
+                         <Card.Text style={{ fontFamily: "monospace",marginLeft:'1rem' }} className='text-center'>
                           
                          {item.prdId?.prdName}
                           </Card.Text>
@@ -182,7 +183,7 @@ const Vieworders = () => {
                         <div className="cardhead">
                           
                         </div>
-                        <div className="cardtext ">
+                        <div className="cardtext  ">
                         {/* <Container> */}
                         {/* <Row> */}
                       
@@ -271,7 +272,7 @@ const Vieworders = () => {
                     <Button
                       variant="primary"
                       size="lg"
-                      className="cartbtnstyle "
+                      className="viewprdbtnstyle  mb-4 ms-2"
                      onClick={()=>cancelOrder(item._id)}
                     >
                      Cancelled
@@ -281,7 +282,7 @@ const Vieworders = () => {
                           <Button
                             variant="primary"
                             size="lg"
-                            className="cartbtnstyle "
+                            className="viewprdbtnstyle mb-4 ms-2"
                            onClick={()=>cancelOrder(item._id)}
                           >
                            Cancel Order
@@ -298,7 +299,7 @@ const Vieworders = () => {
                           <Button
                             variant="primary"
                             size="lg"
-                            className="cartbtnstyle mb-3"
+                            className="viewprdbtnstyle mb-3"
                            
                           >
                             Track your Order
@@ -308,7 +309,7 @@ const Vieworders = () => {
                           <Button
                             variant="primary"
                             size="lg"
-                            className="cartbtnstyle "
+                            className="viewprdbtnstyle "
                            
                           >
                             Change Delivery date
@@ -318,6 +319,177 @@ const Vieworders = () => {
           </div>
           </div>
           </Container>
+          {/* nb */}
+          <Container>
+             <div className='viewodrres'>
+              nbjk
+            <Row >
+              <Col sm={10} className="cartcolstyleone me-5">
+               
+               
+                {filteredData.map((item,index) => (
+                  <Card
+                    style={{ maxwidth: "50rem", height: "auto" }}
+                    className="mt-5 cartcardstyle"
+                  >
+                    
+                    <div className="cardflex">
+                      <div>
+                      {index+1}
+                        <Card.Img
+                          variant="top" 
+                          src={item.prdId?.image[0]}
+                          style={{ width: "15rem", height: "15rem",paddingTop:'1rem' }}
+                          className="img-rounded ms-3"
+                        />
+
+                         <Card.Text style={{ fontFamily: "monospace",marginLeft:'1rem' }} className='text-center'>
+                          
+                         {item.prdId?.prdName}
+                          </Card.Text>
+                      </div>
+                      {item.status!=6? (
+                      <Card.Body>
+                        <div className="cardhead">
+                          
+                        </div>
+                        <div className="cardtext  ">
+                        {/* <Container> */}
+                        {/* <Row> */}
+                      
+                          {/* <Col > */}
+                       
+                          {/* </Col> */}
+                          {/* <Col  > */}
+                          {/* <Card.Text style={{ fontFamily: "monospace" }}className=''>
+                            Size
+                            {item.prdId.size}
+                          </Card.Text> */}
+                          {/* </Col> */}
+                          {/* <Col  > */}
+                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
+                              prize:
+                              {" "+item.prdId?.prize}
+                            </Card.Text>
+                            {/* </Col> */}
+                            {/* <Col  > */}
+                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
+                              Qnty:
+                              {" "+item.quantity}
+                            </Card.Text>
+                            {/* </Col>
+                          
+                            <Col  > */}
+                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
+                              {/* {item.prdId.prize * item.quantity} */}
+                              total
+                             {" "+item.quantity*item.prdId?.prize}
+                            </Card.Text>
+                            {/* </Col>
+                            <Col  > */}
+                            {/* <Card.Text style={{ fontFamily: "monospace" }} >
+                              {item.prdId.prize * item.quantity}
+                              Address
+                              {address.address}
+                              <br/>
+                              {address.district}
+                              {address.state}
+                              <br/>
+                              {address.pincode}
+                              {address.BuildingNumber}
+                              <br/>
+                              876564567
+                              
+                            </Card.Text> */}
+                          {/* </Col>
+                          <Col  > */}
+                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
+                              {/* {item.prdId.prize * item.quantity} */}
+                              payment
+                            </Card.Text>
+                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
+                              {/* {item.prdId.prize * item.quantity} */}
+                              Order Date:
+                            </Card.Text>
+                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
+                              {/* {item.prdId.prize * item.quantity} */}
+                               Delivery Date:
+                            </Card.Text>
+                            {/* </Col>
+                            <Col  > */}
+
+                           <Card.Text style={{ fontFamily: "monospace" }} className=''>
+                            status: { item.status==3?("Order Cancelled"): item.status==4? ("Processing"): item.status==5? ("out for delivery"): item.status==6? ("out of stock"): ("Ordered")}
+                            </Card.Text>
+                            
+      </div>
+                        
+                      </Card.Body>):
+                      (
+                        <Button
+                        variant="danger"
+                        size="lg"
+                        className="cartbtnstyle "
+                       
+                      >
+                       Out of stock
+                      </Button> 
+                    
+                  )}
+                  </div>
+                    {item.status===3?
+                    <div>
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      className="viewprdbtnstyle  mb-4 ms-2"
+                     onClick={()=>cancelOrder(item._id)}
+                    >
+                     Cancelled
+                    </Button>
+              </div>:
+                          <div>
+                          <Button
+                            variant="primary"
+                            size="lg"
+                            className="viewprdbtnstyle mb-4 ms-2"
+                           onClick={()=>cancelOrder(item._id)}
+                          >
+                           Cancel Order
+                          </Button>
+                    </div>
+}
+                  </Card>
+                 ))}  
+              </Col> 
+            </Row>
+            <div>
+              
+                          <div>
+                          <Button
+                            variant="primary"
+                            size="lg"
+                            className="viewprdbtnstyle mb-3"
+                           
+                          >
+                            Track your Order
+                          </Button>
+                          </div>
+                          <div>
+                          <Button
+                            variant="primary"
+                            size="lg"
+                            className="viewprdbtnstyle "
+                           
+                          >
+                            Change Delivery date
+                          </Button>
+                          </div>
+          
+          </div>
+          </div>
+          </Container>
+          {/* mn */}
           
           </>:
           <>
