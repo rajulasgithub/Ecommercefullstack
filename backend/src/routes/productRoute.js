@@ -46,6 +46,7 @@ productRoute.post('/addproduct', uploadImage.array('image',1),async(req,res)=>{
         prize:req.body.prize,
         size:req.body.size,
         material:req.body.material,
+        status:0,
     }
     console.log(data);
     
@@ -147,11 +148,12 @@ productRoute.put('/deleteproduct/:id',async(req,res)=>{
         status:6,
       }
      const result= await cartDB.updateMany({prdId:req.params.id},{$set:data})
-    if(result){ 
+     const prdresult= await productDB.updateOne({_id:req.params.id},{$set:data})
+    if(prdresult){ 
         return  res.status(200).json({
             success:true,
             error:false,
-            data:result,
+            data:prdresult,
             message:"successfully deleted product",
         }) 
     }
@@ -230,7 +232,7 @@ productRoute.post('/addtocart',checkauth,async(req,res)=>{
         quantity:1,
         status:1,
         date:now.getDate(),
-        time:hours+ minutes+seconds,
+        time:hours+":"+minutes+":"+seconds,
         // date: new Date(),
       }
       console.log(data);

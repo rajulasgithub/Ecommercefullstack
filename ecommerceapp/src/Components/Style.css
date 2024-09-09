@@ -439,11 +439,15 @@ border: 1px solid black;
     .cartimg{
         height: 8rem;
     }
-    .orderbtns{
+    .outofstockbtn{
+        width: 250px;
+        /* margin-left: 20px; */
+    }
+    /* .orderbtns{
         display: none;
     }
     .viewodrres{
         display: block;
-    }
+    } */
     
   }

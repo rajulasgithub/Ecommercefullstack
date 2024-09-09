@@ -65,6 +65,7 @@ const dltproduct=(id)=>{
   console.log(id);
    axios.put(`http://localhost:8080/product/deleteproduct/${id}`).then((response)=>{
     console.log(response);
+    window.location.reload();
    }).catch((error)=>{
     console.log(error);  
    })
@@ -118,36 +119,11 @@ const handleShow = () => setShow(true);
     <div>
       <Header/>
       <div className='viewproductback'>
-      {/* <Container>
-      <Row className=''>
-        {product.map((item)=>(
-
-<Col>
-<Card  className='productcard '>
-<Card.Img variant="top" src={item.image[0]} className='productimage'/>
-<Card.Body className='prdbodyStyle'>
-<Card.Title className='prdtextspace'>{item.prdName}</Card.Title>
-<Card.Text className='prdtextspace'>Prize:{item.prize}</Card.Text>
-<Card.Text className='prdtextspace'>Size:{item.size}</Card.Text>
-<Card.Text >Material:{item.material}</Card.Text>
-
-
-
-
-<div className='text-center'>
-<Button variant="primary" size="sm" onClick={()=>handleSubmit(item._id)}>Add to cart</Button>
-</div>
-</Card.Body>
-</Card>
-</Col>
-
-
-        ))}
-       
-      </Row>
-      </Container> */}
+    
         <div>
       <div className='viewprdtdiv'>
+       {role==2?
+      
       <Container >
       <Row style={{columnGap:30}}>
       {product.map((item)=>(
@@ -167,10 +143,44 @@ const handleShow = () => setShow(true);
        Material: {item.material}
        
         </Card.Text>
-        {role==3?
+        {item.status!==6?
         <>
+        <Button  size="sm" variant="outline-success" onClick={()=>handleSubmit(item._id)}>Add to Cart</Button>
+        </>:
+        <Button  size="sm" variant="danger" >Out Of Stock</Button>
+
+}
+        </Card.Body>
+      </Col>
+    </Card>
+        
+       
+      ))}
+      </Row>
+      </Container>:
+      
+      <Container >
+      <Row style={{columnGap:30}}>
+      {product.map((item)=>(
+      <Card style={{ width: '15rem',paddingTop:15,marginBottom:30 }} className='viewprdctcards' >
+      <Col sm>
+      <Card.Img variant="top" src={item.image[0]} style={{width:180,height:150,marginLeft:15}}/>
+      <Card.Body>
+        <Card.Title className='text-success'>{item.prdName}</Card.Title>
+        <Card.Text className='text-danger '>
+       Prize: {item.prize}
+       
+        </Card.Text>
+        <Card.Text>
+        Size:{item.size}
+        </Card.Text>
+        <Card.Text>
+       Material: {item.material}
+       </Card.Text>
+        <>
+        {item.status!==6?
         <div className='viewprdctbtn'>
-        <Button  size="sm" variant="outline-success" onClick={()=>dltproduct(item._id)}>Delete</Button>
+        <Button  size="sm" variant="outline-success" onClick={()=>dltproduct(item._id)} >Delete</Button>
         <Button  size="sm" variant="outline-success" onClick={handleShow}>Update</Button>
         <Modal show={show} onHide={handleClose} backdrop="static"
         >
@@ -179,7 +189,6 @@ const handleShow = () => setShow(true);
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label>Name</Form.Label> */}
               <Form.Control
                 type="text"
                 placeholder="Product Name"
@@ -192,11 +201,9 @@ const handleShow = () => setShow(true);
               className="mb-3"
               controlId="exampleForm.ControlTextarea1"
             >
-              {/* <Form.Label>Enter Delivery Address</Form.Label> */}
               <Form.Control type="file"  placeholder='choose image'  name='image'  onChange={fileChange} />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label> Building Number</Form.Label> */}
               <Form.Control
                 type="text"
                 placeholder="Prize"
@@ -206,7 +213,6 @@ const handleShow = () => setShow(true);
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label> State</Form.Label> */}
               <Form.Control
                 type="text"
                 placeholder="Size"
@@ -217,7 +223,6 @@ const handleShow = () => setShow(true);
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label> District</Form.Label> */}
               <Form.Control
                 type="text"
                 placeholder="Material"
@@ -238,20 +243,21 @@ const handleShow = () => setShow(true);
           </Button>
         </Modal.Footer>
       </Modal>
-        </div>
-        </>:
-         <>
-        <Button  size="sm" variant="outline-success" onClick={()=>handleSubmit(item._id)}>Add to Cart</Button>
+        </div>:
+        <>
+        <Button variant="danger">Out of Stock</Button>
         </>
-       }
+}
+        </>
       </Card.Body>
       </Col>
     </Card>
-        
-       
+          
       ))}
       </Row>
       </Container>
+    
+}
 
       </div>
       </div>
