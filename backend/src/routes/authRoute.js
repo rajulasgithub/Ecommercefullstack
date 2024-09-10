@@ -106,7 +106,7 @@ authroutes.get('/view',async(req,res)=>{
 })
 
 
-authroutes.get('/viewone',checkauth, async(req,res)=>{3
+authroutes.get('/viewone',checkauth, async(req,res)=>{
     try{
         console.log(req.userData);
         

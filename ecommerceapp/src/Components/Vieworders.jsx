@@ -19,9 +19,24 @@ const Vieworders = () => {
   const [filterstatus, setFilterstatus] = useState([]);
   const [status, setStatus] = useState("");
   const [address, setAddress] = useState({});
+  const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const orderedtime = localStorage.getItem("orderedtime");
+    if (orderedtime) {
+      const now = new Date();
+      const currentHour = now.getHours();
+      const hoursPassed = (currentHour - orderedtime);
+
+      if (hoursPassed >= 24) {
+        setIsDisabled(true); 
+        localStorage.removeItem("buttonClickedTime"); 
+      } else {
+        setIsDisabled(false);
+      }
+    }
+
     console.log(token);
     const headers = {
       Authorization: `bearer ${token}`,
@@ -49,17 +64,18 @@ const Vieworders = () => {
       });
   }, []);
 
-  const currdate = new Date();
+  // const currdate = new Date();
+  
 
   useEffect(() => {
     const filtered = order.filter(
       (item) =>
-        item.status == 2 ||
-        item.status == 3 ||
-        item.status == 4 ||
-        item.status == 5 ||
-        item.status == 6 ||
-        item.status == 7
+        item.status === 2 ||
+        item.status === 3 ||
+        item.status === 4 ||
+        item.status === 5 ||
+        item.status === 6 ||
+        item.status === 7
     );
     setFilteredData(filtered);
   }, [order]);
@@ -114,7 +130,7 @@ const Vieworders = () => {
                   Order history
                 </h4>
                 <h6 style={{ fontFamily: "monospace" }} className="">
-                  {} No Of Orders
+                  {filteredData.length} No Of Orders
                 </h6>
               </div>
 
@@ -139,11 +155,12 @@ const Vieworders = () => {
                       </div>
 
                       {filteredData.map((item, index) => (
+                    
                         <Card
                           style={{ maxwidth: "50rem", height: "auto" }}
                           className="mt-5 cartcardstyle"
                         >
-                          <div className="cardflex">
+                          <div className="cardflex ms-2">
                             <div>
                               {index + 1}
                               <Card.Img
@@ -167,7 +184,7 @@ const Vieworders = () => {
                                 {item.prdId?.prdName}
                               </Card.Text>
                             </div>
-                            {item.status != 6 ? (
+                            {item.status !== 6 ? (
                               <Card.Body>
                                 <div className="cardhead"></div>
                                 <div className="cardtext  ">
@@ -208,7 +225,7 @@ const Vieworders = () => {
                                     className=""
                                   >
                                     {/* {item.prdId.prize * item.quantity} */}
-                                    total
+                                    total :
                                     {" " + item.quantity * item.prdId?.prize}
                                   </Card.Text>
                                   {/* </Col>
@@ -234,21 +251,21 @@ const Vieworders = () => {
                                     className=""
                                   >
                                     {/* {item.prdId.prize * item.quantity} */}
-                                    payment
+                                    payment:{" "}
                                   </Card.Text>
                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
                                     className=""
                                   >
                                     {/* {item.prdId.prize * item.quantity} */}
-                                    Order Date:
+                                    Order Date:{" "+item.date}
                                   </Card.Text>
                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
                                     className=""
                                   >
                                     {/* {item.prdId.prize * item.quantity} */}
-                                    Delivery Date:
+                                    Delivery Date:{" "+item.deliveryDate}
                                   </Card.Text>
                                   {/* </Col>
                             <Col  > */}
@@ -258,15 +275,15 @@ const Vieworders = () => {
                                     className=""
                                   >
                                     status:{" "}
-                                    {item.status == 3
+                                    {item.status === 3
                                       ? "Order Cancelled"
-                                      : item.status == 4
+                                      : item.status === 4
                                       ? "Processing"
-                                      : item.status == 5
+                                      : item.status === 5
                                       ? "out for delivery"
-                                      : item.status == 6
+                                      : item.status === 6
                                       ? "out of stock"
-                                      : item.status == 7
+                                      : item.status === 7
                                       ? "Delivered"
                                       : "Ordered"}
                                   </Card.Text>
@@ -276,35 +293,88 @@ const Vieworders = () => {
                               <Button
                                 variant="danger"
                                 size="lg"
-                                className="outofstockbtn"
+                                className="outofstockbtn" disabled
                               >
                                 Out of stock
                               </Button>
                             )}
                           </div>
-                          {item.status === 3 ? (
+                          {(item.status === 3) ? (
                             <div>
                                 <Button
                                   variant="primary"
                                   size="lg"
-                                  className="viewprdbtnstyle  mb-4 ms-2"
-                                  onClick={() => cancelOrder(item._id)}
+                                  className="viewprdbtnstyle  mb-4 ms-4"
+                                  onClick={() => cancelOrder(item._id)}  disabled
                                 >
                                   Cancelled
                                 </Button>
                               
                             </div>
-                          ) : (
+                          ) : (item.status===4)?
+                          (
+                            <div>
+                              <Button
+                                  variant="primary"
+                                  size="lg"
+                                  className="viewprdbtnstyle  mb-4 ms-4" disabled
+                                
+                                >
+                                  Processing
+                                </Button>
+                            </div>
+                          ):
+                          (item.status===5)?
+                          (
+                            <div>
+                               <Button
+                                  variant="primary"
+                                  size="lg"
+                                  className="viewprdbtnstyle  mb-4 ms-4" disabled
+                                
+                                >
+                                  Out for Delivery
+                                </Button>
+                            </div>
+                          ):
+                          (item.status===6)?
+                          (
+                            <div>
+                              <Button
+                                  variant="primary"
+                                  size="lg"
+                                  className="viewprdbtnstyle  mb-4 ms-4" disabled
+                                
+                                >
+                                  Out of stock
+                                </Button>
+                            </div>
+                          ):
+                          (item.status===7)?
+                          (
+                            <div>
+                              <Button
+                                  variant="primary"
+                                  size="lg"
+                                  className="viewprdbtnstyle  mb-4 ms-4" disabled
+                                
+                                >
+                                  Delivered
+                                </Button>
+                            </div>
+                          ):
+                          (
                             <div>
                               <Button
                                 variant="primary"
                                 size="lg"
                                 className="viewprdbtnstyle mb-4 ms-2"
-                                onClick={() => cancelOrder(item._id)}
+                                onClick={() => cancelOrder(item._id)} disabled={isDisabled}
                               >
                                 Cancel Order
                               </Button>
                             </div>
+                            
                           )}
                         </Card>
                       ))}
@@ -593,15 +663,15 @@ const Vieworders = () => {
                                             className="mt-5"
                                           >
                                             <option>
-                                              {item.status == 3
+                                              {item.status === 3
                                                 ? "Order Cancelled"
-                                                : item.status == 4
+                                                : item.status === 4
                                                 ? "Processing"
-                                                : item.status == 5
+                                                : item.status === 5
                                                 ? "out for delivery"
-                                                : item.status == 6
+                                                : item.status === 6
                                                 ? "out of stock"
-                                                : item.status == 7
+                                                : item.status === 7
                                                 ? "Delivered"
                                                 : "Ordered"}
                                             </option>

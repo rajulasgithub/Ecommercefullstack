@@ -28,16 +28,14 @@ const OrderSummary = () => {
   const[address,setAddress]=useState({});
 
 
-const calshippingdays=(shippingdays)=>{
-   const today= new Date();
-   const deliveryDate = new Date();
-   deliveryDate.setDate(today.getDate()+shippingdays)
-  return  deliveryDate.toISOString().split('T')[0];
-}
-  
-const[expdeliverydate,setExpdeliverydate]=useState(calshippingdays(shippingdays))
 
   useEffect(() => {
+    const now = new Date();
+    const day= now.getDate();
+    const month = now.getMonth()+1;
+    const year = now.getFullYear();
+    const exptdeliverydate= (`${day+5}-${month}-${year}`);
+    localStorage.setItem("expdeliverydate",exptdeliverydate)
     const total=localStorage.setItem('total',(JSON.parse(localStorage.getItem('totalprize')))+40)
     const token=localStorage.getItem('token');
     const headers = {
@@ -68,6 +66,11 @@ console.log(shippinginfo)
  
   const conformOrder=()=>{
     const token=localStorage.getItem('token');
+    const now = new Date();
+    const hours = now.getHours(); 
+    localStorage.setItem("orderedtime", (`${hours}`));
+    
+
     console.log(token);
     const headers = {
       Authorization: `bearer ${token}`,
@@ -276,7 +279,7 @@ console.log(shippinginfo)
       </Col>
       <Col>
       <div className='ordercoltwo'>
-      <div className=''><h6 className='ps-5 pt-5 fw-bold'>Expected Delivery Date:{""+expdeliverydate}</h6></div>
+      <div className=''><h6 className='ps-5 pt-5 fw-bold'>Expected Delivery Date:{" "+localStorage.getItem("expdeliverydate")}</h6></div>
        <div className='odraddrsflex pt-3 ps-5 pe-5'>
        <h6 className='fw-bold'>Price Of({localStorage.getItem('itemcount')})</h6>
        <h6 className='fw-bold'>{localStorage.getItem('totalprize')}</h6>

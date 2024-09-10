@@ -190,20 +190,8 @@ const Cart = () => {
   };
 
   const checkOut = () => {
-  localStorage.setItem('totalprize',totalValue)
-  localStorage.setItem('itemcount',cartitem.length);
     navigate("/ordersummary");
   };
-
-  // const clearCart=()=>{
-  //   axios.get('http://localhost:8080/product/deletecart').then((response)=>{
-  //     console.log(response);
-      
-  //   }).catch((error)=>{
-  //     console.log(error);
-      
-  //   })
-  // }
 
   return (
     <>

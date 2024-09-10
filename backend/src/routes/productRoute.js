@@ -216,23 +216,30 @@ catch(error){
 }
 })
 
+
+
 //add to cart
 
 productRoute.post('/addtocart',checkauth,async(req,res)=>{
     console.log(req.body)
-    const now=new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    console.log(hours)
+    // const now=new Date();
+    // const day = now.getDate();
+    // const month = now.getMonth() + 1;
+    // const year = now.getFullYear();
+    // const hours = now.getHours();
+    // const minutes = now.getMinutes();
+    // const seconds = now.getSeconds();
+    // const date=(`${day}-${month}-${year}`);
+    // console.log(hours)
     try{
       const data={
         loginId:req.userData.loginId,
         prdId:req.body.productId,
         quantity:1,
         status:1,
-        date:now.getDate(),
-        time:hours+":"+minutes+":"+seconds,
+        // date:(`${day}-${month}-${year}`),
+
+        // time:hours+":"+minutes+":"+seconds,
         // date: new Date(),
       }
       console.log(data);
@@ -497,9 +504,59 @@ productRoute.put('/updatecart',checkauth,async(req,res)=>{
     try{
 
         const oldData=await cartDB.find({loginId:req.userData.loginId})
+        const now = new Date();
+        const day = now.getDate();
+        const month = now.getMonth() + 1;
+        const year = now.getFullYear();
       
         const data={
             status:2,
+            date:(`${day}-${month}-${year}`),
+            deliveryDate:(`${day+5}-${month}-${year}`),
+            
+        }
+        const result= await cartDB.updateMany({loginId:req.userData.loginId},{$set:data})
+      
+        
+        if(result){
+            return  res.status(200).json({
+                success:true,
+                error:false,
+                data:result,
+                message:"successfully updated ",
+            }) 
+        }
+        else{
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"not updated",
+            })
+        }
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            error:true,
+            errorMessage:error.message,
+            message:"something went wrong",
+        })
+    }
+})
+
+
+
+productRoute.put('/updtexpdeliverydate',checkauth,async(req,res)=>{
+    try{
+
+        const oldData=await cartDB.find({loginId:req.userData.loginId})
+        const now = new Date();
+        const day= now.getDate();
+        const month= now.getMonth()+1;
+        const year= now.getFullYear();
+          
+        const data={
+            deliveryDate:(`${day+5}-${month}-${year}`),
         }
         const result= await cartDB.updateMany({loginId:req.userData.loginId},{$set:data})
       
