@@ -21,7 +21,6 @@ import Header from './Header';
 
 const OrderSummary = () => {
   const navigate = useNavigate();
-  const shippingdays=5;
   const[shippingname,setShippingname]=useState([]);
   const[shippinginfo,setShippinginfo]=useState([]);
   const [show, setShow] = useState(false);
@@ -66,9 +65,8 @@ console.log(shippinginfo)
  
   const conformOrder=()=>{
     const token=localStorage.getItem('token');
-    const now = new Date();
-    const hours = now.getHours(); 
-    localStorage.setItem("orderedtime", (`${hours}`));
+    const ordertime = Date.now(); 
+    localStorage.setItem("orderedtime", ordertime);
     
 
     console.log(token);

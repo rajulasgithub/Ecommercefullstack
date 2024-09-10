@@ -21,19 +21,18 @@ const Vieworders = () => {
   const [filterstatus, setFilterstatus] = useState([]);
   const [status, setStatus] = useState("");
   const [address, setAddress] = useState({});
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [show, setShow] = useState(false);
   const [deliveryDate,setDeliveryDate]=useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const orderedtime = localStorage.getItem("orderedtime");
-    if (orderedtime) {
-      const now = new Date();
-      const currentHour = now.getHours();
-      const hoursPassed = (currentHour - orderedtime);
+    const ordertime = localStorage.getItem("orderedtime");
+    if (ordertime) {
+      const now = Date.now();      
+      const hoursPassed = (now -ordertime);
 
-      if (hoursPassed >= 24) {
+      if (hoursPassed >86400000) {
         setIsDisabled(true); 
         localStorage.removeItem("buttonClickedTime"); 
       } else {
@@ -413,12 +412,13 @@ const Vieworders = () => {
                         Track your Order
                       </Button>
                     </div>
+                    
                     <div>
                       <Button
                         variant="primary"
                         size="lg"
                         className="viewprdbtnstyle " 
-                        onClick={handleShow}
+                        onClick={handleShow} disabled={isDisabled}
 
                       >
                         Change Delivery date
