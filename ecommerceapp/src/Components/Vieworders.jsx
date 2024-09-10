@@ -9,6 +9,8 @@ import axios from "axios";
 import Form from "react-bootstrap/Form";
 import Header from "./Header";
 import ListGroup from "react-bootstrap/ListGroup";
+import Modal from 'react-bootstrap/Modal';
+
 
 const Vieworders = () => {
   const role = localStorage.getItem("role");
@@ -20,6 +22,8 @@ const Vieworders = () => {
   const [status, setStatus] = useState("");
   const [address, setAddress] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
+  const [show, setShow] = useState(false);
+  const [deliveryDate,setDeliveryDate]=useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -118,6 +122,25 @@ const Vieworders = () => {
     cursor: "pointer",
   };
 
+  const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
+
+
+  const dateChange=(e)=>{
+    console.log(deliveryDate);
+    const token=localStorage.getItem("token");
+    const headers={
+      Authorization: ` bearer ${token}`,
+    };
+     axios.put('http://localhost:8080/product/updatedeliverydate',deliveryDate,{headers:headers}).then((response)=>{
+      console.log(response);
+     }).catch((error)=>{
+      console.log(error);
+      
+     })
+    //  window.location.reload();
+  }
+  
   return (
     <div>
       <Header />
@@ -394,11 +417,41 @@ const Vieworders = () => {
                       <Button
                         variant="primary"
                         size="lg"
-                        className="viewprdbtnstyle "
+                        className="viewprdbtnstyle " 
+                        onClick={handleShow}
+
                       >
                         Change Delivery date
                       </Button>
                     </div>
+
+
+                    <div>
+                    <Modal show={show} onHide={handleClose}>
+                 <Modal.Header closeButton>
+               <Modal.Title>Choose Date</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+              <input
+        type="date" name="deliveryDate"
+        onChange={(e)=>setDeliveryDate({date:e.target.value})}
+        // value={}
+        // onChange={(e) => setDeliveryDate(e.target.value)}
+      />
+              </Modal.Body>
+              <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+               Close
+              </Button>
+              <Button variant="primary" onClick={dateChange}>
+               Save Changes
+              </Button>
+            </Modal.Footer>
+             </Modal>
+
+                    </div>
+
+
                   </div>
                 </div>
               </Container>
@@ -662,6 +715,8 @@ const Vieworders = () => {
                                             }
                                             className="mt-5"
                                           >
+                                           
+                                             
                                             <option>
                                               {item.status === 3
                                                 ? "Order Cancelled"
@@ -675,6 +730,8 @@ const Vieworders = () => {
                                                 ? "Delivered"
                                                 : "Ordered"}
                                             </option>
+                                            {(item.status!==3)?
+                                            <>
                                             <option value="4">
                                               Processing
                                             </option>
@@ -682,8 +739,13 @@ const Vieworders = () => {
                                               Out For Delivery
                                             </option>
                                             <option value="7">Delivered</option>
-                                            {/* <option value="6">Out of Stock</option> */}
-                                            {/* <option value="option3">Deliverd</option> */}
+                                            </>:
+                                            <Button variant="secondary">
+                                            Cancelled
+                                           </Button>
+
+                                              }
+                                            
                                           </select>
                                         }
                                       </Col>

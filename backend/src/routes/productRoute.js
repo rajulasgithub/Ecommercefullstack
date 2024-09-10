@@ -546,19 +546,17 @@ productRoute.put('/updatecart',checkauth,async(req,res)=>{
 
 
 
-productRoute.put('/updtexpdeliverydate',checkauth,async(req,res)=>{
+productRoute.put('/updatedeliverydate',checkauth,async(req,res)=>{
+    console.log(req.body);
     try{
 
         const oldData=await cartDB.find({loginId:req.userData.loginId})
-        const now = new Date();
-        const day= now.getDate();
-        const month= now.getMonth()+1;
-        const year= now.getFullYear();
+        
           
         const data={
-            deliveryDate:(`${day+5}-${month}-${year}`),
+            deliveryDate: req.body.date,
         }
-        const result= await cartDB.updateMany({loginId:req.userData.loginId},{$set:data})
+        const result= await cartDB.updateMany({loginId:req.userData.loginId,status:2},{$set:data})
       
         
         if(result){
