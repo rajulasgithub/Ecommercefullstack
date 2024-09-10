@@ -515,7 +515,7 @@ productRoute.put('/updatecart',checkauth,async(req,res)=>{
             deliveryDate:(`${day+5}-${month}-${year}`),
             
         }
-        const result= await cartDB.updateMany({loginId:req.userData.loginId},{$set:data})
+        const result= await cartDB.updateOne({loginId:req.userData.loginId,status:1},{$set:data})
       
         
         if(result){
@@ -546,17 +546,17 @@ productRoute.put('/updatecart',checkauth,async(req,res)=>{
 
 
 
-productRoute.put('/updatedeliverydate',checkauth,async(req,res)=>{
+productRoute.put('/updatedeliverydate/:id',async(req,res)=>{
     console.log(req.body);
     try{
 
-        const oldData=await cartDB.find({loginId:req.userData.loginId})
+        const oldData=await cartDB.find({_id:req.params.id})
         
           
         const data={
             deliveryDate: req.body.date,
         }
-        const result= await cartDB.updateMany({loginId:req.userData.loginId,status:2},{$set:data})
+        const result= await cartDB.updateMany({_id:req.params.id},{$set:data})
       
         
         if(result){

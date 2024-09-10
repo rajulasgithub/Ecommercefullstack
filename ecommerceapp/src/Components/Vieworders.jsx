@@ -24,6 +24,7 @@ const Vieworders = () => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [show, setShow] = useState(false);
   const [deliveryDate,setDeliveryDate]=useState("");
+  const [getid,setGetId]=useState({})
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -121,23 +122,24 @@ const Vieworders = () => {
     cursor: "pointer",
   };
 
-  const handleShow = () => setShow(true);
+  const handleShow = (id) =>{
+     setShow(true);
+     setGetId(id)
+  }
   const handleClose = () => setShow(false);
 
 
   const dateChange=(e)=>{
+    const id=getid;
     console.log(deliveryDate);
-    const token=localStorage.getItem("token");
-    const headers={
-      Authorization: ` bearer ${token}`,
-    };
-     axios.put('http://localhost:8080/product/updatedeliverydate',deliveryDate,{headers:headers}).then((response)=>{
+   
+     axios.put(`http://localhost:8080/product/updatedeliverydate/${id}`,deliveryDate).then((response)=>{
       console.log(response);
      }).catch((error)=>{
       console.log(error);
       
      })
-    //  window.location.reload();
+     window.location.reload();
   }
   
   return (
@@ -159,7 +161,7 @@ const Vieworders = () => {
               <Container>
                 <div className="orderbtns">
                   <Row>
-                    <Col sm={10} className="cartcolstyleone me-5">
+                    <Col sm={11} className="cartcolstyleone ">
                       <div className="carttitlebartop">
                         {/* <div className="carttitlebar"> */}
                         {/* <div><h6>item</h6></div>
@@ -312,20 +314,24 @@ const Vieworders = () => {
                                 </div>
                               </Card.Body>
                             ) : (
+                              <div className="">
                               <Button
                                 variant="danger"
                                 size="lg"
-                                className="outofstockbtn" disabled
+                                className="outofstockbtn  ms-5" disabled
                               >
                                 Out of stock
                               </Button>
+                              </div>
                             )}
                           </div>
                           {(item.status === 3) ? (
+                      
                             <div>
+                              
                                 <Button
                                   variant="primary"
-                                  size="lg"
+                                  size="sm"
                                   className="viewprdbtnstyle  mb-4 ms-4"
                                   onClick={() => cancelOrder(item._id)}  disabled
                                 >
@@ -335,28 +341,56 @@ const Vieworders = () => {
                             </div>
                           ) : (item.status===4)?
                           (
+                          
+
                             <div>
                               <Button
                                   variant="primary"
-                                  size="lg"
-                                  className="viewprdbtnstyle  mb-4 ms-4" disabled
+                                  size="sm"
+                                  className="viewprdbtnstyle ms-5 mb-3" disabled
                                 
                                 >
                                   Processing
                                 </Button>
+                                <Button
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle  ms-3 mb-3" 
+                           
+                          >
+                            Track your Order
+                          </Button>
+                          
                             </div>
                           ):
                           (item.status===5)?
                           (
-                            <div>
+                            <div className="d-flex flex-column">
                                <Button
                                   variant="primary"
-                                  size="lg"
-                                  className="viewprdbtnstyle  mb-4 ms-4" disabled
+                                  size="sm"
+                                  className="viewprdbtnstyle ms-4 mb-2" disabled
                                 
                                 >
                                   Out for Delivery
                                 </Button>
+                                
+                                <Button 
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle  ms-4 mb-2"
+                           
+                          >
+                            Track your Order
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle ms-4 mb-2" disabled={isDisabled} onClick={()=>handleShow(item._id)}
+                           
+                          >
+                            Change Delivery date
+                          </Button>
                             </div>
                           ):
                           (item.status===6)?
@@ -364,7 +398,7 @@ const Vieworders = () => {
                             <div>
                               <Button
                                   variant="primary"
-                                  size="lg"
+                                  size="sm"
                                   className="viewprdbtnstyle  mb-4 ms-4" disabled
                                 
                                 >
@@ -377,52 +411,71 @@ const Vieworders = () => {
                             <div>
                               <Button
                                   variant="primary"
-                                  size="lg"
+                                  size="sm"
                                   className="viewprdbtnstyle  mb-4 ms-4" disabled
                                 
                                 >
                                   Delivered
                                 </Button>
                             </div>
-                          ):
+                          ):(item.status==2)?
                           (
-                            <div>
+                            <div className="d-flex flex-column">
                               <Button
                                 variant="primary"
-                                size="lg"
-                                className="viewprdbtnstyle mb-4 ms-2"
+                                size="sm"
+                                className="viewprdbtnstyle ms-4 mb-2"
                                 onClick={() => cancelOrder(item._id)} disabled={isDisabled}
                               >
                                 Cancel Order
                               </Button>
+                              <Button
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle ms-4 mb-2"
+                           
+                          >
+                            Track your Order
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle ms-4 mb-2" disabled={isDisabled} onClick={()=>handleShow(item._id)}
+                           
+                          >
+                            Change Delivery date
+                          </Button>
                             </div>
                             
-                          )}
+                          ):
+                          <>
+                          </>
+                        }
                         </Card>
                       ))}
                     </Col>
                   </Row>
                   <div>
                     <div>
-                      <Button
+                      {/* <Button
                         variant="primary"
                         size="lg"
                         className="viewprdbtnstyle mb-3"
                       >
                         Track your Order
-                      </Button>
+                      </Button> */}
                     </div>
-                    
+                     
                     <div>
-                      <Button
+                      {/* <Button
                         variant="primary"
                         size="lg"
                         className="viewprdbtnstyle " 
-                        onClick={handleShow} disabled={isDisabled}
+                        onClick={handleShow}   disabled={isDisabled} 
 
                       >
                         Change Delivery date
-                      </Button>
+                      </Button> */}
                     </div>
 
 
@@ -456,7 +509,7 @@ const Vieworders = () => {
                 </div>
               </Container>
               {/* nb */}
-              {/* <Container>
+              <Container>
              <div className='viewodrres'>
               nbjk
             <Row >
@@ -555,13 +608,30 @@ const Vieworders = () => {
                           >
                            Cancel Order
                           </Button>
+                          <Button
+                            variant="primary"
+                            size="lg"
+                            className="viewprdbtnstyle mb-3"
+                           
+                          >
+                            Track your Order
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="lg"
+                            className="viewprdbtnstyle " disabled={isDisabled}
+                           
+                          >
+                            Change Delivery date
+                          </Button>
+
                     </div>
 }
                   </Card>
                  ))}  
               </Col> 
             </Row>
-            <div>
+            {/* <div>
               
                           <div>
                           <Button
@@ -584,9 +654,9 @@ const Vieworders = () => {
                           </Button>
                           </div>
           
+          </div> */}
           </div>
-          </div>
-          </Container> */}
+          </Container>
               {/* mn */}
             </>
           ) : (
@@ -730,7 +800,21 @@ const Vieworders = () => {
                                                 ? "Delivered"
                                                 : "Ordered"}
                                             </option>
-                                            {(item.status!==3)?
+                                            {( item.status==3 )?(
+                                            <>
+                                            <Button variant="secondary">
+                                            Cancelled
+                                           </Button>
+    
+                                            </>):(item.status==6)?
+                                            (
+                                              <>
+                                              <Button variant="secondary">
+                                            Out of Stock
+                                           </Button>
+                                              </>
+                                            ):
+                        
                                             <>
                                             <option value="4">
                                               Processing
@@ -739,10 +823,7 @@ const Vieworders = () => {
                                               Out For Delivery
                                             </option>
                                             <option value="7">Delivered</option>
-                                            </>:
-                                            <Button variant="secondary">
-                                            Cancelled
-                                           </Button>
+                                            </>
 
                                               }
                                             

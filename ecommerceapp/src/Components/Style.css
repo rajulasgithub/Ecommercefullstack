@@ -128,7 +128,7 @@
 .cartcolstyleone{
     border: 1px solid white;
     /* max-width: 400px; */
-    /* margin: auto; */
+    margin: auto;
     height: auto;
     background-color: white;
     border-radius: 20px;
@@ -165,7 +165,7 @@
     /* display: flex;
     justify-content: space-between; */
     /* margin-left: 15rem; */
-    margin-left: 2rem;
+    margin-left: 5rem;
     
 }
 .cartcardstyle{
@@ -178,7 +178,7 @@
     margin-right: 20px;
     margin-bottom: 20px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    height: auto;
+    /* height: 600px; */
 }
 .carttitlebar{
     display: flex;
@@ -365,7 +365,7 @@ border: 1px solid black;
     width: 250px;
 }
 .viewodrres{
-    
+     display: none;
 }
 @media screen and (max-width: 600px) {
     .formdiv{
@@ -440,14 +440,14 @@ border: 1px solid black;
         height: 8rem;
     }
     .outofstockbtn{
-        width: 250px;
-        /* margin-left: 20px; */
+        width: 300px;
+        
     }
-    /* .orderbtns{
+    .orderbtns{
         display: none;
     }
     .viewodrres{
         display: block;
-    } */
+    }
     
   }

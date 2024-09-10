@@ -115,6 +115,10 @@ const handleClose = () =>
 
 const handleShow = () => setShow(true);
 
+const setstock=()=>{
+
+}
+
   return (
     <div>
       <Header/>
@@ -245,7 +249,13 @@ const handleShow = () => setShow(true);
       </Modal>
         </div>:
         <>
-        <Button variant="danger">Out of Stock</Button>
+        <Form.Select aria-label="Default select example" onChange={(e)=>setstock({value:e.target.value})} >
+        <option >Out Of Stock</option>
+        <option value="0">Add Product</option>
+    
+      
+        </Form.Select>
+        {/* <Button variant="danger">Out of Stock</Button> */}
         </>
 }
         </>
