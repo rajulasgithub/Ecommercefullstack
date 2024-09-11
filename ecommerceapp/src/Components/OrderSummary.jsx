@@ -21,10 +21,9 @@ import Header from './Header';
 
 const OrderSummary = () => {
   const navigate = useNavigate();
-  const[shippingname,setShippingname]=useState([]);
-  const[shippinginfo,setShippinginfo]=useState([]);
   const [show, setShow] = useState(false);
   const[address,setAddress]=useState({});
+  // const[shippinginfo,setShippinginfo] = useState({})
 
 
 
@@ -37,29 +36,21 @@ const OrderSummary = () => {
     localStorage.setItem("expdeliverydate",exptdeliverydate)
     const total=localStorage.setItem('total',(JSON.parse(localStorage.getItem('totalprize')))+40)
     const token=localStorage.getItem('token');
+    
     const headers = {
       Authorization: `bearer ${token}`,
       // 'Content-Type':'application/json'
     };
-   
-axios.get('http://localhost:8080/auth/viewone',{headers:headers}).then((response)=>{
-  console.log(response.data.data);
-  setShippingname(response.data.data) 
-  localStorage.setItem("number",shippingname.number)
-}).catch((error)=>{
-  console.log(error);
-  
-})
+    axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
+      console.log(response);
+      
+    }).catch((error)=>{
+      console.log(error);
+      
+    })
+    
+       
 
-axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
-  console.log(response.data.data);
-  // setShippinginfo(response.data.data.address+","+"Building No:"+response.data.data.BuildingNumber+"pincode:"+response.data.data.pincode+","+"district:"+response.data.data.district+","+"state:"+response.data.data.state)
-setShippinginfo(response.data.data);
-localStorage.setItem('address',shippinginfo.address+" "+shippinginfo.district+" "+shippinginfo.state+" "+shippinginfo.BuildingNumber+" "+shippinginfo.pincode);
-}).catch((error)=>{
-  console.log(error);
-})
-console.log(shippinginfo)
   }, [])
 
  
@@ -76,7 +67,6 @@ console.log(shippinginfo)
     };
     axios.put('http://localhost:8080/product/updatecart',{},{headers:headers}).then((response)=>{
       console.log(response);  
-      setShippinginfo(shippinginfo);
     }).catch((error)=>{
       console.log(error);   
     })
@@ -86,12 +76,7 @@ console.log(shippinginfo)
 
   const handleClose = () =>
     { 
-      // const token = localStorage.getItem("token");
-
-      // const headers = {
-      //   Authorization: `bearer ${token}`,
-      //   // 'Content-Type':'application/json'
-      // };
+    
       
       setShow(false);
     window.location.reload();
@@ -171,7 +156,7 @@ console.log(shippinginfo)
       <Col>
       <div className='ordercolone'>
         <div className='odraddrsflex pt-4 ps-4 pe-4'>
-        <h3>deliver to:{" "+shippingname.firstname}</h3>
+        <h3>deliver to:</h3>
         <Button variant="outline-primary" onClick={handleShow} >Change</Button>{' '}
         <Modal show={show} onHide={handleClose} backdrop="static"
         >
@@ -262,15 +247,15 @@ console.log(shippinginfo)
         <div className=' ps-4 pe-4'>
        <h4>Address:</h4>
        <div className='adrsdiv pe-5'>
-       <p className='fw-bold text-primary'>{shippinginfo.address} </p>
-       <p className='fw-bold text-primary'>{shippinginfo.district+','+shippinginfo.state+','+shippinginfo.pincode}</p>
+       <p className='fw-bold text-primary'> </p>
+       <p className='fw-bold text-primary'></p>
 
 
-       <p className='fw-bold text-primary'>{"Building No:"+" "+shippinginfo.BuildingNumber}</p>
+       <p className='fw-bold text-primary'></p>
 
         </div>
        </div>
-       <h6 className='ps-4 pb-5 fw-bold'>Phone:{shippingname.number}</h6>
+       <h6 className='ps-4 pb-5 fw-bold'></h6>
 
       </div>
       

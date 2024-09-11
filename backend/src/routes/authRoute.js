@@ -76,6 +76,9 @@ authroutes.post('/signup',async(req,res)=>{
 })
 
 
+
+
+
 authroutes.get('/view',async(req,res)=>{
     try{
         const result=await signupDB.find();

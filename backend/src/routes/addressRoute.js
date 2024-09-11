@@ -175,4 +175,75 @@ addressRoute.put('/changedeliveryaddress',checkauth,async(req,res)=>{
     }
 })
 
+
+
+addressRoute.get('/getaddress/:id',async(req,res)=>{
+    try{
+
+        const data= await addressDB.aggregate([
+            {
+              $lookup: {
+                from: 'addresslists', 
+                localField: 'loginId', 
+                foreignField: 'loginId', 
+                as: 'result',
+              },
+            }, {
+              $unwind: {
+                path: '$result',
+              },
+            },
+            {
+                $match: {
+                  _id: new mongoose.Types.ObjectId(id),
+                },
+              },
+             {
+              $group: {
+                _id: '_id', 
+                number: {
+                  $first: '$number'
+                }, 
+                address: {
+                  $first: '$result.address'
+                }, 
+                district: {
+                  $first: '$result.district'
+                }, 
+                state: {
+                  $first: '$result.state'
+                }, 
+                pincode: {
+                  $first: '$result.pincode'
+                }, 
+                BuildingNumber: {
+                  $first: '$result.BuildingNumber'
+                }
+              }
+            }
+          ])
+          if (data) {
+            res.status(200).json({
+              success: true,
+              error: false,
+              data: data,
+              message: "address viewed successfully",
+            });
+          } else {
+            res.status(400).json({
+              success: false,
+              error: true,
+              message: "address not viewed ",
+            });
+          }
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            error: true,
+            errorMessage: error.message,
+            message: "something went wrong",
+          });
+    }
+})
+
 module.exports=addressRoute;

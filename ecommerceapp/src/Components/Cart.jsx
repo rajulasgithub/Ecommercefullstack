@@ -191,6 +191,8 @@ const Cart = () => {
 
   const checkOut = () => {
     navigate("/ordersummary");
+    localStorage.setItem("totalprize",totalValue);
+    localStorage.setItem("itemcount",cartitem.length)
   };
 
   return (

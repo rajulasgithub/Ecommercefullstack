@@ -218,6 +218,47 @@ catch(error){
 
 
 
+productRoute.put('/updateproductstatus/:id/:value',async(req,res)=>{
+    console.log(req.params.id);
+    console.log("value",req.params.value);
+
+
+    try{
+    const oldData= await productDB.findOne({_id:req.params.id});
+    const data={
+       status:req.params.value,
+    }
+    console.log(oldData);
+    const result = await productDB.updateOne({_id:req.params.id},{$set:data})
+    if(result){
+        return  res.status(200).json({
+            success:true,
+            error:false,
+            data:result,
+            message:"successfully updated product",
+        }) 
+    }
+    else{
+        return res.status(400).json({
+            success:false,
+            error:true,
+            message:"not updated",
+        })
+    }
+}
+catch(error){
+    return res.status(500).json({
+        success:false,
+        error:true,
+        errorMessage:error.message,
+        message:"something went wrong",
+    })
+}
+})
+
+
+
+
 //add to cart
 
 productRoute.post('/addtocart',checkauth,async(req,res)=>{
@@ -437,7 +478,7 @@ productRoute.put('/decrcart/:id',async(req,res)=>{
 
 productRoute.get('/delcartitem/:id',checkauth,async(req,res)=>{
     try{
-        const result= await cartDB.deleteOne({loginId:req.userData.loginId},{_id:req.params.id})
+        const result= await cartDB.deleteOne({loginId:req.userData.loginId,status:1},{_id:req.params.id})
         if(result){
             return  res.status(200).json({
                 success:true,

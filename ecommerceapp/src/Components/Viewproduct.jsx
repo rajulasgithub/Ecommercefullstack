@@ -115,7 +115,17 @@ const handleClose = () =>
 
 const handleShow = () => setShow(true);
 
-const setstock=()=>{
+const setStatus=(id,value)=>{
+  console.log(value);
+     axios.put(`http://localhost:8080/product/updateproductstatus/${id}/${value}`).then((response)=>{
+      console.log(response);
+      
+     }).catch((error)=>{
+      console.log(error);
+      
+     })
+
+     window.location.reload();
 
 }
 
@@ -249,9 +259,9 @@ const setstock=()=>{
       </Modal>
         </div>:
         <>
-        <Form.Select aria-label="Default select example" onChange={(e)=>setstock({value:e.target.value})} >
-        <option >Out Of Stock</option>
-        <option value="0">Add Product</option>
+        <Form.Select aria-label="Default select example" name="status" onChange={(e)=>setStatus(item._id,e.target.value)} >
+        <option  >Out Of Stock</option>
+        <option value="0" >Add Product</option>
     
       
         </Form.Select>
