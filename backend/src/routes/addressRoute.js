@@ -3,6 +3,7 @@ const addressDB = require("../model/addressSchema");
 const checkauth = require("../middleware/checkauth");
 const productDB = require("../model/addproductsSchema");
 const signupDB = require("../model/signupSchema");
+const { default: mongoose } = require("mongoose");
 const  addressRoute= express.Router();
 
 addressRoute.post('/addAddress',checkauth,async(req,res)=>{
@@ -177,32 +178,40 @@ addressRoute.put('/changedeliveryaddress',checkauth,async(req,res)=>{
 
 
 
-addressRoute.get('/getaddress/:id',async(req,res)=>{
+addressRoute.get('/getnewaddress',checkauth,async(req,res)=>{
+  console.log(req.userData.loginId)
+  const loginId=req.userData.loginId;
     try{
 
         const data= await addressDB.aggregate([
+          {
+            '$lookup': {
+              'from': 'addresslists', 
+              'localField': 'loginId', 
+              'foreignField': 'loginId', 
+              'as': 'result'
+            }
+            }, 
             {
-              $lookup: {
-                from: 'addresslists', 
-                localField: 'loginId', 
-                foreignField: 'loginId', 
-                as: 'result',
-              },
-            }, {
               $unwind: {
                 path: '$result',
               },
             },
             {
                 $match: {
-                  _id: new mongoose.Types.ObjectId(id),
+                 
+                  'loginId':new mongoose.Types.ObjectId(loginId),
+                // loginId: new mongoose.Types.ObjectId(loginId),
                 },
               },
              {
               $group: {
-                _id: '_id', 
+                _id: "$loginId", 
                 number: {
                   $first: '$number'
+                }, 
+                firstname: {
+                  $first: '$firstname'
                 }, 
                 address: {
                   $first: '$result.address'
@@ -221,7 +230,7 @@ addressRoute.get('/getaddress/:id',async(req,res)=>{
                 }
               }
             }
-          ])
+          ]);
           if (data) {
             res.status(200).json({
               success: true,

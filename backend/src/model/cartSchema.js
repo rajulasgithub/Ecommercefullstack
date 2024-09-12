@@ -7,6 +7,8 @@ const cartSchema = new mongoose.Schema({
     date:{type:String},
     time:{type:String},
     deliveryDate:{type:String},
+    payment:{type:String},
+
     // time:{type:String,required:true},
 })
 

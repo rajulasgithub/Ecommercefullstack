@@ -554,6 +554,7 @@ productRoute.put('/updatecart',checkauth,async(req,res)=>{
             status:2,
             date:(`${day}-${month}-${year}`),
             deliveryDate:(`${day+5}-${month}-${year}`),
+            payment:"Cash on Delivery"
             
         }
         const result= await cartDB.updateOne({loginId:req.userData.loginId,status:1},{$set:data})

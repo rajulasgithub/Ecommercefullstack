@@ -24,7 +24,9 @@ const Vieworders = () => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [show, setShow] = useState(false);
   const [deliveryDate,setDeliveryDate]=useState("");
-  const [getid,setGetId]=useState({})
+  const [getid,setGetId]=useState({});
+  const[shippingaddress,setShippingAddress]=useState({});
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -66,6 +68,19 @@ const Vieworders = () => {
       .catch((error) => {
         console.log(error);
       });
+
+
+      
+  
+      // axios.get('http://localhost:8080/address/getaddress').then((response)=>{
+      //   console.log(response);
+      //   // setShippingAddress(response.data.data);
+      // }).catch((error)=>{
+      //   console.log(error);
+        
+      // })
+
+
   }, []);
 
   // const currdate = new Date();
@@ -275,7 +290,7 @@ const Vieworders = () => {
                                     className=""
                                   >
                                     {/* {item.prdId.prize * item.quantity} */}
-                                    payment:{" "}
+                                    payment:{" "+item.payment}
                                   </Card.Text>
                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
@@ -757,10 +772,9 @@ const Vieworders = () => {
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
                                         >
-                                          {/* {item.prdId.prize * item.quantity} */}
-                                          Address
-                                          <br />
-                                          Number:
+                                         
+
+                                         
                                         </Card.Text>
                                       </Col>
                                       <Col>
@@ -769,7 +783,7 @@ const Vieworders = () => {
                                           className="mt-5"
                                         >
                                           {/* {item.prdId.prize * item.quantity} */}
-                                          payment
+                                          {item.payment}
                                         </Card.Text>
                                       </Col>
                                       <Col>

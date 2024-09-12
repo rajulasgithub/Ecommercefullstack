@@ -393,7 +393,7 @@ const Cart = () => {
                     <Form.Control
                       onChange={handlehange}
                       as="textarea"
-                      className="carttxtare mt-3 "
+                      className=" carttxtare mt-3 "
                       name="address"
                       value={address?.address}
                       placeholder="Enter Address"

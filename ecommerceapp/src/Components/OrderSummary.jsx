@@ -23,7 +23,9 @@ const OrderSummary = () => {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const[address,setAddress]=useState({});
-  // const[shippinginfo,setShippinginfo] = useState({})
+  const[shippingaddress,setShippingAddress]=useState({});
+
+  
 
 
 
@@ -41,9 +43,9 @@ const OrderSummary = () => {
       Authorization: `bearer ${token}`,
       // 'Content-Type':'application/json'
     };
-    axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
+    axios.get('http://localhost:8080/address/getnewaddress',{},{headers:headers}).then((response)=>{
       console.log(response);
-      
+      setShippingAddress(response.data.data);
     }).catch((error)=>{
       console.log(error);
       
@@ -245,17 +247,18 @@ const OrderSummary = () => {
       </Modal>
         </div>
         <div className=' ps-4 pe-4'>
-       <h4>Address:</h4>
+       <h4>Address:{shippingaddress.address}</h4>
        <div className='adrsdiv pe-5'>
-       <p className='fw-bold text-primary'> </p>
-       <p className='fw-bold text-primary'></p>
+       <p className='fw-bold '>District:{shippingaddress.district} </p>
+       <p className='fw-bold '>State:{shippingaddress.state}</p>
+       <p className='fw-bold '>Pincode:{shippingaddress.pincode}</p>
+       <p className='fw-bold '>Building Number:{shippingaddress.BuildingNumber}</p>
+       <h6 className=' fw-bold pb-4'>Phone Number:</h6>
 
-
-       <p className='fw-bold text-primary'></p>
+       
 
         </div>
        </div>
-       <h6 className='ps-4 pb-5 fw-bold'></h6>
 
       </div>
       
