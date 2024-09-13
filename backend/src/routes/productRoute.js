@@ -377,6 +377,9 @@ productRoute.get("/viewcartcmpny", async (req, res) => {
           firstname: {
             $first: "$info.firstname",
           },
+          number: {
+            $first: "$info.number",
+          },
           image: {
             $first: "$product.image",
           },

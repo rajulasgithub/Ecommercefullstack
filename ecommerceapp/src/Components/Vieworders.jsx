@@ -742,9 +742,9 @@ console.log(order);
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
                                         >
-                                          {item.address+" "+item.state+
+                                          {item.firstname+" "+item.address+" "+item.state+
                                           " "+item.district+" "+item.pincode+
-                                          " "+item.BuildingNumber
+                                          " "+item.BuildingNumber+" "+item.number
                                           }
                                          
                                          

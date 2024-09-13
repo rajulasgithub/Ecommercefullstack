@@ -10,7 +10,7 @@ import Header from './Header';
 const Companysignup = () => {
   const[companysignup,setCompanysignup]=useState({})
   const handleChange=(event)=>{
-    // console.log(event.target.value)
+    console.log(event)
     setCompanysignup({...companysignup, [event.target.name]: event.target.value })
   }
  
@@ -29,10 +29,12 @@ const Companysignup = () => {
   formdata.append("contactNumber",companysignup.contactNumber)
   formdata.append("regNumber",companysignup.regNumber)
   formdata.append("gstNumber",companysignup.gstNumber)
+  formdata.append("regNumber",companysignup.email)
+  formdata.append("gstNumber",companysignup.password)
 
-  for (const [key, value] of formdata.entries()) {
-    console.log(`${key}: ${value}`);
-}
+//   for (const [key, value] of formdata.entries()) {
+//     console.log(`${key}: ${value}`);
+// }
  
 
   const handleSubmit=(event)=>{
