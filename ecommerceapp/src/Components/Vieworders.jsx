@@ -58,6 +58,7 @@ const Vieworders = () => {
       .catch((error) => {
         console.log(error);
       });
+      console.log(order)
 
     axios
       .get("http://localhost:8080/product/vieworderuser", { headers: headers })
@@ -69,21 +70,8 @@ const Vieworders = () => {
         console.log(error);
       });
 
-
-      
-  
-      // axios.get('http://localhost:8080/address/getaddress').then((response)=>{
-      //   console.log(response);
-      //   // setShippingAddress(response.data.data);
-      // }).catch((error)=>{
-      //   console.log(error);
-        
-      // })
-
-
   }, []);
-
-  // const currdate = new Date();
+console.log(order);
   
 
   useEffect(() => {
@@ -524,7 +512,7 @@ const Vieworders = () => {
                 </div>
               </Container>
               {/* nb */}
-              <Container>
+              {/* <Container>
              <div className='viewodrres'>
               nbjk
             <Row >
@@ -646,32 +634,9 @@ const Vieworders = () => {
                  ))}  
               </Col> 
             </Row>
-            {/* <div>
-              
-                          <div>
-                          <Button
-                            variant="primary"
-                            size="lg"
-                            className="viewprdbtnstyle mb-3"
-                           
-                          >
-                            Track your Order
-                          </Button>
-                          </div>
-                          <div>
-                          <Button
-                            variant="primary"
-                            size="lg"
-                            className="viewprdbtnstyle "
-                           
-                          >
-                            Change Delivery date
-                          </Button>
-                          </div>
-          
-          </div> */}
+            
           </div>
-          </Container>
+          </Container> */}
               {/* mn */}
             </>
           ) : (
@@ -714,7 +679,8 @@ const Vieworders = () => {
                               <div>
                                 <Card.Img
                                   variant="top"
-                                  src={item.prdId?.image[0]}
+                                  // src={item.prdId?.image[0]}
+                                  src={item.image[0]}
                                   style={{ width: "7rem", height: "10rem" }}
                                   className="img-rounded ms-3"
                                 />
@@ -730,7 +696,8 @@ const Vieworders = () => {
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
-                                          {item.prdId?.prdName}
+                                          {/* {item.prdId?.prdName} */}
+                                          {item.prdName}
                                         </Card.Text>
                                       </Col>
                                       <Col>
@@ -738,7 +705,8 @@ const Vieworders = () => {
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
-                                          {item.prdId?.size}
+                                          {/* {item.prdId?.size} */}
+                                          {item.size}
                                         </Card.Text>
                                       </Col>
                                       <Col>
@@ -746,7 +714,8 @@ const Vieworders = () => {
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
-                                          {item.prdId?.prize}
+                                          {/* {item.prdId?.prize} */}
+                                          {item.prize}
                                         </Card.Text>
                                       </Col>
                                       <Col>
@@ -754,6 +723,7 @@ const Vieworders = () => {
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
+                                          {/* {item.quantity} */}
                                           {item.quantity}
                                         </Card.Text>
                                       </Col>
@@ -765,15 +735,18 @@ const Vieworders = () => {
                                         >
                                           {/* {item.prdId.prize * item.quantity} */}
 
-                                          {item.quantity * item.prdId?.prize}
+                                          {item.quantity * item.prize}
                                         </Card.Text>
                                       </Col>
                                       <Col>
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
                                         >
+                                          {item.address+" "+item.state+
+                                          " "+item.district+" "+item.pincode+
+                                          " "+item.BuildingNumber
+                                          }
                                          
-
                                          
                                         </Card.Text>
                                       </Col>

@@ -24,6 +24,8 @@ const OrderSummary = () => {
   const [show, setShow] = useState(false);
   const[address,setAddress]=useState({});
   const[shippingaddress,setShippingAddress]=useState({});
+  const[shippinginfo,setShippinginfo]=useState({});
+
 
   
 
@@ -43,9 +45,18 @@ const OrderSummary = () => {
       Authorization: `bearer ${token}`,
       // 'Content-Type':'application/json'
     };
-    axios.get('http://localhost:8080/address/getnewaddress',{},{headers:headers}).then((response)=>{
-      console.log(response);
+    axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
+      console.log(response.data.data);
       setShippingAddress(response.data.data);
+    }).catch((error)=>{
+      console.log(error);
+      
+    })
+
+    axios.get('http://localhost:8080/auth/viewinfo',{headers:headers}).then((response)=>{
+      console.log(response);
+      setShippinginfo(response.data.data)
+      
     }).catch((error)=>{
       console.log(error);
       
@@ -158,7 +169,7 @@ const OrderSummary = () => {
       <Col>
       <div className='ordercolone'>
         <div className='odraddrsflex pt-4 ps-4 pe-4'>
-        <h3>deliver to:</h3>
+        <h3>deliver to:{shippinginfo.firstname}</h3>
         <Button variant="outline-primary" onClick={handleShow} >Change</Button>{' '}
         <Modal show={show} onHide={handleClose} backdrop="static"
         >
@@ -253,7 +264,7 @@ const OrderSummary = () => {
        <p className='fw-bold '>State:{shippingaddress.state}</p>
        <p className='fw-bold '>Pincode:{shippingaddress.pincode}</p>
        <p className='fw-bold '>Building Number:{shippingaddress.BuildingNumber}</p>
-       <h6 className=' fw-bold pb-4'>Phone Number:</h6>
+       <h6 className=' fw-bold pb-4'>Phone Number:{shippinginfo.number}</h6>
 
        
 

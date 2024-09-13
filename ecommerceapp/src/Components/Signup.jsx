@@ -28,8 +28,8 @@ const [error, setError] = useState({});
 
 
   const handleChange=(event)=>{
-    // console.log(event.target.name)
-    setSignup({...signup,[event.target.name]:event.target.value})
+    console.log(event)
+    // setSignup({...signup,[event.target.name]:event.target.value})
   }
   console.log(signup)
 

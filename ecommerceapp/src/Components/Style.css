@@ -364,9 +364,9 @@ border: 1px solid black;
 .viewprdbtnstyle{
     width: 250px;
 }
-.viewodrres{
+/* .viewodrres{
      display: none;
-}
+} */
 @media screen and (max-width: 600px) {
     .formdiv{
         width: 300px;
@@ -443,11 +443,11 @@ border: 1px solid black;
         width: 300px;
         
     }
-    .orderbtns{
+    /* .orderbtns{
         display: none;
     }
     .viewodrres{
         display: block;
-    }
+    } */
     
   }

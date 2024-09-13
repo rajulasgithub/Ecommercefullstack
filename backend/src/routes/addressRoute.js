@@ -178,81 +178,83 @@ addressRoute.put('/changedeliveryaddress',checkauth,async(req,res)=>{
 
 
 
-addressRoute.get('/getnewaddress',checkauth,async(req,res)=>{
-  console.log(req.userData.loginId)
-  const loginId=req.userData.loginId;
-    try{
+// addressRoute.get('/getnewaddress/:id',checkauth,async(req,res)=>{
+//   console.log(req.userData.loginId)
+//   const loginId=req.userData.loginId;
+//     try{
 
-        const data= await addressDB.aggregate([
-          {
-            '$lookup': {
-              'from': 'addresslists', 
-              'localField': 'loginId', 
-              'foreignField': 'loginId', 
-              'as': 'result'
-            }
-            }, 
-            {
-              $unwind: {
-                path: '$result',
-              },
-            },
-            {
-                $match: {
+//         const data= await addressDB.aggregate([
+//           {
+//             '$lookup': {
+//               'from': 'addresslists', 
+//               'localField': 'loginId', 
+//               'foreignField': 'loginId', 
+//               'as': 'result'
+//             }
+//             }, 
+//             {
+//               $unwind: {
+//                 path: '$result',
+//               },
+//             },
+//             {
+//                 $match: {
                  
-                  'loginId':new mongoose.Types.ObjectId(loginId),
-                // loginId: new mongoose.Types.ObjectId(loginId),
-                },
-              },
-             {
-              $group: {
-                _id: "$loginId", 
-                number: {
-                  $first: '$number'
-                }, 
-                firstname: {
-                  $first: '$firstname'
-                }, 
-                address: {
-                  $first: '$result.address'
-                }, 
-                district: {
-                  $first: '$result.district'
-                }, 
-                state: {
-                  $first: '$result.state'
-                }, 
-                pincode: {
-                  $first: '$result.pincode'
-                }, 
-                BuildingNumber: {
-                  $first: '$result.BuildingNumber'
-                }
-              }
-            }
-          ]);
-          if (data) {
-            res.status(200).json({
-              success: true,
-              error: false,
-              data: data,
-              message: "address viewed successfully",
-            });
-          } else {
-            res.status(400).json({
-              success: false,
-              error: true,
-              message: "address not viewed ",
-            });
-          }
-    }catch(error){
-        res.status(500).json({
-            success: false,
-            error: true,
-            errorMessage: error.message,
-            message: "something went wrong",
-          });
-    }
-})
+//                   loginId:new mongoose.Types.ObjectId(id),
+//                 },
+//               },
+//              {
+//               $group: {
+//                 _id: "$loginId", 
+//                 number: {
+//                   $first: '$number'
+//                 }, 
+//                 firstname: {
+//                   $first: '$firstname'
+//                 }, 
+//                 address: {
+//                   $first: '$result.address'
+//                 }, 
+//                 district: {
+//                   $first: '$result.district'
+//                 }, 
+//                 state: {
+//                   $first: '$result.state'
+//                 }, 
+//                 pincode: {
+//                   $first: '$result.pincode'
+//                 }, 
+//                 BuildingNumber: {
+//                   $first: '$result.BuildingNumber'
+//                 }
+//               }
+//             }
+//           ]);
+//           if (data) {
+//             res.status(200).json({
+//               success: true,
+//               error: false,
+//               data: data,
+//               message: "address viewed successfully",
+//             });
+//           } else {
+//             res.status(400).json({
+//               success: false,
+//               error: true,
+//               message: "address not viewed ",
+//             });
+//           }
+//     }catch(error){
+//         res.status(500).json({
+//             success: false,
+//             error: true,
+//             errorMessage: error.message,
+//             message: "something went wrong",
+//           });
+//     }
+// })
+
+
+
 
 module.exports=addressRoute;

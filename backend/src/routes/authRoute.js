@@ -109,7 +109,7 @@ authroutes.get('/view',async(req,res)=>{
 })
 
 
-authroutes.get('/viewone',checkauth, async(req,res)=>{
+authroutes.get('/viewinfo',checkauth, async(req,res)=>{
     try{
         console.log(req.userData);
         
