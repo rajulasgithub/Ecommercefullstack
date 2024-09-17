@@ -14,13 +14,9 @@ const Cart = () => {
   const navigate = useNavigate();
 
   const [cartitem, setCartitem] = useState([]);
-  // const[totalprize,setTotalprize]= useState(1);
-  // const[cartcount,setCartcount]=useState(0);
+  
   const [address, setAddress] = useState({});
   const [newaddress, setNewaddress] = useState({});
-  // console.log(address.pincode);
-  // console.log(address)
-  // const [value, setValue] = useState({});
 
   const [totalValue, setTotalValue] = useState(0);
 

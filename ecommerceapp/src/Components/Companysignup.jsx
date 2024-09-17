@@ -54,7 +54,7 @@ const Companysignup = () => {
         <div className='forminnerdiv'>
         <form  className='text-center formtext' encType="multpart/form-data"   onSubmit={handleSubmit}>
         {/* <Form  > */}
-        <div className='text-center text-white mb-4 signuphead'>Login</div>
+        <div className='text-center text-white mb-4 signuphead'>Signup</div>
 
         <Row className="mb-3 justify-content-center">
         
