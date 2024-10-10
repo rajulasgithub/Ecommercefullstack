@@ -34,6 +34,7 @@ const[addproduct,setAddproduct]=useState({})
 
 
   console.log(addproduct);
+  
 const handleSubmit= async (event)=>{
   event.preventDefault();
 

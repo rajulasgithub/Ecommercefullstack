@@ -17,6 +17,7 @@ app.use(express.urlencoded({extended:true}));
 
 mongoose.connect(process.env.MONGO_URL).then((response)=>{
     console.log('Database is connected');
+    console.log(process.env.MONGO_URL);
 }).catch((error)=>{
     console.log('Database not connected'); 
 })
