@@ -47,7 +47,7 @@ const Cart = () => {
   const decrement = (id) => {
     console.log(id);
     axios
-      .put(`http://localhost:8080/product/decrcart/${id}`)
+      .put(`https://ecommercefullstack-xv9x.onrender.com/product/decrcart/${id}`)
       .then((response) => {
         console.log(response.data.data);
         const filter = cartitem.filter((data) => {
@@ -112,7 +112,7 @@ const Cart = () => {
       // 'Content-Type':'application/json'
     };
     axios
-      .post("http://localhost:8080/address/addAddress", newaddress, {
+      .post("https://ecommercefullstack-xv9x.onrender.com/address/addAddress", newaddress, {
         headers: headers,
       })
       .then((response) => {
@@ -133,7 +133,7 @@ const Cart = () => {
     };
 
     axios
-      .get("http://localhost:8080/address/getaddress", { headers: headers })
+      .get("https://ecommercefullstack-xv9x.onrender.com/address/getaddress", { headers: headers })
       .then((response) => {
         console.log(response.data.data);
         setAddress(response.data.data);
@@ -152,7 +152,7 @@ const Cart = () => {
       // 'Content-Type':'application/json'
     };
     axios
-      .put("http://localhost:8080/address/updateaddress", address, {
+      .put("https://ecommercefullstack-xv9x.onrender.com/address/updateaddress", address, {
         headers: headers,
       })
       .then((response) => {

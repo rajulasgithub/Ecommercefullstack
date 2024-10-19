@@ -38,7 +38,7 @@ const Companysignup = () => {
  
 
   const handleSubmit=(event)=>{
-    axios.post('http://localhost:8080/auth/companysignup',formdata).then((response) => {
+    axios.post('https://ecommercefullstack-xv9x.onrender.com/auth/companysignup',formdata).then((response) => {
       console.log(response);
     })
     .catch((error) => {
