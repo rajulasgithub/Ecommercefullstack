@@ -96,7 +96,7 @@ const [error, setError] = useState({});
         <div className='forminnerdiv'>
       <Form className='text-center'>
         <div className="">
-      <Row className="mb-4 justify-content-center">
+      <Row className="mb-1 justify-content-center">
         <Form.Group as={Col} sm={6} controlId="formGridEmail" className=' gridone ' >
         <Form.Label className="labelstyle">{error.firstname}</Form.Label>
         <Form.Control type="text" placeholder="Firstname" className='formborder'  name="firstname" onChange={handleChange}  />
@@ -109,7 +109,7 @@ const [error, setError] = useState({});
       </Row>
       </div>
       
-      <Row className="mb-4 justify-content-center">
+      <Row className="mb-1 justify-content-center">
         <Form.Group as={Col} sm={4} controlId="formGridState" className='gridone'>
         <Form.Label className="labelstyle">{error.state}</Form.Label>
           <Form.Control type="text" placeholder="Enter State" className='formborder'  name="state" onChange={handleChange} />
@@ -127,7 +127,7 @@ const [error, setError] = useState({});
 
        
       </Row>
-      <Row className="mb-4 justify-content-center">
+      <Row className="mb-1 justify-content-center">
       <Form.Group as={Col} sm={6} controlId="formGridPincode" className='gridone'>
       <Form.Label className="labelstyle">{error.pincode}</Form.Label>
       <Form.Control type="text" placeholder="Enter Pincode"  className='formborder'  name="pincode"  onChange={handleChange}/>
@@ -138,7 +138,7 @@ const [error, setError] = useState({});
           <Form.Control type="text" placeholder="enter Gender" className='formborder'  name="gender" onChange={handleChange}/>
         </Form.Group>
       </Row>
-      <Row className="mb-4 justify-content-center">
+      <Row className="mb-1 justify-content-center">
         <Form.Group as={Col} sm={6} controlId="formGridEmail" className='gridone'>
         <Form.Label className="labelstyle">{error.email}</Form.Label>
           <Form.Control type="email" placeholder="Enter  Email" className='formborder' name="email" onChange={handleChange} />
@@ -149,7 +149,7 @@ const [error, setError] = useState({});
           <Form.Control type="password" placeholder="Enter Password" className='formborder'  name="password" onChange={handleChange} />
         </Form.Group>
       </Row>
-      <Button variant="warning" size="sm"  className='btnstyle' onClick={handleSubmit} >
+      <Button variant="warning" size="sm"  className='btnstyle mb-4 mt-3' onClick={handleSubmit} >
           SignUp
         </Button>
     </Form>

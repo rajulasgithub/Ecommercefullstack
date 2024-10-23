@@ -61,7 +61,7 @@ const Login = () => {
   return (
     <>
     <Header/>
-    <div className="signupbg">
+    <div className="loginbg">
       <div className="loginformdiv">
         <div className="forminnerdiv">
           <Form className="text-center">
