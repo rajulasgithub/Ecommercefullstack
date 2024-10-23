@@ -63,13 +63,13 @@ const Header = () => {
                   <Nav.Link href="/vieworders" className="navtext">
                     View Order
                   </Nav.Link>
-                  <Nav.Link href="/home" className="navtext" onClick={logout}>
+                  <Nav.Link href="/" className="navtext" onClick={logout}>
                     Logout
                   </Nav.Link>
                 </>
               ) : (
                 <>
-                  <Nav.Link href="/home" className="navtext me-3">
+                  <Nav.Link href="/" className="navtext me-3">
                     Home
                   </Nav.Link>
                   <Nav.Link href="/login" className="navtext">
