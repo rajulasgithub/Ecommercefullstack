@@ -43,7 +43,7 @@ const Header = () => {
                     My Orders
                   </Nav.Link>
 
-                  <Nav.Link href="/home" className="navtext" onClick={logout}>
+                  <Nav.Link href="/" className="navtext" onClick={logout}>
                     Logout
                   </Nav.Link>
 
