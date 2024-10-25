@@ -214,7 +214,7 @@ const Home = () => {
      </Col>
         </Row>
         </Container >
-        <div style={{backgroundColor:"rgba(40,90,120)",height:"300px",fontFamily:"cursive"}}>
+        <div style={{backgroundColor:"#008B8B",height:"300px",fontFamily:"cursive"}}>
 
           <Container style={{display:"flex",justifyContent:"space-around"}}>
             <Row>
