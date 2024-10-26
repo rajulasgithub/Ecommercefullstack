@@ -13,6 +13,7 @@ const Home = () => {
   return (
     <>
     <Header/>
+    <div>
     <div className='homepage pt-5'>
 
       <div className='hmtextdiv' >
@@ -339,6 +340,10 @@ bm
         
       </Row>
       </Container> */}
+    </div>
+    <div className='hmres'>
+
+    </div>
     </div>
     </>
   )
