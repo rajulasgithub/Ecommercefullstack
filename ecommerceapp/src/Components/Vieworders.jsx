@@ -473,7 +473,7 @@ console.log(order);
                           >
                             <div className="cardflex">
                               <div>
-                              {index + 1}
+                              {/* {index + 1} */}
                                 <Card.Img
                                   variant="top"
                                   src={item.image[0]}
@@ -951,7 +951,7 @@ console.log(order);
                           >
                             <div className="">
                               <div>
-                              {index + 1}
+                              {/* {index + 1} */}
                                 <Card.Img
                                   variant="top"
                                   src={item.image[0]}
