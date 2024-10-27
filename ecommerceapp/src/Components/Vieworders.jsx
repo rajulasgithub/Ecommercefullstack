@@ -98,7 +98,7 @@ console.log(order);
       .catch((error) => {
         console.log(error);
       });
-    window.location.reload();
+    // window.location.reload();
   };
 
   
@@ -108,7 +108,7 @@ console.log(order);
       .put(`https://ecommercefullstack-xv9x.onrender.com/product/updatecartstatus/${id}/${value}`)
       .then((response) => {
         console.log(response);
-        window.location.reload();
+        // window.location.reload();
       })
       .catch((error) => {
         console.log(error);
@@ -142,7 +142,7 @@ console.log(order);
       console.log(error);
       
      })
-     window.location.reload();
+    //  window.location.reload();
   }
   
   return (
@@ -449,6 +449,7 @@ console.log(order);
             </>
           ) : (
             <>
+            {/* bkn */}
               <div className="carthead">
                 <h4 style={{ fontFamily: "monospace" }} className="">
                   Order's
@@ -947,7 +948,7 @@ console.log(order);
                             style={{ maxwidth: "50rem", height: "auto" }}
                             className="mt-5 cartcardstyle"
                           >
-                            <div className="cardflex">
+                            <div className="">
                               <div>
                                 <Card.Img
                                   variant="top"
@@ -965,52 +966,49 @@ console.log(order);
                                       <Col>
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
-                                          className="mt-5"
+                                          className="m-0"
                                         >
-                                          {item.prdName}
+                                        product:{item.prdName}
                                         </Card.Text>
-                                      </Col>
-                                      <Col>
+                                      
+                                     
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
-                                          className="mt-5"
+                                          className="m-0"
                                         >
-                                          {item.size}
+                                         Size: {item.size}
                                         </Card.Text>
-                                      </Col>
-                                      <Col>
+                                      
+                                      
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
-                                          className="mt-5"
+                                          className="m-0"
                                         >
-                                          {item.prize}
+                                          Prize:{item.prize}
                                         </Card.Text>
-                                      </Col>
-                                      <Col>
+                                      
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
-                                          className="mt-5"
+                                          className="m-0"
                                         >
-                                          {item.quantity}
+                                         Quantity: {item.quantity}
                                         </Card.Text>
-                                      </Col>
-
-                                      <Col>
+                                      
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
-                                          className="mt-5"
+                                          className="m-0"
                                         >
 
-                                          {item.quantity * item.prize}
+                                         Total: {item.quantity * item.prize}
                                         </Card.Text>
-                                      </Col>
-                                      <Col>
+                                     
+                                     
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
                                         >
-                                          {item.firstname+" "+item.address+" "+item.state+
-                                          " "+item.district+" "+item.pincode+
-                                          " "+item.BuildingNumber+" "+item.number
+                                         Address: {item.firstname+","+item.address+","+item.state+
+                                          ","+item.district+","+item.pincode+
+                                          ","+item.BuildingNumber+","+item.number
                                           }
                                          
                                          
@@ -1019,7 +1017,7 @@ console.log(order);
                                       <Col>
                                         <Card.Text
                                           style={{ fontFamily: "monospace" }}
-                                          className="mt-5"
+                                          className=""
                                         >
                                           {item.payment}
                                         </Card.Text>
@@ -1035,7 +1033,7 @@ console.log(order);
                                                 e.target.value
                                               )
                                             }
-                                            className="mt-5"
+                                            className=""
                                           >
                                            
                                              
