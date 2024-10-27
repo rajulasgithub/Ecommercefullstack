@@ -357,6 +357,66 @@ bm
         Explore New Arrivals
        </Button>
       </div> 
+      <Container>
+        <Row className='mt-4'>
+          <Col>
+          <Card  style={{ width: '',height:"",backgroundColor:"rgba(255,255,255,0.3)",boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
+      <Card.Img variant="top"  smd="auto" src="/images/ethnic.jpg"  style={{height:"150px"}} />
+      <Card.Body>
+        <Card.Title className='text-center text-white'>Ethnic wears</Card.Title>
+
+      </Card.Body>
+    </Card>
+          </Col>
+          <Col>
+          <Card style={{ width: '',height:"",backgroundColor:"rgba(255,255,255,0.3)",boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
+      <Card.Img variant="top"  smd="auto" src="/images/partywear.jpg" style={{height:"150px"}} />
+      <Card.Body>
+        <Card.Title className='text-center text-white'>Party Wears</Card.Title>
+        
+      </Card.Body>
+    </Card>
+          </Col>
+          <Col>
+          <Card style={{ width: '',height:"",backgroundColor:"rgba(255,255,255,0.3)",boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
+      <Card.Img variant="top"  smd="auto" src="/images/casualwears.jpg" style={{height:"150px"}} />
+      <Card.Body>
+        <Card.Title className='text-center text-white'>Casual Wears</Card.Title>
+        
+      </Card.Body>
+    </Card>
+          </Col>
+        </Row>
+        <Row className='mt-3'>
+          <Col>
+          <Card style={{ width: '',height:"",backgroundColor:"rgba(255,255,255,0.3)",boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
+      <Card.Img variant="top"  smd="auto" src="/images/gowns.jpg" style={{height:"150px"}} />
+      <Card.Body>
+        <Card.Title className='text-center text-white'>Gowns</Card.Title>
+        
+      </Card.Body>
+    </Card>
+          </Col>
+          <Col >
+          <Card style={{ width: '',height:"",backgroundColor:"rgba(255,255,255,0.3)" ,boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
+      <Card.Img variant="top"  smd="auto" src="/images/kidswear.jpg" style={{height:"150px"}} />
+      <Card.Body>
+        <h6 className='text-center text-white'>kids Wear</h6>
+        
+      </Card.Body>
+    </Card>
+          </Col>
+          <Col>
+          <Card style={{ width: '',height:"",backgroundColor:"rgba(255,255,255,0.3)",boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
+      <Card.Img variant="top"  smd="auto" src="/images/menswear.jpg" style={{height:"150px"}} />
+      <Card.Body>
+        <Card.Title className='text-center text-white'>MensWear</Card.Title>
+       
+      </Card.Body>
+    </Card>
+          </Col>
+        </Row>
+      </Container>
      
     </div>
 
