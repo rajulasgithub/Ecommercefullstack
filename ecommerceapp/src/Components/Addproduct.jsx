@@ -49,42 +49,36 @@ const handleSubmit= async (event)=>{
   return (
     <>
     <Header/>
-    <div className='addprdform'>
-        <div className='addproducmaindiv'>
+    <div className='addprdform' style={{backgroundColor:"white"}}>
+        <div className='addproducmaindiv' >
+          <div className='addprct'>
           <div className='addprdtsubdiv'>
         <Form  encType="multpart/form-data"  onSubmit={handleSubmit}>
-          <h2 className='text-center mb-5 ' style={{fontFamily:"monospace"}}>Add Product</h2>
-       {/* <Form.Group className="mb-3" as={Col} sm={12}>
-        <Form.Label></Form.Label> 
-        <Form.Control type="file" placeholder="Product Image"   name='image'  />
-      </Form.Group>  */}
-      {/* <div className='text-center'>
-      <input type='file'  placeholder="Product Image" name='image' className='mb-3' addprdformstyle ></input>
-      </div> */}
-      <Form.Group className="mb-3 addformfile " >
-        {/* <Form.Label>Default file input example</Form.Label> */}
+          <h2 className='text-center mb-5 ' style={{fontFamily:"monospace"}}>ADD PRODUCT</h2>
+      
+      <Form.Group className="mb-3 addformfile " style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}} >
         <Form.Control type="file"  name="image"  onChange={fileChange} />
       </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle ">
-        {/* <Form.Label>product name</Form.Label> */}
+      <Form.Group className="mb-3 addprdformstyle " style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
         <Form.Control type="text" placeholder="Product Name" className='text-center'   name='prdName' onChange={handleChange} />
       </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle">
-        {/* <Form.Label>product name</Form.Label> */}
+      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}} >
         <Form.Control type="text" placeholder="Product Prize" className='text-center'  name='prize' onChange={handleChange} />
       </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle">
-        {/* <Form.Label>product name</Form.Label> */}
+      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
         <Form.Control type="text" placeholder="Product Size" className='text-center'  name='size' onChange={handleChange}  />
       </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle">
-        {/* <Form.Label>product name</Form.Label> */}
+      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
         <Form.Control type="text" placeholder="Product Material" className='text-center'  name='material' onChange={handleChange} />
       </Form.Group>
-      <div className='text-center addprdbtnstyle '>
+      <div className='text-center addprdbtnstyle ' >
       <Button variant="success" size="sm" type='submit'>Add Product</Button>{' '}
       </div>
     </Form>
+    </div>
+    </div>
+    <div className='addprdctres'>
+      
     </div>
     <div>
    
