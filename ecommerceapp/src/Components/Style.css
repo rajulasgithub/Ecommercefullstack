@@ -248,7 +248,7 @@
     background-color: white;
 }
 .viewproductback{
-    background-color: #DCDCDC;
+    background-color: white;
     height: 700px;
 }
 .odrsmryback{
@@ -358,7 +358,7 @@
 
 
 .viewproductback{
-    background-color: #DCDCDC;
+    background-color: white;
     width: 100%;
     height: 900px;
 }
@@ -509,6 +509,9 @@ border: 1px solid black;
     }
 .homepage{
     height: 70rem;
+}
+.viewprdctcards{
+    margin-left: 90px;
 }
     /* .orderbtns{
         display: none;
