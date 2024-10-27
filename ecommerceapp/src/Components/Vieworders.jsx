@@ -157,7 +157,7 @@ console.log(order);
                   Order history
                 </h4>
                 <h6 style={{ fontFamily: "monospace" }} className="">
-                  {filteredData.length} No Of Orders
+                  No Of Orders: {filteredData.length}
                 </h6>
               </div>
 
@@ -455,7 +455,7 @@ console.log(order);
                   Order's
                 </h4>
                 <h6 style={{ fontFamily: "monospace" }} className="">
-                  {} No Of Orders
+                   No Of Orders:{filteredData.length}
                 </h6>
               </div>
 
@@ -466,13 +466,14 @@ console.log(order);
                                           </div>
                     <ListGroup as="ol">
                       <ListGroup.Item as="li">
-                        {filteredData.map((item) => (
+                        {filteredData.map((item,index) => (
                           <Card
                             style={{ maxwidth: "50rem", height: "auto" }}
                             className="mt-5 cartcardstyle"
                           >
                             <div className="cardflex">
                               <div>
+                              {index + 1}
                                 <Card.Img
                                   variant="top"
                                   src={item.image[0]}
@@ -635,7 +636,7 @@ console.log(order);
                   Order history
                 </h4>
                 <h6 style={{ fontFamily: "monospace" }} className="">
-                  {filteredData.length} No Of Orders
+                   No Of Orders:{filteredData.length}
                 </h6>
               </div>
 
@@ -932,7 +933,7 @@ console.log(order);
                   Order's
                 </h4>
                 <h6 style={{ fontFamily: "monospace" }} className="">
-                  {} No Of Orders
+                   No Of Orders: {filteredData.length}
                 </h6>
               </div>
 
@@ -943,18 +944,19 @@ console.log(order);
                                           </div>
                     <ListGroup as="ol">
                       <ListGroup.Item as="li">
-                        {filteredData.map((item) => (
+                        {filteredData.map((item,index) => (
                           <Card
                             style={{ maxwidth: "50rem", height: "auto" }}
-                            className="mt-5 cartcardstyle"
+                            className="mt-1 cartcardstyle"
                           >
                             <div className="">
                               <div>
+                              {index + 1}
                                 <Card.Img
                                   variant="top"
                                   src={item.image[0]}
-                                  style={{ width: "7rem", height: "10rem" }}
-                                  className="img-rounded ms-3"
+                                  style={{ width: "10rem", height: "9rem",marginLeft:"35px" }}
+                                  className="img-rounded mt-2"
                                 />
                               </div>
 
@@ -1033,7 +1035,7 @@ console.log(order);
                                                 e.target.value
                                               )
                                             }
-                                            className=""
+                                            className="mt-1 ms-2"
                                           >
                                            
                                              
