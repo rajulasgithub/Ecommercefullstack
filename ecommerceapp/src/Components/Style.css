@@ -297,7 +297,7 @@
 }
 .hmtextdiv{
     border:7px solid white;
-    width:500px;
+    max-width:500px;
     height:350px;
     color:white;
     margin:auto;
@@ -395,6 +395,9 @@ border: 1px solid black;
 .viewprdbtnstyle{
     width: 250px;
 }
+.hmres{
+    display: none;
+}
 /* .viewodrres{
      display: none;
 } */
@@ -482,6 +485,27 @@ border: 1px solid black;
         height: auto;
         /* font-family:'Aleo'; */
         
+    }
+    .hmres{
+        display: block;
+    }
+    .hmdiv{
+        display: none;
+    }
+    .hmtextdiv{
+        border:7px solid white;
+       width:250px;
+        height:330px;
+        color:white;
+        /* margin:auto; */
+        text-align: center;
+        outline: 2px solid white;
+        outline-offset: 6px;
+        text-shadow: 2px 2px  black;
+        padding-top: 0px;
+        /* word-spacing: 10px; */
+        /* white-space: wrap; */
+        /* padding-top: 40px; */
     }
     /* .orderbtns{
         display: none;

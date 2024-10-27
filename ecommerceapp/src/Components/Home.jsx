@@ -15,7 +15,7 @@ const Home = () => {
     <Header/>
     <div>
     <div className='homepage pt-5'>
-
+      <div className='hmdiv'>
       <div className='hmtextdiv' >
         <h1 className='mt-3'>
         Discover Your Perfect Dress for Every Occasion
@@ -340,11 +340,28 @@ bm
         
       </Row>
       </Container> */}
+      </div>
+      <div className='hmres'>
+     <div className='hmtextdiv' >
+        <h3 className="mt-3">
+        Discover Your Perfect Dress for Every Occasion
+
+        </h3>
+        <h6 style={{fontFamily:"cursive",textShadow:"none"}} className='mt-3'>
+        "From elegant evening gowns to breezy casual styles, explore our collection of dresses designed to celebrate you."
+        </h6>
+       <Button  variant="dark" className='me-2 mt-3' >
+        Shop Now
+       </Button>
+       <Button variant="dark" className=' mt-2'>
+        Explore New Arrivals
+       </Button>
+      </div> 
+     
     </div>
-    <div className='hmres'>
 
     </div>
-    </div>
+       </div>
     </>
   )
 }
