@@ -507,6 +507,9 @@ border: 1px solid black;
         /* white-space: wrap; */
         /* padding-top: 40px; */
     }
+.homepage{
+    height: 70rem;
+}
     /* .orderbtns{
         display: none;
     }
