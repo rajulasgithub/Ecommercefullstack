@@ -382,7 +382,7 @@ const Cart = () => {
                 ))}
               </Col>
 
-              <Col sm={3} className="cartcolstyle mt-5">
+              <Col sm={3} className="cartcolstyle ">
                 <h5 className="text-center mt-3">Shipping Address</h5>
                 {address?.address || address?.state || address?.district ? (
                   <>

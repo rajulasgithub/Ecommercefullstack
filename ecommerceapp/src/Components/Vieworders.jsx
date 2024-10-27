@@ -205,15 +205,15 @@ console.log(order);
                                 <div className="cardtext  ">
                                   
                                   <Card.Text
-                                    style={{ fontFamily: "monospace" }}
-                                    className=""
+                                    style={{ fontFamily: "monospace",marginLeft:"4rem" }}
+                                    className="mt-2"
                                   >
                                     prize:
                                     {" " + item.prdId?.prize}
                                   </Card.Text>
                                  
                                   <Card.Text
-                                    style={{ fontFamily: "monospace" }}
+                                    style={{ fontFamily: "monospace",marginLeft:"4rem" }}
                                     className=""
                                   >
                                     Qnty:
@@ -221,33 +221,33 @@ console.log(order);
                                   </Card.Text>
                                  
                                   <Card.Text
-                                    style={{ fontFamily: "monospace" }}
+                                    style={{ fontFamily: "monospace",marginLeft:"4rem" }}
                                     className=""
                                   >
                                     total :
                                     {" " + item.quantity * item.prdId?.prize}
                                   </Card.Text>
                                                                    <Card.Text
-                                    style={{ fontFamily: "monospace" }}
+                                    style={{ fontFamily: "monospace",marginLeft:"4rem" }}
                                     className=""
                                   >
                                     payment:{" "+item.payment}
                                   </Card.Text>
                                   <Card.Text
-                                    style={{ fontFamily: "monospace" }}
+                                    style={{ fontFamily: "monospace",marginLeft:"4rem" }}
                                     className=""
                                   >
                                     Order Date:{" "+item.date}
                                   </Card.Text>
                                   <Card.Text
-                                    style={{ fontFamily: "monospace" }}
+                                    style={{ fontFamily: "monospace",marginLeft:"4rem" }}
                                     className=""
                                   >
                                     Delivery Date:{" "+item.deliveryDate}
                                   </Card.Text>
                                  
                                   <Card.Text
-                                    style={{ fontFamily: "monospace" }}
+                                    style={{ fontFamily: "monospace",marginLeft:"4rem" }}
                                     className=""
                                   >
                                     status:{" "}
@@ -624,6 +624,484 @@ console.log(order);
               </Container>
             </>
           )}
+        </div>
+        <div className="vieworderres">
+
+        {role == 2 ? (
+            <>
+              <div className="carthead">
+                <h4 style={{ fontFamily: "monospace" }} className="">
+                  Order history
+                </h4>
+                <h6 style={{ fontFamily: "monospace" }} className="">
+                  {filteredData.length} No Of Orders
+                </h6>
+              </div>
+
+              <Container>
+                <div className="orderbtns">
+                  <Row>
+                    <Col sm={11} className="cartcolstyleone ">
+                      <div className="carttitlebartop">
+                       
+                      </div>
+
+                      {filteredData.map((item, index) => (
+                    
+                        <Card
+                          style={{ width: "300px", height: "auto" }}
+                          className=" cartcardstyle"
+                        >
+                          <div className=" ms-2">
+                            <div>
+                              {index + 1}
+                              <Card.Img
+                                variant="top"
+                                src={item.prdId?.image[0]}
+                                style={{
+                                  width: "13rem",
+                                  height: "13rem",
+                                  paddingTop: "1rem",
+                                }}
+                                className="img-rounded ms-4"
+                              />
+
+                              <Card.Text
+                                style={{
+                                  fontFamily: "monospace",
+                                  marginLeft: "1rem",
+                                }}
+                                className="text-center"
+                              >
+                                {item.prdId?.prdName}
+                              </Card.Text>
+                            </div>
+                            {item.status !== 6 ? (
+                              <Card.Body>
+                                <div className="cardhead"></div>
+                                <div className="cardtext  ">
+                                  
+                                  <Card.Text
+                                    style={{ fontFamily: "monospace" }}
+                                    className="m-0"
+                                  >
+                                    prize:
+                                    {" " + item.prdId?.prize}
+                                  </Card.Text>
+                                 
+                                  <Card.Text
+                                    style={{ fontFamily: "monospace" }}
+                                    className="m-0"
+                                  >
+                                    Qnty:
+                                    {" " + item.quantity}
+                                  </Card.Text>
+                                 
+                                  <Card.Text
+                                    style={{ fontFamily: "monospace" }}
+                                    className="m-0"
+                                  >
+                                    total :
+                                    {" " + item.quantity * item.prdId?.prize}
+                                  </Card.Text>
+                                                                   <Card.Text
+                                    style={{ fontFamily: "monospace" }}
+                                    className="m-0"
+                                  >
+                                    payment:{" "+item.payment}
+                                  </Card.Text>
+                                  <Card.Text
+                                    style={{ fontFamily: "monospace" }}
+                                    className="m-0"
+                                  >
+                                    Order Date:{" "+item.date}
+                                  </Card.Text>
+                                  <Card.Text
+                                    style={{ fontFamily: "monospace" }}
+                                    className="m-0"
+                                  >
+                                    Delivery Date:{" "+item.deliveryDate}
+                                  </Card.Text>
+                                 
+                                  <Card.Text
+                                    style={{ fontFamily: "monospace" }}
+                                    className="m-0"
+                                  >
+                                    status:{" "}
+                                    {item.status === 3
+                                      ? "Order Cancelled"
+                                      : item.status === 4
+                                      ? "Processing"
+                                      : item.status === 5
+                                      ? "out for delivery"
+                                      : item.status === 6
+                                      ? "out of stock"
+                                      : item.status === 7
+                                      ? "Delivered"
+                                      : "Ordered"}
+                                  </Card.Text>
+                                </div>
+                              </Card.Body>
+                            ) : (
+                              <div className="">
+                              <Button
+                                variant="danger"
+                                size="lg"
+                                className="outofstockbtn  ms-5" disabled
+                              >
+                                Out of stock
+                              </Button>
+                              </div>
+                            )}
+                          </div>
+                          {(item.status === 3) ? (
+                      
+                            <div>
+                              
+                                <Button
+                                  variant="primary"
+                                  size="sm"
+                                  className="viewprdbtnstyle  mb-4 ms-4"
+                                  onClick={() => cancelOrder(item._id)}  disabled
+                                >
+                                  Cancelled
+                                </Button>
+                              
+                            </div>
+                          ) : (item.status===4)?
+                          (
+                          
+
+                            <div>
+                              <Button
+                                  variant="primary"
+                                  size="sm"
+                                  className="viewprdbtnstyle ms-5 mb-3" disabled
+                                
+                                >
+                                  Processing
+                                </Button>
+                                <Button
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle  ms-3 mb-3" 
+                           
+                          >
+                            Track your Order
+                          </Button>
+                          
+                            </div>
+                          ):
+                          (item.status===5)?
+                          (
+                            <div className="d-flex flex-column">
+                               <Button
+                                  variant="primary"
+                                  size="sm"
+                                  className="viewprdbtnstyle ms-4 mb-2" disabled
+                                
+                                >
+                                  Out for Delivery
+                                </Button>
+                                
+                                <Button 
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle  ms-4 mb-2"
+                           
+                          >
+                            Track your Order
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle ms-4 mb-2" disabled={isDisabled} onClick={()=>handleShow(item._id)}
+                           
+                          >
+                            Change Delivery date
+                          </Button>
+                            </div>
+                          ):
+                          (item.status===6)?
+                          (
+                            <div>
+                              <Button
+                                  variant="primary"
+                                  size="sm"
+                                  className="viewprdbtnstyle  mb-4 ms-4" disabled
+                                
+                                >
+                                  Out of stock
+                                </Button>
+                            </div>
+                          ):
+                          (item.status===7)?
+                          (
+                            <div>
+                              <Button
+                                  variant="primary"
+                                  size="sm"
+                                  className="viewprdbtnstyle  mb-4 ms-4" disabled
+                                
+                                >
+                                  Delivered
+                                </Button>
+                            </div>
+                          ):(item.status==2)?
+                          (
+                            <div className="d-flex flex-column">
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                className="viewprdbtnstyle ms-4 mb-2"
+                                onClick={() => cancelOrder(item._id)} disabled={isDisabled}
+                              >
+                                Cancel Order
+                              </Button>
+                              <Button
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle ms-4 mb-2"
+                           
+                          >
+                            Track your Order
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="viewprdbtnstyle ms-4 mb-2" disabled={isDisabled} onClick={()=>handleShow(item._id)}
+                           
+                          >
+                            Change Delivery date
+                          </Button>
+                            </div>
+                            
+                          ):
+                          <>
+                          </>
+                        }
+                        </Card>
+                      ))}
+                    </Col>
+                  </Row>
+                  <div>
+                    <div>
+                      
+                    </div>
+                     
+                    <div>
+                     
+                    </div>
+
+
+                    <div>
+                    <Modal show={show} onHide={handleClose}>
+                 <Modal.Header closeButton>
+               <Modal.Title>Choose Date</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+              <input
+        type="date" name="deliveryDate"
+        onChange={(e)=>setDeliveryDate({date:e.target.value})}
+        
+      />
+              </Modal.Body>
+              <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+               Close
+              </Button>
+              <Button variant="primary" onClick={dateChange}>
+               Save Changes
+              </Button>
+            </Modal.Footer>
+             </Modal>
+
+                    </div>
+
+
+                  </div>
+                </div>
+              </Container>
+              
+            </>
+          ) : (
+            <>
+              <div className="carthead">
+                <h4 style={{ fontFamily: "monospace" }} className="">
+                  Order's
+                </h4>
+                <h6 style={{ fontFamily: "monospace" }} className="">
+                  {} No Of Orders
+                </h6>
+              </div>
+
+              <Container>
+                <Row>
+                  <Col sm={12} className="cartcolstyleone me-5">
+                    <div className="carttitlebartop">
+                                          </div>
+                    <ListGroup as="ol">
+                      <ListGroup.Item as="li">
+                        {filteredData.map((item) => (
+                          <Card
+                            style={{ maxwidth: "50rem", height: "auto" }}
+                            className="mt-5 cartcardstyle"
+                          >
+                            <div className="cardflex">
+                              <div>
+                                <Card.Img
+                                  variant="top"
+                                  src={item.image[0]}
+                                  style={{ width: "7rem", height: "10rem" }}
+                                  className="img-rounded ms-3"
+                                />
+                              </div>
+
+                              <Card.Body>
+                                <div className="cardhead"></div>
+                                <div className="cardtext ">
+                                  <Container>
+                                    <Row>
+                                      <Col>
+                                        <Card.Text
+                                          style={{ fontFamily: "monospace" }}
+                                          className="mt-5"
+                                        >
+                                          {item.prdName}
+                                        </Card.Text>
+                                      </Col>
+                                      <Col>
+                                        <Card.Text
+                                          style={{ fontFamily: "monospace" }}
+                                          className="mt-5"
+                                        >
+                                          {item.size}
+                                        </Card.Text>
+                                      </Col>
+                                      <Col>
+                                        <Card.Text
+                                          style={{ fontFamily: "monospace" }}
+                                          className="mt-5"
+                                        >
+                                          {item.prize}
+                                        </Card.Text>
+                                      </Col>
+                                      <Col>
+                                        <Card.Text
+                                          style={{ fontFamily: "monospace" }}
+                                          className="mt-5"
+                                        >
+                                          {item.quantity}
+                                        </Card.Text>
+                                      </Col>
+
+                                      <Col>
+                                        <Card.Text
+                                          style={{ fontFamily: "monospace" }}
+                                          className="mt-5"
+                                        >
+
+                                          {item.quantity * item.prize}
+                                        </Card.Text>
+                                      </Col>
+                                      <Col>
+                                        <Card.Text
+                                          style={{ fontFamily: "monospace" }}
+                                        >
+                                          {item.firstname+" "+item.address+" "+item.state+
+                                          " "+item.district+" "+item.pincode+
+                                          " "+item.BuildingNumber+" "+item.number
+                                          }
+                                         
+                                         
+                                        </Card.Text>
+                                      </Col>
+                                      <Col>
+                                        <Card.Text
+                                          style={{ fontFamily: "monospace" }}
+                                          className="mt-5"
+                                        >
+                                          {item.payment}
+                                        </Card.Text>
+                                      </Col>
+                                      <Col>
+                                        {
+                                          <select
+                                            style={buttonStyle}
+                                            name="status"
+                                            onChange={(e) =>
+                                              statusChange(
+                                                item._id,
+                                                e.target.value
+                                              )
+                                            }
+                                            className="mt-5"
+                                          >
+                                           
+                                             
+                                            <option>
+                                              {item.status === 3
+                                                ? "Order Cancelled"
+                                                : item.status === 4
+                                                ? "Processing"
+                                                : item.status === 5
+                                                ? "out for delivery"
+                                                : item.status === 6
+                                                ? "out of stock"
+                                                : item.status === 7
+                                                ? "Delivered"
+                                                : "Ordered"}
+                                            </option>
+                                            {( item.status==3 )?(
+                                            <>
+                                            <Button variant="secondary">
+                                            Cancelled
+                                           </Button>
+    
+                                            </>):(item.status==6)?
+                                            (
+                                              <>
+                                              <Button variant="secondary">
+                                            Out of Stock
+                                           </Button>
+                                              </>
+                                            ):
+                        
+                                            <>
+                                            <option value="4">
+                                              Processing
+                                            </option>
+                                            <option value="5">
+                                              Out For Delivery
+                                            </option>
+                                            <option value="7">Delivered</option>
+                                            </>
+
+                                              }
+                                            
+                                          </select>
+                                        }
+                                      </Col>
+
+                                      <Col>
+                                        
+                                      </Col>
+                                    </Row>
+                                  </Container>
+                                </div>
+                                <div></div>
+                              </Card.Body>
+                            </div>
+                          </Card>
+                        ))}
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </Col>
+                </Row>
+              </Container>
+            </>
+          )}
+
         </div>
       </div>
     </div>
