@@ -78,6 +78,30 @@ const handleSubmit= async (event)=>{
     </div>
     </div>
     <div className='addprdctres'>
+    <div className='addprdtsubdiv'>
+        <Form  encType="multpart/form-data"  onSubmit={handleSubmit}>
+          <h2 className=' mb-5 ' style={{fontFamily:"monospace",marginLeft:"6rem"}}>ADD PRODUCT</h2>
+      
+      <Form.Group className="mb-3 addprdformstyle " style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}} >
+        <Form.Control type="file"  name="image"  onChange={fileChange} />
+      </Form.Group>
+      <Form.Group className="mb-3   addprdformstyle " style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}}>
+        <Form.Control type="text" placeholder="Product Name" className='text-center'   name='prdName' onChange={handleChange} />
+      </Form.Group>
+      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}} >
+        <Form.Control type="text" placeholder="Product Prize" className='text-center'  name='prize' onChange={handleChange} />
+      </Form.Group>
+      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}}>
+        <Form.Control type="text" placeholder="Product Size" className='text-center'  name='size' onChange={handleChange}  />
+      </Form.Group>
+      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}}>
+        <Form.Control type="text" placeholder="Product Material" className='text-center'  name='material' onChange={handleChange} />
+      </Form.Group>
+      <div className=' addprdbtnstyle ' style={{marginLeft:"8rem"}} >
+      <Button variant="success" size="sm" type='submit'>Add Product</Button>{' '}
+      </div>
+    </Form>
+    </div>
       
     </div>
     <div>
