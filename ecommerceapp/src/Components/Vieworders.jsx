@@ -166,19 +166,7 @@ console.log(order);
                   <Row>
                     <Col sm={11} className="cartcolstyleone ">
                       <div className="carttitlebartop">
-                        {/* <div className="carttitlebar"> */}
-                        {/* <div><h6>item</h6></div>
-
-                  <div><h6 className="ms-5">size</h6></div>
-
-                  <div><h6 className=" ms-5">prize</h6></div>
-                  <div> <h6 className=" ">Quantity </h6></div>
-                  <div><h6 className="">total </h6></div>
-                  <div><h6 className="">Address </h6></div>
-                  <div> <h6 className="">paymentMode </h6></div>
-                  <div><h6 className="">Status </h6></div> */}
-
-                        {/* </div> */}
+                       
                       </div>
 
                       {filteredData.map((item, index) => (
@@ -215,19 +203,7 @@ console.log(order);
                               <Card.Body>
                                 <div className="cardhead"></div>
                                 <div className="cardtext  ">
-                                  {/* <Container> */}
-                                  {/* <Row> */}
-
-                                  {/* <Col > */}
-
-                                  {/* </Col> */}
-                                  {/* <Col  > */}
-                                  {/* <Card.Text style={{ fontFamily: "monospace" }}className=''>
-                            Size
-                            {item.prdId.size}
-                          </Card.Text> */}
-                                  {/* </Col> */}
-                                  {/* <Col  > */}
+                                  
                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
                                     className=""
@@ -235,8 +211,7 @@ console.log(order);
                                     prize:
                                     {" " + item.prdId?.prize}
                                   </Card.Text>
-                                  {/* </Col> */}
-                                  {/* <Col  > */}
+                                 
                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
                                     className=""
@@ -244,59 +219,33 @@ console.log(order);
                                     Qnty:
                                     {" " + item.quantity}
                                   </Card.Text>
-                                  {/* </Col>
-                          
-                            <Col  > */}
+                                 
                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
                                     className=""
                                   >
-                                    {/* {item.prdId.prize * item.quantity} */}
                                     total :
                                     {" " + item.quantity * item.prdId?.prize}
                                   </Card.Text>
-                                  {/* </Col>
-                            <Col  > */}
-                                  {/* <Card.Text style={{ fontFamily: "monospace" }} >
-                              {item.prdId.prize * item.quantity}
-                              Address
-                              {address.address}
-                              <br/>
-                              {address.district}
-                              {address.state}
-                              <br/>
-                              {address.pincode}
-                              {address.BuildingNumber}
-                              <br/>
-                              876564567
-                              
-                            </Card.Text> */}
-                                  {/* </Col>
-                          <Col  > */}
-                                  <Card.Text
+                                                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
                                     className=""
                                   >
-                                    {/* {item.prdId.prize * item.quantity} */}
                                     payment:{" "+item.payment}
                                   </Card.Text>
                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
                                     className=""
                                   >
-                                    {/* {item.prdId.prize * item.quantity} */}
                                     Order Date:{" "+item.date}
                                   </Card.Text>
                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
                                     className=""
                                   >
-                                    {/* {item.prdId.prize * item.quantity} */}
                                     Delivery Date:{" "+item.deliveryDate}
                                   </Card.Text>
-                                  {/* </Col>
-                            <Col  > */}
-
+                                 
                                   <Card.Text
                                     style={{ fontFamily: "monospace" }}
                                     className=""
@@ -460,25 +409,11 @@ console.log(order);
                   </Row>
                   <div>
                     <div>
-                      {/* <Button
-                        variant="primary"
-                        size="lg"
-                        className="viewprdbtnstyle mb-3"
-                      >
-                        Track your Order
-                      </Button> */}
+                      
                     </div>
                      
                     <div>
-                      {/* <Button
-                        variant="primary"
-                        size="lg"
-                        className="viewprdbtnstyle " 
-                        onClick={handleShow}   disabled={isDisabled} 
-
-                      >
-                        Change Delivery date
-                      </Button> */}
+                     
                     </div>
 
 
@@ -491,8 +426,7 @@ console.log(order);
               <input
         type="date" name="deliveryDate"
         onChange={(e)=>setDeliveryDate({date:e.target.value})}
-        // value={}
-        // onChange={(e) => setDeliveryDate(e.target.value)}
+        
       />
               </Modal.Body>
               <Modal.Footer>
@@ -511,133 +445,7 @@ console.log(order);
                   </div>
                 </div>
               </Container>
-              {/* nb */}
-              {/* <Container>
-             <div className='viewodrres'>
-              nbjk
-            <Row >
-              <Col sm={10} className="cartcolstyleone me-5">
-               
-               
-                {filteredData.map((item,index) => (
-                  <Card
-                    style={{ maxwidth: "50rem", height: "auto" }}
-                    className="mt-5 cartcardstyle"
-                  >
-                    
-                    <div className="cardflex">
-                      <div>
-                      {index+1}
-                        <Card.Img
-                          variant="top" 
-                          src={item.prdId?.image[0]}
-                          style={{ width: "15rem", height: "15rem",paddingTop:'1rem' }}
-                          className="img-rounded ms-3"
-                        />
-
-                         <Card.Text style={{ fontFamily: "monospace",marginLeft:'1rem' }} className='text-center'>
-                          
-                         {item.prdId?.prdName}
-                          </Card.Text>
-                      </div>
-                      {item.status!=6? (
-                      <Card.Body>
-                        <div className="cardhead">
-                          
-                        </div>
-                        <div className="cardtext  ">
-                                                    <Card.Text style={{ fontFamily: "monospace" }} className=''>
-                              prize:
-                              {" "+item.prdId?.prize}
-                            </Card.Text>
-                           
-                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
-                              Qnty:
-                              {" "+item.quantity}
-                            </Card.Text>
-                           
-                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
-                              total
-                             {" "+item.quantity*item.prdId?.prize}
-                            </Card.Text>
-                           
-                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
-                              payment
-                            </Card.Text>
-                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
-                              Order Date:
-                            </Card.Text>
-                            <Card.Text style={{ fontFamily: "monospace" }} className=''>
-                               Delivery Date:
-                            </Card.Text>
-                            
-
-                           <Card.Text style={{ fontFamily: "monospace" }} className=''>
-                            status: { item.status==3?("Order Cancelled"): item.status==4? ("Processing"): item.status==5? ("out for delivery"): item.status==6? ("out of stock"): ("Ordered")}
-                            </Card.Text>
-                            
-      </div>
-                        
-                      </Card.Body>):
-                      (
-                        <Button
-                        variant="danger"
-                        size="lg"
-                        className="cartbtnstyle "
-                       
-                      >
-                       Out of stock
-                      </Button> 
-                    
-                  )}
-                  </div>
-                    {item.status===3?
-                    <div>
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="viewprdbtnstyle  mb-4 ms-2"
-                     onClick={()=>cancelOrder(item._id)}
-                    >
-                     Cancelled
-                    </Button>
-              </div>:
-                          <div>
-                          <Button
-                            variant="primary"
-                            size="lg"
-                            className="viewprdbtnstyle mb-4 ms-2"
-                           onClick={()=>cancelOrder(item._id)}
-                          >
-                           Cancel Order
-                          </Button>
-                          <Button
-                            variant="primary"
-                            size="lg"
-                            className="viewprdbtnstyle mb-3"
-                           
-                          >
-                            Track your Order
-                          </Button>
-                          <Button
-                            variant="primary"
-                            size="lg"
-                            className="viewprdbtnstyle " disabled={isDisabled}
-                           
-                          >
-                            Change Delivery date
-                          </Button>
-
-                    </div>
-}
-                  </Card>
-                 ))}  
-              </Col> 
-            </Row>
-            
-          </div>
-          </Container> */}
-              {/* mn */}
+              
             </>
           ) : (
             <>
@@ -654,20 +462,7 @@ console.log(order);
                 <Row>
                   <Col sm={12} className="cartcolstyleone me-5">
                     <div className="carttitlebartop">
-                      {/* <div className="carttitlebar"> */}
-                      {/* <div><h6>item</h6></div>
-
-                  <div><h6 className="ms-5">size</h6></div>
-
-                  <div><h6 className=" ms-5">prize</h6></div>
-                  <div> <h6 className=" ">Quantity </h6></div>
-                  <div><h6 className="">total </h6></div>
-                  <div><h6 className="">Address </h6></div>
-                  <div> <h6 className="">paymentMode </h6></div>
-                  <div><h6 className="">Status </h6></div> */}
-
-                      {/* </div> */}
-                    </div>
+                                          </div>
                     <ListGroup as="ol">
                       <ListGroup.Item as="li">
                         {filteredData.map((item) => (
@@ -679,7 +474,6 @@ console.log(order);
                               <div>
                                 <Card.Img
                                   variant="top"
-                                  // src={item.prdId?.image[0]}
                                   src={item.image[0]}
                                   style={{ width: "7rem", height: "10rem" }}
                                   className="img-rounded ms-3"
@@ -696,7 +490,6 @@ console.log(order);
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
-                                          {/* {item.prdId?.prdName} */}
                                           {item.prdName}
                                         </Card.Text>
                                       </Col>
@@ -705,7 +498,6 @@ console.log(order);
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
-                                          {/* {item.prdId?.size} */}
                                           {item.size}
                                         </Card.Text>
                                       </Col>
@@ -714,7 +506,6 @@ console.log(order);
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
-                                          {/* {item.prdId?.prize} */}
                                           {item.prize}
                                         </Card.Text>
                                       </Col>
@@ -723,7 +514,6 @@ console.log(order);
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
-                                          {/* {item.quantity} */}
                                           {item.quantity}
                                         </Card.Text>
                                       </Col>
@@ -733,7 +523,6 @@ console.log(order);
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
-                                          {/* {item.prdId.prize * item.quantity} */}
 
                                           {item.quantity * item.prize}
                                         </Card.Text>
@@ -755,7 +544,6 @@ console.log(order);
                                           style={{ fontFamily: "monospace" }}
                                           className="mt-5"
                                         >
-                                          {/* {item.prdId.prize * item.quantity} */}
                                           {item.payment}
                                         </Card.Text>
                                       </Col>
@@ -819,19 +607,7 @@ console.log(order);
                                       </Col>
 
                                       <Col>
-                                        {/* {item.status===3?
-                          <div>
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            className="cartbtnstyle mt-5"
-                            // onClick={()=>rejectOrder(item._id)}
-                          >
-                           cancelled
-                          </Button>
-                          </div>:
-                          ""
-                          } */}
+                                        
                                       </Col>
                                     </Row>
                                   </Container>
