@@ -266,7 +266,7 @@ const Home = () => {
               </Col> */}
             </Row>
           </Container>
-bm
+
         </div>
         <div style={{height:"200px",backgroundColor:"black",textAlign:"center",color:"white",fontFamily:"monospace"}}>
 
@@ -293,53 +293,7 @@ bm
        </div>
       
         </div>
-        {/* <div className='text-center  homepagehead'>
-      <h1 className=' hometxt'>Stay SomeHome.Shop Online..
-       <br/> With trendLife Collections
-      </h1>
-     <h4 className='text-white'>Huge Collection of Women men and kids wear</h4>
-        </div> */}
-        {/* <Container>
-      <Row>
-        <Col>
-        <Card  className='homecardflex'>
-      <Card.Img variant="top" src='/images/cardcolone.jpg' />
-      <Card.Body>
-        <Card.Title>Card Title</Card.Title>
-        
-      </Card.Body>
-    </Card>
-    </Col>
-    <Col>
-    <Card >
-      <Card.Img variant="top" src="holder.js/100px180" />
-      <Card.Body>
-        <Card.Title>Card Title</Card.Title>
-        
-      </Card.Body>
-    </Card>
-    </Col>
-    <Col>
-    <Card >
-      <Card.Img variant="top" src="holder.js/100px180" />
-      <Card.Body>
-        <Card.Title>Card Title</Card.Title>
-        
-      </Card.Body>
-    </Card> 
-    </Col>
-    <Col><Card >
-      <Card.Img variant="top" src="holder.js/100px180" />
-      <Card.Body>
-        <Card.Title>Card Title</Card.Title>
-        
-      </Card.Body>
-    </Card>
-        </Col>
-        
-        
-      </Row>
-      </Container> */}
+       
       </div>
       <div className='hmres'>
      <div className='hmtextdiv' >
@@ -481,6 +435,47 @@ bm
           </Col>
         </Row>
       </Container>
+      <div style={{backgroundColor:"#008B8B",height:"520px",fontFamily:"cursive"}}>
+
+          <Container style={{display:"flex",justifyContent:"space-around"}}>
+            <Row>
+              <Col md="auto">
+              <Card style={{ width: '',height:"",marginTop:"30px",backgroundColor:"rgba(255,255,255)",boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
+      <Card.Body>
+        <Card.Title className='text-center text-dark'>Quality and Style You Can Trust</Card.Title>
+        <Card.Text style={{textAlign:"justify"}}>
+        Our passion is crafting dresses that make you look and feel your best. With high-quality fabrics and timeless designs, our collection is tailored to flatter every shape and suit any style.
+        </Card.Text>
+      </Card.Body>
+    </Card>
+              </Col>
+              <Col md="auto">
+              <Card style={{ width: '',height:"",marginTop:"20px",backgroundColor:"rgba(255,255,255)",boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
+      <Card.Body>
+        <Card.Title className='text-center text-dark'>Ethnic wearsMust-Haves This Season</Card.Title>
+        <Card.Text style={{textAlign:"justify"}}>
+        Shop our bestsellers, customer favorites, and timeless styles that are flying off the shelves.
+        </Card.Text>
+      </Card.Body>
+    </Card>
+              </Col>
+              <Col md="auto">
+              <Card style={{ width: '',height:"",marginTop:"20px",backgroundColor:"rgba(255,255,255)",boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
+      <Card.Body>
+        <Card.Title className='text-center text-dark'>What Our Customers Are Saying</Card.Title>
+        <Card.Text style={{textAlign:"justify"}}>
+        I felt amazing in my dress! The fit and quality are unbeatable.
+        Perfect dress for every occasion—I keep coming back
+                </Card.Text>
+      </Card.Body>
+    </Card>
+              </Col>
+             
+            </Row>
+          </Container>
+bm
+        </div>
+
      
     </div>
 
