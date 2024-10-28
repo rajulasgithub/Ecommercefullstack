@@ -69,7 +69,7 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <Nav.Link href="/" className="navtext me-3">
+                  <Nav.Link href="/home" className="navtext me-3">
                     Home
                   </Nav.Link>
                   <Nav.Link href="/login" className="navtext">
