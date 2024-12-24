@@ -31,6 +31,7 @@ const[addproduct,setAddproduct]=useState({})
   formdata.append('material',addproduct.material)
   
 
+  
 
 
   console.log(addproduct);

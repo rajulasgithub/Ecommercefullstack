@@ -57,7 +57,8 @@ authroutes.post('/signup',async(req,res)=>{
                 error:false,
                 data:signupresult,
                 message:"successfully registered",
-            })
+            })}
+            else{
         return res.status(400).json({
                 success:false,
                 error:true,
@@ -88,7 +89,8 @@ authroutes.get('/view',async(req,res)=>{
                 error:false,
                 data:result,
                 message:"successfully viewed",
-            })
+            })}
+            else{
            return res.status(400).json({
                 success:false,
                 error:true,
@@ -157,7 +159,8 @@ authroutes.get('/delete/:id',async(req,res)=>{
                 error:false,
                 data:result,
                 message:"deleted one",
-            })
+            })}
+            else{
             return res.status(400).json({
                 success:false,
                 error:true,
