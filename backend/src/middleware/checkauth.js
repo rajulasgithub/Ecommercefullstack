@@ -15,6 +15,7 @@ module.exports=(req,res,next)=>{
         success:false,
         error:true,
         errorMessage:error,
+        
         message:"auth failed",
     }) 
   }

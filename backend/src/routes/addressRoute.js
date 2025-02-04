@@ -12,7 +12,7 @@ addressRoute.post('/addAddress',checkauth,async(req,res)=>{
     loginId:req.userData.loginId,
     address:req.body.address,
     state:req.body.state,
-    district:req.body.district,
+    district:req.body.district,                     
     pincode:req.body.pincode,
     BuildingNumber:req.body.BuildingNumber,
         }

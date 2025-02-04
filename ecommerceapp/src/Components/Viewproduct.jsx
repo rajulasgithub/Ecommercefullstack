@@ -49,6 +49,7 @@ const Viewproduct = () => {
       'Authorization':`bearer ${token}`,
       // 'Content-Type':'application/json'
     }
+    
     axios.post(`https://ecommercefullstack-xv9x.onrender.com/product/addtocart`,prdId,{
       headers:headers
     }).then((response)=>{

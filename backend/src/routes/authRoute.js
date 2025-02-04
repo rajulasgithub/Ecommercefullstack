@@ -204,12 +204,16 @@ authroutes.put('/update/:id',async(req,res)=>{
                 data:result,
                 message:"deleted one",
             })
+        }else{
             return  res.status(400).json({
                 success:false,
                 error:true,
                 message:"not deleted",
             })
+
         }
+           
+        
         
     }
     catch(error){
@@ -386,12 +390,17 @@ authroutes.get('/viewonecompany/:id',async(req,res)=>{
                 data:result,
                 message:"successfully viewed",
             })
+           
+        }
+        else{
             return res.status(400).json({
                 success:false,
                 error:true,
                 message:"not viewed",
             })
+
         }
+       
     
     }
     catch(error){
@@ -417,12 +426,16 @@ authroutes.get('/deletecompany/:id',async(req,res)=>{
                 data:result,
                 message:"deleted one",
             })
+        }else{
             return res.status(400).json({
                 success:false,
                 error:true,
                 message:"not deleted",
             })
+
         }
+            
+        
         
     }
     catch(error){
@@ -466,11 +479,15 @@ authroutes.put('/updatecompany/:id',async(req,res)=>{
                 data:result,
                 message:"updated one",
             })
+        }else{
             return  res.status(400).json({
                 success:false,
                 error:true,
                 message:"not updated",
             })
+
+        
+           
         }
         
     }
@@ -485,6 +502,69 @@ authroutes.put('/updatecompany/:id',async(req,res)=>{
     }
 })
 
+
+
+
+
+authroutes.post('/login',async(req,res)=>{
+    try{
+        const email=req.body.email;
+        const password=req.body.password;
+        if(!email || !password){
+            return res.status(400).json({
+                success:false,
+                error:true,
+                message:"all fields are required",
+
+            })
+        }
+        else{
+            const result= await loginDB.findOne({email:req.body.email});
+            if(!result){
+                return res.status(400).json({
+                    success:false,
+                    error:true,
+                    message:"email not found",
+                })
+            }
+            else{
+                if(result.password==password){
+
+                 const token=jwt.sign(
+                    {
+                        loginId:result._id,
+                        role:result.role,
+                    },
+                    'encryptkey',
+                    {expiresIn:'1h'}
+                 )
+
+                    return res.status(200).json({
+                        success:true,
+                        error:false,
+                        message:"login successful",
+                        token:result.token,
+                    })
+                }
+                else{
+                    return res.status(400).json({
+                        success:false,
+                        error:true,
+                        message:"password is incorrect",
+                    })
+                }
+            }
+        }
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            error:true,
+            message:error.message,
+            
+        })
+    }
+})
 
 
 

@@ -510,6 +510,8 @@ productRoute.put("/decrcart/:id", async (req, res) => {
   try {
     console.log(req.params.id);
 
+
+    
     const oldData = await cartDB.findOne({ _id: req.params.id });
     console.log(oldData);
 
