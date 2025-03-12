@@ -23,6 +23,7 @@ const[addproduct,setAddproduct]=useState({})
   setAddproduct({...addproduct,image:event.target.files[0]})
  }
 
+ 
   const formdata= new FormData();
   formdata.append('prdName',addproduct.prdName)
   formdata.append('image',addproduct.image)

@@ -50,6 +50,7 @@ authroutes.post('/signup',async(req,res)=>{
             
         }
         
+        
         const signupresult= await signupDB(signup).save();
         if(signupresult){
             return   res.status(200).json({
