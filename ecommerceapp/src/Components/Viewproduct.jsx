@@ -25,7 +25,7 @@ const Viewproduct = () => {
 
   // const[cart,setAddtocart]=useState("");
  useEffect(() => {
-  axios.get('https://ecommercefullstack-xv9x.onrender.com/product/viewproduct').then((response)=>{
+  axios.get('http://localhost:8080/product/viewproduct').then((response)=>{
     console.log(response.data.data); 
     setProduct(response.data.data);
   }).catch((error)=>{
@@ -50,7 +50,7 @@ const Viewproduct = () => {
       // 'Content-Type':'application/json'
     }
     
-    axios.post(`https://ecommercefullstack-xv9x.onrender.com/product/addtocart`,prdId,{
+    axios.post(`http://localhost:8080/product/addtocart`,prdId,{
       headers:headers
     }).then((response)=>{
       console.log(response);
@@ -64,7 +64,7 @@ const Viewproduct = () => {
 
 const dltproduct=(id)=>{
   console.log(id);
-   axios.put(`https://ecommercefullstack-xv9x.onrender.com/product/deleteproduct/${id}`).then((response)=>{
+   axios.put(`http://localhost:8080/product/deleteproduct/${id}`).then((response)=>{
     console.log(response);
     window.location.reload();
    }).catch((error)=>{
@@ -99,7 +99,7 @@ const fileChange=(event)=>{
 
 
  const handleUpdate=(id)=>{
-   axios.put(`https://ecommercefullstack-xv9x.onrender.com/product/updateproduct/${id}`,formdata).then((response)=>{
+   axios.put(`http://localhost:8080/product/updateproduct/${id}`,formdata).then((response)=>{
     console.log(response.data.data);  
    }).catch((error)=>{
      console.log(error);
@@ -118,7 +118,7 @@ const handleShow = () => setShow(true);
 
 const setStatus=(id,value)=>{
   console.log(value);
-     axios.put(`https://ecommercefullstack-xv9x.onrender.com/product/updateproductstatus/${id}/${value}`).then((response)=>{
+     axios.put(`http://localhost:8080/product/updateproductstatus/${id}/${value}`).then((response)=>{
       console.log(response);
       
      }).catch((error)=>{

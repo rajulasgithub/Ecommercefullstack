@@ -50,7 +50,7 @@ const Vieworders = () => {
     };
 
     axios
-      .get("https://ecommercefullstack-xv9x.onrender.com/product/viewcartcmpny")
+      .get("http://localhost:8080/product/viewcartcmpny")
       .then((response) => {
         console.log(response.data.data);
         setOrder(response.data.data);
@@ -61,7 +61,7 @@ const Vieworders = () => {
       console.log(order)
 
     axios
-      .get("https://ecommercefullstack-xv9x.onrender.com/product/vieworderuser", { headers: headers })
+      .get("http://localhost:8080/product/vieworderuser", { headers: headers })
       .then((response) => {
         console.log(response.data.data);
         setOrder(response.data.data);
@@ -91,7 +91,7 @@ console.log(order);
   const cancelOrder = (id) => {
     
     axios
-      .put(`https://ecommercefullstack-xv9x.onrender.com/product/cancelorder/${id}`)
+      .put(`http://localhost:8080/product/cancelorder/${id}`)
       .then((response) => {
         console.log(response);
       })
@@ -105,7 +105,7 @@ console.log(order);
 
   const statusChange = (id, value) => {
     axios
-      .put(`https://ecommercefullstack-xv9x.onrender.com/product/updatecartstatus/${id}/${value}`)
+      .put(`http://localhost:8080/product/updatecartstatus/${id}/${value}`)
       .then((response) => {
         console.log(response);
         // window.location.reload();
@@ -136,7 +136,7 @@ console.log(order);
     const id=getid;
     console.log(deliveryDate);
    
-     axios.put(`https://ecommercefullstack-xv9x.onrender.com/product/updatedeliverydate/${id}`,deliveryDate).then((response)=>{
+     axios.put(`http://localhost:8080/product/updatedeliverydate/${id}`,deliveryDate).then((response)=>{
       console.log(response);
      }).catch((error)=>{
       console.log(error);

@@ -75,7 +75,7 @@ const [error, setError] = useState({});
         return
       }
     
-    axios.post('https://ecommercefullstack-xv9x.onrender.com/auth/signup',signup).then((response)=>{
+    axios.post('http://localhost:8080/auth/signup',signup).then((response)=>{
       console.log(response); 
     }).catch((error) => {
       console.log(error);

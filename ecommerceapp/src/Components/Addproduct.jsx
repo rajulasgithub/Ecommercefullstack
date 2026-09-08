@@ -40,7 +40,7 @@ const[addproduct,setAddproduct]=useState({})
 const handleSubmit= async (event)=>{
   event.preventDefault();
 
-  axios.post('https://ecommercefullstack-xv9x.onrender.com/product/addproduct',formdata).then((response)=>{
+  axios.post('http://localhost:8080/product/addproduct',formdata).then((response)=>{
     console.log(response);   
   }).catch((error)=>{
     console.log(error);

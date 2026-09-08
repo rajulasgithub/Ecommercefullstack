@@ -78,7 +78,7 @@ const OrderSummary = () => {
       Authorization: `bearer ${token}`,
       // 'Content-Type':'application/json'
     };
-    axios.put('https://ecommercefullstack-xv9x.onrender.com/product/updatecart',{},{headers:headers}).then((response)=>{
+    axios.put('http://localhost:8080/product/updatecart',{},{headers:headers}).then((response)=>{
       console.log(response);  
     }).catch((error)=>{
       console.log(error);   
@@ -111,7 +111,7 @@ const OrderSummary = () => {
       Authorization: `bearer ${token}`,
       // 'Content-Type':'application/json'
     };
-    axios.put('https://ecommercefullstack-xv9x.onrender.com/address/changedeliveryaddress',address,{headers:headers}).then((response)=>{
+    axios.put('http://localhost:8080/address/changedeliveryaddress',address,{headers:headers}).then((response)=>{
       console.log(response.data.data);
     }).catch((error)=>{
       console.log(error)
