@@ -7,6 +7,7 @@ import Login from './Components/Login';
 import Companysignup from './Components/Companysignup';
 import Addproduct from './Components/Addproduct';
 import Viewproduct from './Components/Viewproduct';
+import SingleProduct from './Components/SingleProduct';
 import Home from './Components/Home';
 import Order from './Components/Order';
 import Cart from './Components/Cart';
@@ -28,6 +29,8 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/companysignup' element={<Companysignup />} />
           <Route path='/viewproduct' element={<Viewproduct />} />
+          <Route path='/product/:id' element={<SingleProduct />} />
+          <Route path='/viewone/:id' element={<SingleProduct />} />
 
           {/* Customer (User) Protected Routes */}
           <Route

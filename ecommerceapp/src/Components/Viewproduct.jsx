@@ -153,14 +153,18 @@ const Viewproduct = () => {
               <div className="glass-card h-100 d-flex flex-column justify-content-between p-3">
                 <div>
                   {/* Product Image */}
-                  <div style={{
-                    borderRadius: "14px",
-                    overflow: "hidden",
-                    height: "220px",
-                    position: "relative",
-                    marginBottom: "1rem",
-                    backgroundColor: "rgba(0,0,0,0.3)"
-                  }}>
+                  <div
+                    onClick={() => navigate(`/product/${item._id}`)}
+                    style={{
+                      borderRadius: "14px",
+                      overflow: "hidden",
+                      height: "220px",
+                      position: "relative",
+                      marginBottom: "1rem",
+                      backgroundColor: "rgba(0,0,0,0.3)",
+                      cursor: "pointer"
+                    }}
+                  >
                     <img
                       src={item.image ? item.image[0] : '/images/ethnic.jpg'}
                       alt={item.prdName}
@@ -183,7 +187,12 @@ const Viewproduct = () => {
                   </div>
 
                   {/* Details */}
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.4rem" }}>
+                  <h3
+                    onClick={() => navigate(`/product/${item._id}`)}
+                    style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.4rem", cursor: "pointer" }}
+                    onMouseOver={(e) => e.currentTarget.style.color = "#a5b4fc"}
+                    onMouseOut={(e) => e.currentTarget.style.color = "#ffffff"}
+                  >
                     {item.prdName}
                   </h3>
 
@@ -229,14 +238,17 @@ const Viewproduct = () => {
                     </div>
                   ) : (
                     /* Customer Actions */
-                    <div className="d-grid">
+                    <div className="d-flex gap-2">
+                      <Button className="btn-glass-secondary w-50" size="sm" onClick={() => navigate(`/product/${item._id}`)}>
+                        Details
+                      </Button>
                       {item.status !== 6 ? (
-                        <Button className="btn-glass-primary" onClick={() => handleSubmit(item._id)}>
+                        <Button className="btn-glass-primary w-50" size="sm" onClick={() => handleSubmit(item._id)}>
                           Add to Cart
                         </Button>
                       ) : (
-                        <Button className="btn-glass-secondary" disabled style={{ opacity: 0.6 }}>
-                          Currently Unavailable
+                        <Button className="btn-glass-secondary w-50" disabled style={{ opacity: 0.6 }} size="sm">
+                          Unavailable
                         </Button>
                       )}
                     </div>
