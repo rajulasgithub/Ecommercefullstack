@@ -4,40 +4,22 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
-import axios from "axios";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
+import api from "../utils/api";
 
 const Cart = () => {
   const navigate = useNavigate();
-
   const [cartitem, setCartitem] = useState([]);
-  
   const [address, setAddress] = useState({});
   const [newaddress, setNewaddress] = useState({});
-
   const [totalValue, setTotalValue] = useState(0);
 
   useEffect(() => {
-    
-    const token = localStorage.getItem("token");
-
-    const headers = {
-      Authorization: `bearer ${token}`,
-      // 'Content-Type':'application/json'
-    };
-    axios
-      .get("http://localhost:8080/product/viewcart", {
-        headers: headers,
-      })
+    api.get("/product/viewcart")
       .then((response) => {
-       
-
-        setCartitem(response.data.data);
-
-        console.log(cartitem);
+        setCartitem(response.data.data || []);
       })
       .catch((error) => {
         console.log(error);
@@ -45,79 +27,31 @@ const Cart = () => {
   }, []);
 
   const decrement = (id) => {
-    console.log(id);
-    axios
-      .put(`http://localhost:8080/product/decrcart/${id}`)
-      .then((response) => {
-        console.log(response.data.data);
-        const filter = cartitem.filter((data) => {
-          if (data._id == id) {
-            data.quantity -= 1;
+    api.put(`/product/decrcart/${id}`)
+      .then(() => {
+        const updated = cartitem.map((data) => {
+          if (data._id === id && data.quantity > 1) {
+            return { ...data, quantity: data.quantity - 1 };
           }
           return data;
         });
-        setCartitem(filter);
-     
-        console.log(cartitem);
+        setCartitem(updated);
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  useEffect(()=>{
-    let val = 0;
-    console.log(val);
-    cartitem?.map((item) => {
-      // console.log(item.prdId.prize)
-      val += item.prdId.prize * item.quantity;
-    });
-    //  console.log(val)
-    setTotalValue(val);
-  },[cartitem])
 
   const increment = (id) => {
-    axios
-      .put(`http://localhost:8080/product/incrcart/${id}`)
-      .then((response) => {
-        console.log(response);
-        const filter = cartitem.filter((data) => {
-          if (data._id == id) {
-            data.quantity += 1;
+    api.put(`/product/incrcart/${id}`)
+      .then(() => {
+        const updated = cartitem.map((data) => {
+          if (data._id === id) {
+            return { ...data, quantity: data.quantity + 1 };
           }
           return data;
         });
-        setCartitem(filter);
-        console.log(cartitem);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handlehange = async (event) => {
-    console.log(event.target.name);
-    setAddress({ ...address, [event.target.name]: event.target.value });
-  };
-  console.log(address);
-  const handleAdd = async (event) => {
-    console.log(event.target.name);
-    setNewaddress({ ...newaddress, [event.target.name]: event.target.value });
-  };
-  console.log(newaddress);
-
-  const handleSubmit = async (event) => {
-    const token = localStorage.getItem("token");
-    const headers = {
-      Authorization: `bearer ${token}`,
-      // 'Content-Type':'application/json'
-    };
-    axios
-      .post("http://localhost:8080/address/addAddress", newaddress, {
-        headers: headers,
-      })
-      .then((response) => {
-        console.log(response.data.data);
-        // setValue(response.data.data);
+        setCartitem(updated);
       })
       .catch((error) => {
         console.log(error);
@@ -125,498 +59,312 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    let val = 0;
+    cartitem?.forEach((item) => {
+      if (item.prdId) {
+        val += item.prdId.prize * item.quantity;
+      }
+    });
+    setTotalValue(val);
+  }, [cartitem]);
 
-    const headers = {
-      Authorization: `bearer ${token}`,
-      // 'Content-Type':'application/json'
-    };
+  const handlehange = (event) => {
+    setAddress({ ...address, [event.target.name]: event.target.value });
+  };
 
-    axios
-      .get("http://localhost:8080/address/getaddress", { headers: headers })
+  const handleAdd = (event) => {
+    setNewaddress({ ...newaddress, [event.target.name]: event.target.value });
+  };
+
+  const handleSubmit = (event) => {
+    if (event) event.preventDefault();
+    api.post("/address/addAddress", newaddress)
       .then((response) => {
-        console.log(response.data.data);
-        setAddress(response.data.data);
+        setAddress(response.data.data || {});
       })
-      .catch((error) => {
-        console.log(error);
-      });
-    console.log(address);
+      .catch((error) => console.log(error));
+  };
+
+  useEffect(() => {
+    api.get("/address/getaddress")
+      .then((response) => {
+        setAddress(response.data.data || {});
+      })
+      .catch((error) => console.log(error));
   }, []);
 
-  const handleUpdate = async (event) => {
-    const token = localStorage.getItem("token");
-
-    const headers = {
-      Authorization: `bearer ${token}`,
-      // 'Content-Type':'application/json'
-    };
-    axios
-      .put("http://localhost:8080/address/updateaddress", address, {
-        headers: headers,
-      })
+  const handleUpdate = (event) => {
+    if (event) event.preventDefault();
+    api.put("/address/updateaddress", address)
       .then((response) => {
         console.log(response);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => console.log(error));
   };
 
   const removeItem = (id) => {
-    const token = localStorage.getItem("token");
-    const headers = {
-      Authorization: `bearer ${token}`,
-      // 'Content-Type':'application/json'
-    };
-    axios
-      .get(`http://localhost:8080/product/delcartitem/${id}`, {
-        headers: headers,
-      })
-      .then((response) => {
-        console.log(response);
-        const filter = cartitem.filter((data) => {
-          return data._id != id;
-        });
-        setCartitem(filter);
+    api.delete(`/product/delcartitem/${id}`)
+      .then(() => {
+        setCartitem(cartitem.filter((data) => data._id !== id));
       })
       .catch((error) => {
-        console.log(error);
+        // Fallback for GET method
+        api.get(`/product/delcartitem/${id}`)
+          .then(() => {
+            setCartitem(cartitem.filter((data) => data._id !== id));
+          })
+          .catch((err) => console.log(err));
       });
   };
 
   const checkOut = () => {
     navigate("/ordersummary");
-    localStorage.setItem("totalprize",totalValue);
-    localStorage.setItem("itemcount",cartitem.length)
+    localStorage.setItem("totalprize", totalValue);
+    localStorage.setItem("itemcount", cartitem.length);
   };
 
   return (
-    <>
-    <Header/>
-    <div>
-      <div>
-        
-        <div className="cartinnerdiv ">
-          <div>
-          <div className='pgstopflex'>
-        <div className='progressflex'>
-        <div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"blue"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
-</svg>
-</div>
+    <div className="page-container">
+      <Header />
 
-  <div>
-    <div className='progressbarone'>
-      .
-    </div>
-  </div>
-  </div>
-
-  <div className='progressflex'>
-  <div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"grey"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
-</svg>
-</div>
-<div>
-    <div className='progressbartwo'>
-      
-    </div>
-  </div>
-</div>
-
- 
-  <div >
-  <div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"grey"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
-</svg>
-</div>
-
-</div>
-
-
-  </div>
-      
+      <Container className="py-4">
+        {/* Step Progress Bar */}
+        <div className="d-flex justify-content-center align-items-center mb-5 gap-3">
+          <div className="d-flex align-items-center gap-2">
+            <span className="status-pill ordered">1. Shopping Bag</span>
           </div>
-          <div className="carthead">
-            <h4 style={{ fontFamily: "monospace" }} className="">
-              Shopping Bag
-            </h4>
-            <h6 style={{ fontFamily: "monospace" }} className="">
-              {cartitem.length} items in your bag
-            </h6>
-            {/* <Button variant="primary" onClick={clearCart}>Clear Cart</Button>{' '} */}
+          <div style={{ height: "2px", width: "60px", background: "rgba(255,255,255,0.2)" }}></div>
+          <div className="d-flex align-items-center gap-2">
+            <span className="status-pill out-of-stock">2. Order Summary</span>
           </div>
-         
-          <Container>
-            <Row >
-              <Col sm={8} className="cartcolstyleone me-5">
-                {/* <div className="carttitlebartop">
-                  <div className="carttitlebar">
-                    <h6>Product</h6>
-                  </div>
-                  <div className="carttitlebar">
-                    <h6 className="">Prize</h6>
-
-                    <h6 className="">Quantity</h6>
-                    <h6 className="">Total Prize</h6>
-                  </div>
-                </div> */}
-                
-                {cartitem.map((item) => (
-                  <Card
-                    style={{ maxwidth: "50rem", height: "10rem" }}
-                    className="mt-5 cartcardstyle"
-                  >
-                    <div className="cardflex">
-                      <div>
-                        <Card.Img
-                          variant="top"
-                          src={item.prdId.image[0]}
-                          style={{ width: "7rem" }}
-                          className="img-rounded cartimg"
-                        />
-                      </div>
-                      
-                     <div className="cartcardbody">
-                      <Card.Body>
-                        
-                        <div className="cardhead">
-                        
-                          <Card.Title style={{ fontFamily: "monospace" }}>
-                            {item.prdId.prdName}
-                          </Card.Title>
-                          
-                          
-                          <Card.Text style={{ fontFamily: "monospace" }}>
-                            Size:{item.prdId.size}
-                          </Card.Text>
-                          
-
-                        </div>
-
-                        <div className="cardflexone">
-                          <div>
-                            <Card.Text style={{ fontFamily: "monospace" }}>
-                            {item.prdId.prize}
-                            </Card.Text>
-                          </div>
-                          <div className="counterflex">
-                            {/* <div className='counterflex'> */}
-                            <button
-                              className="decrement"
-                              onClick={() => decrement(item._id)}
-                            >
-                              -
-                            </button>
-                            <Card.Text style={{ fontFamily: "monospace" }}>
-                              {item.quantity}
-                            </Card.Text>
-                            <button onClick={() => increment(item._id)}>
-                              +
-                            </button>
-                            {/* </div> */}
-                          </div>
-                          <div>
-                            <Card.Text style={{ fontFamily: "monospace" }}>
-                              {item.prdId.prize * item.quantity}
-                            </Card.Text>
-                          </div>
-                        </div>
-
-                        <div>
-                          <Button
-                            variant="success"
-                            size="sm"
-                            className="cartbtnstyle "
-                            onClick={() => removeItem(item._id)}
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      </Card.Body>
-                      </div>
-
-                      {/* nbm */}
-                      <div className="cartbodyres">
-                      <Card.Body>
-                      <h6 style={{ fontFamily: "monospace" }}>
-                            {item.prdId.prdName}
-                        </h6>
-
-                        <h6 style={{ fontFamily: "monospace" }}>
-                            Size:{item.prdId.size}
-                          </h6>
-                          <h6 style={{ fontFamily: "monospace" }}>
-                            Prize:{item.prdId.prize}
-                            </h6>
-                            <div className="counterflex">
-                            {/* <div className='counterflex'> */}
-                            <h6>Qnty:</h6>
-                            <button
-                              className="decrement"
-                              onClick={() => decrement(item._id)}
-                            >
-                              -
-                            </button>
-                            <h6 style={{ fontFamily: "monospace" }}>
-                              {item.quantity}
-                            </h6>
-                            <button onClick={() => increment(item._id)}>
-                              +
-                            </button>
-                            {/* </div> */}
-                          </div>
-                          <h6 style={{ fontFamily: "monospace" }}>
-                           Total:   {item.prdId.prize * item.quantity}
-                            </h6>
-                        
-                      </Card.Body>
-                      </div>
-                      {/* nbmj */}
-                    </div>
-                  </Card>
-                ))}
-              </Col>
-
-              <Col sm={3} className="cartcolstyle ">
-                <h5 className="text-center mt-3">Shipping Address</h5>
-                {address?.address || address?.state || address?.district ? (
-                  <>
-                    <Form.Control
-                      onChange={handlehange}
-                      as="textarea"
-                      className=" carttxtare mt-3 "
-                      name="address"
-                      value={address?.address}
-                      placeholder="Enter Address"
-                      style={{
-                        height: "30px",
-                        backgroundColor: "#E6E6FA",
-                        borderRadius: 25,
-                      }}
-                    />
-                    <div className="formflex gap-3">
-                      <Form.Control
-                        onChange={handlehange}
-                        type="input"
-                        className="mt-3"
-                        name="state"
-                        value={address?.state}
-                        placeholder="State"
-                        style={{
-                          height: "30px",
-                          backgroundColor: "#E6E6FA",
-                          borderRadius: 25,
-                        }}
-                      />
-                      <Form.Control
-                        onChange={handlehange}
-                        type="input"
-                        className="mt-3"
-                        name="district"
-                        value={address?.district}
-                        placeholder="District"
-                        style={{
-                          height: "30px",
-                          backgroundColor: "#E6E6FA",
-                          borderRadius: 25,
-                        }}
-                      />
-                    </div>
-                    <div className="formflex gap-2">
-                      <Form.Control
-                        onChange={handlehange}
-                        type="input"
-                        className="mt-3"
-                        name="pincode"
-                        value={address?.pincode}
-                        placeholder="pincode"
-                        style={{
-                          height: "30px",
-                          backgroundColor: "#E6E6FA",
-                          borderRadius: 25,
-                        }}
-                      />
-                      <Form.Control
-                        onChange={handlehange}
-                        type="input"
-                        className="mt-3"
-                        name="BuildingNumber"
-                        value={address?.BuildingNumber}
-                        placeholder="Building Number"
-                        style={{
-                          height: "30px",
-                          backgroundColor: "#E6E6FA",
-                          borderRadius: 25,
-                        }}
-                      />
-                    </div>
-                    <div className=" text-center d-grid mt-3 carttotalbtn">
-                      <Button variant="dark" size="sm" onClick={handleUpdate}>
-                        Update
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <Form.Control
-                      onChange={handleAdd}
-                      as="textarea"
-                      className="carttxtare mt-3 "
-                      name="address"
-                      placeholder="Enter Address"
-                      style={{
-                        height: "30px",
-                        backgroundColor: "#E6E6FA",
-                        borderRadius: 25,
-                      }}
-                    />
-                    <div className="formflex gap-3">
-                      <Form.Control
-                        onChange={handleAdd}
-                        type="input"
-                        className="mt-3"
-                        name="state"
-                        placeholder="State"
-                        style={{
-                          height: "30px",
-                          backgroundColor: "#E6E6FA",
-                          borderRadius: 25,
-                        }}
-                      />
-                      <Form.Control
-                        onChange={handleAdd}
-                        type="input"
-                        className="mt-3"
-                        name="district"
-                        placeholder="District"
-                        style={{
-                          height: "30px",
-                          backgroundColor: "#E6E6FA",
-                          borderRadius: 25,
-                        }}
-                      />
-                    </div>
-                    <div className="formflex gap-2">
-                      <Form.Control
-                        onChange={handleAdd}
-                        type="input"
-                        className="mt-3"
-                        name="pincode"
-                        placeholder="pincode"
-                        style={{
-                          height: "30px",
-                          backgroundColor: "#E6E6FA",
-                          borderRadius: 25,
-                        }}
-                      />
-                      <Form.Control
-                        onChange={handleAdd}
-                        type="input"
-                        className="mt-3"
-                        name="BuildingNumber"
-                        placeholder="Building Number"
-                        style={{
-                          height: "30px",
-                          backgroundColor: "#E6E6FA",
-                          borderRadius: 25,
-                        }}
-                      />
-                    </div>
-                    <div className=" text-center d-grid mt-3 carttotalbtn">
-                      <Button variant="dark" size="sm" onClick={handleSubmit}>
-                        Add
-                      </Button>
-                    </div>
-                  </>
-                )}
-
-                <hr className="mt-4"></hr>
-                <div className="carttotalstyle">
-                  <div className="carttotalinner">
-                    <div>
-                      <h4 className="mb-3">Cart total</h4>
-                    </div>
-                    <div>
-                      <div className="carttotaldivflex">
-                        <>
-                          <h6>Cart Total</h6>
-                        </>
-                        <>{totalValue}</>
-                      </div>
-                      <div className="carttotaldivflex">
-                        <>
-                          <h6>Discount</h6>
-                        </>
-                        <>
-                          <h6>0</h6>
-                        </>
-                      </div>
-                      <div className="carttotaldivflex mb-3">
-                        <>
-                          <h6> total</h6>
-                        </>
-                        <>
-                          <h6>{totalValue}</h6>
-                        </>
-                      </div>
-                    </div>
-                    <div className="d-grid">
-                      <Button variant="light" size="sm" onClick={checkOut}>
-                        Check Out
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </Container>
         </div>
 
-        {/* <Container>
-      <Row>
-    
+        {/* Page Header */}
+        <div className="page-header pt-0">
+          <h1 className="page-title">Your Shopping Bag</h1>
+          <p className="page-subtitle">{cartitem.length} item(s) selected in your bag</p>
+        </div>
 
-<Col>
-{cartitem.map((item)=>(
-   
-   <Card  className=' '>
-<Card.Img variant="top" src={item.prdId.image[0]} className='cartimg'/>
-<Card.Body className=''>
-<Card.Title className=''>{item.prdId.prdName}</Card.Title>
-<Card.Text className=''>{item.prdId.material}</Card.Text>
-<Card.Text className=''>{item.prdId.size}</Card.Text>
-<Card.Text >{item.prdId.prize}</Card.Text>
-<Card.Text >{item.quantity}</Card.Text>
+        {cartitem.length === 0 ? (
+          <div className="glass-card text-center py-5" style={{ maxWidth: "550px", margin: "0 auto" }}>
+            <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🛍️</div>
+            <h3 className="page-title" style={{ fontSize: "1.5rem" }}>Your Bag is Empty</h3>
+            <p className="page-subtitle mb-4">Discover our handpicked collection and find your perfect dress today.</p>
+            <Button className="btn-glass-primary" onClick={() => navigate('/viewproduct')}>
+              Explore Shop
+            </Button>
+          </div>
+        ) : (
+          <Row className="g-4">
+            {/* Cart Items List */}
+            <Col xs={12} lg={8}>
+              <div className="d-flex flex-column gap-3">
+                {cartitem.map((item) => (
+                  <div key={item._id} className="glass-card p-3">
+                    <Row className="align-items-center g-3">
+                      <Col xs={4} sm={3} md={2}>
+                        <img
+                          src={item.prdId?.image ? item.prdId.image[0] : '/images/ethnic.jpg'}
+                          alt={item.prdId?.prdName}
+                          style={{
+                            width: "100%",
+                            height: "90px",
+                            objectFit: "cover",
+                            borderRadius: "12px"
+                          }}
+                        />
+                      </Col>
 
+                      <Col xs={8} sm={5} md={5}>
+                        <h4 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.25rem" }}>
+                          {item.prdId?.prdName}
+                        </h4>
+                        <div style={{ fontSize: "0.85rem", color: "#9ca3af" }}>
+                          Size: <span style={{ color: "#ffffff" }}>{item.prdId?.size}</span>
+                        </div>
+                        <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "#a5b4fc", marginTop: "0.25rem" }}>
+                          ₹{item.prdId?.prize}
+                        </div>
+                      </Col>
 
+                      <Col xs={6} sm={4} md={3} className="d-flex align-items-center justify-content-sm-center">
+                        <div className="quantity-control">
+                          <button className="quantity-btn" onClick={() => decrement(item._id)}>-</button>
+                          <span className="quantity-val">{item.quantity}</span>
+                          <button className="quantity-btn" onClick={() => increment(item._id)}>+</button>
+                        </div>
+                      </Col>
 
+                      <Col xs={6} sm={12} md={2} className="text-end">
+                        <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "#ffffff", marginBottom: "0.5rem" }}>
+                          ₹{item.prdId?.prize * item.quantity}
+                        </div>
+                        <Button className="btn-glass-danger py-1 px-2" size="sm" onClick={() => removeItem(item._id)}>
+                          Remove
+                        </Button>
+                      </Col>
+                    </Row>
+                  </div>
+                ))}
+              </div>
+            </Col>
 
+            {/* Shipping Address & Total Order Summary Widget */}
+            <Col xs={12} lg={4}>
+              <div className="glass-card mb-4">
+                <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#ffffff", marginBottom: "1rem" }}>
+                  📍 Shipping Address
+                </h3>
 
-<div className='text-center'>
-<Button variant="primary" size="sm" >Buy Now</Button>
-<Button variant="primary" size="sm" >Remove from Cart</Button>
+                {address?.address || address?.state || address?.district ? (
+                  <Form onSubmit={handleUpdate}>
+                    <Form.Group className="mb-2">
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        className="glass-input"
+                        name="address"
+                        value={address?.address || ''}
+                        placeholder="Street Address"
+                        onChange={handlehange}
+                      />
+                    </Form.Group>
+                    <Row className="g-2 mb-2">
+                      <Col xs={6}>
+                        <Form.Control
+                          type="text"
+                          className="glass-input"
+                          name="state"
+                          value={address?.state || ''}
+                          placeholder="State"
+                          onChange={handlehange}
+                        />
+                      </Col>
+                      <Col xs={6}>
+                        <Form.Control
+                          type="text"
+                          className="glass-input"
+                          name="district"
+                          value={address?.district || ''}
+                          placeholder="District"
+                          onChange={handlehange}
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="g-2 mb-3">
+                      <Col xs={6}>
+                        <Form.Control
+                          type="text"
+                          className="glass-input"
+                          name="pincode"
+                          value={address?.pincode || ''}
+                          placeholder="Pincode"
+                          onChange={handlehange}
+                        />
+                      </Col>
+                      <Col xs={6}>
+                        <Form.Control
+                          type="text"
+                          className="glass-input"
+                          name="BuildingNumber"
+                          value={address?.BuildingNumber || ''}
+                          placeholder="Building No."
+                          onChange={handlehange}
+                        />
+                      </Col>
+                    </Row>
+                    <Button type="submit" className="btn-glass-secondary w-100 py-1" size="sm">
+                      Update Address
+                    </Button>
+                  </Form>
+                ) : (
+                  <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-2">
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        className="glass-input"
+                        name="address"
+                        placeholder="Enter Street Address"
+                        onChange={handleAdd}
+                      />
+                    </Form.Group>
+                    <Row className="g-2 mb-2">
+                      <Col xs={6}>
+                        <Form.Control
+                          type="text"
+                          className="glass-input"
+                          name="state"
+                          placeholder="State"
+                          onChange={handleAdd}
+                        />
+                      </Col>
+                      <Col xs={6}>
+                        <Form.Control
+                          type="text"
+                          className="glass-input"
+                          name="district"
+                          placeholder="District"
+                          onChange={handleAdd}
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="g-2 mb-3">
+                      <Col xs={6}>
+                        <Form.Control
+                          type="text"
+                          className="glass-input"
+                          name="pincode"
+                          placeholder="Pincode"
+                          onChange={handleAdd}
+                        />
+                      </Col>
+                      <Col xs={6}>
+                        <Form.Control
+                          type="text"
+                          className="glass-input"
+                          name="BuildingNumber"
+                          placeholder="Building No."
+                          onChange={handleAdd}
+                        />
+                      </Col>
+                    </Row>
+                    <Button type="submit" className="btn-glass-secondary w-100 py-1" size="sm">
+                      Save Address
+                    </Button>
+                  </Form>
+                )}
+              </div>
 
-</div>
-</Card.Body>
-</Card>
+              {/* Order Total Widget */}
+              <div className="glass-card" style={{ background: "rgba(99, 102, 241, 0.1)", borderColor: "rgba(99, 102, 241, 0.3)" }}>
+                <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#ffffff", marginBottom: "1rem" }}>
+                  Order Total
+                </h3>
 
+                <div className="d-flex justify-content-between mb-2" style={{ color: "#cbd5e1" }}>
+                  <span>Bag Subtotal</span>
+                  <span>₹{totalValue}</span>
+                </div>
+                <div className="d-flex justify-content-between mb-2" style={{ color: "#cbd5e1" }}>
+                  <span>Estimated Shipping</span>
+                  <span style={{ color: "#10b981", fontWeight: 600 }}>FREE</span>
+                </div>
+                <hr style={{ borderColor: "rgba(255,255,255,0.15)" }} />
+                <div className="d-flex justify-content-between mb-4" style={{ fontSize: "1.2rem", fontWeight: 800, color: "#ffffff" }}>
+                  <span>Total Amount</span>
+                  <span style={{ color: "#a5b4fc" }}>₹{totalValue}</span>
+                </div>
 
- ))} 
-</Col>
-
-
-        
-       
-      </Row>
-      </Container> */}
-      </div>
+                <Button className="btn-glass-primary w-100 py-2" onClick={checkOut}>
+                  Proceed to Checkout →
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        )}
+      </Container>
     </div>
-    </>
   );
 };
 

@@ -3,89 +3,78 @@ import "./Header.css";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-// import {useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom';
+import ROLES from "../utils/roles";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [role, setRole] = useState(localStorage.getItem("role"));
-  // const navigate = useNavigate()
+
   useEffect(() => {
     const data = localStorage.getItem("role");
-    setRole(data);
+    setRole(data ? Number(data) : null);
   }, []);
 
   const logout = () => {
     localStorage.clear();
-    // navigate('home')
+    setRole(null);
+    navigate("/login");
   };
+
   return (
-    <div>
-      <Navbar collapseOnSelect expand="lg" className="navclr ">
-        <Container>
-          <Navbar.Brand href="#home">TrendLife</Navbar.Brand>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="me-auto">
-              {role == 2 ? (
-                <>
-                  <Nav.Link href="/login" className="navtext">
-                    Login
-                  </Nav.Link>
-                  <Nav.Link href="/cart" className="navtext">
-                    View Cart
-                  </Nav.Link>
-                  <Nav.Link href="/viewproduct" className="navtext">
-                    View product
-                  </Nav.Link>
-                  <Nav.Link href="/ordersummary" className="navtext">
-                    Order Summary
-                  </Nav.Link>
-                  <Nav.Link href="/vieworders" className="navtext">
-                    My Orders
-                  </Nav.Link>
+    <Navbar collapseOnSelect expand="lg" className="header-navbar">
+      <Container>
+        <Navbar.Brand as={Link} to="/" className="header-brand">
+          TrendLife
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="ms-auto align-items-lg-center gap-1">
+            <Nav.Link as={Link} to="/" className="header-nav-link">
+              Home
+            </Nav.Link>
+            <Nav.Link as={Link} to="/viewproduct" className="header-nav-link">
+              Shop Products
+            </Nav.Link>
 
-                  <Nav.Link href="/" className="navtext" onClick={logout}>
-                    Logout
-                  </Nav.Link>
-
-                  {/* <Nav.Link href="/payment" className='navtext'>Payment</Nav.Link> */}
-                </>
-              ) : role == 3 ? (
-                <>
-                  <Nav.Link href="/companysignup" className="navtext">
-                    Login
-                  </Nav.Link>
-                  <Nav.Link href="/viewproduct" className="navtext">
-                    View product
-                  </Nav.Link>
-                  <Nav.Link href="/addproduct" className="navtext">
-                    Add product
-                  </Nav.Link>
-                  <Nav.Link href="/vieworders" className="navtext">
-                    View Order
-                  </Nav.Link>
-                  <Nav.Link href="/" className="navtext" onClick={logout}>
-                    Logout
-                  </Nav.Link>
-                </>
-              ) : (
-                <>
-                  <Nav.Link href="/home" className="navtext me-3">
-                    Home
-                  </Nav.Link>
-                  <Nav.Link href="/login" className="navtext">
-                    Login
-                  </Nav.Link>
-
-                  <Nav.Link href="/signup" className="navtext">
-                    Signup
-                  </Nav.Link>
-                </>
-              )}
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-    </div>
+            {role === ROLES.USER ? (
+              <>
+                <Nav.Link as={Link} to="/cart" className="header-nav-link">
+                  View Cart
+                </Nav.Link>
+                <Nav.Link as={Link} to="/vieworders" className="header-nav-link">
+                  My Orders
+                </Nav.Link>
+                <Nav.Link as={Link} to="#" className="header-nav-link text-danger" onClick={logout}>
+                  Logout
+                </Nav.Link>
+              </>
+            ) : role === ROLES.COMPANY || role === ROLES.ADMIN ? (
+              <>
+                <Nav.Link as={Link} to="/addproduct" className="header-nav-link">
+                  Add Product
+                </Nav.Link>
+                <Nav.Link as={Link} to="/vieworders" className="header-nav-link">
+                  Manage Orders
+                </Nav.Link>
+                <Nav.Link as={Link} to="#" className="header-nav-link text-danger" onClick={logout}>
+                  Logout
+                </Nav.Link>
+              </>
+            ) : (
+              <>
+                <Nav.Link as={Link} to="/login" className="header-nav-link me-lg-1">
+                  Login
+                </Nav.Link>
+                <Nav.Link as={Link} to="/signup" className="header-cta-link">
+                  Sign Up
+                </Nav.Link>
+              </>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 

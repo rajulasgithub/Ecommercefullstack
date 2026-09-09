@@ -1,447 +1,304 @@
-.signupbg {
-  background-image: url("../../public/images/loginback.avif");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  height: 700px;
-  font-family: "Aleo";
-}
-.loginbg {
-  background-image: url("../../public/images/loginback.avif");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  height: 700px;
-  font-family: "Aleo";
+/* Global Design System & Glassmorphism Utilities */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --app-bg: #0b0f19;
+  --app-card-bg: rgba(255, 255, 255, 0.05);
+  --app-card-border: rgba(255, 255, 255, 0.1);
+  --app-card-hover-border: rgba(99, 102, 241, 0.5);
+  --app-primary: #6366f1;
+  --app-primary-hover: #4f46e5;
+  --app-secondary: #ec4899;
+  --app-success: #10b981;
+  --app-warning: #f59e0b;
+  --app-danger: #ef4444;
+  --app-info: #3b82f6;
+  --app-text-main: #f9fafb;
+  --app-text-muted: #9ca3af;
+  --app-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.forminnerdiv {
-  width: 100%;
-}
-.formdiv {
-  margin: auto;
-  width: 50%;
-  padding-top: 150px;
-}
-.formborder:hover {
-  border: 1px solid blue;
-}
-.signuphead {
-  font-size: 30px;
-}
-.btnstyle:hover {
-  font-size: 15px;
-  border: 2px solid blue;
-}
-.loginformdiv {
-  margin: auto;
-  width: 50%;
-  padding-top: 150px;
-}
-.companysignupformdiv {
-  margin: auto;
-  width: 50%;
-  padding-top: 150px;
-}
-.formtext {
-  font-size: 50px;
-}
-.navclr {
-  background-color: white;
-}
-.labelstyle {
-  color: red;
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--app-bg);
+  color: var(--app-text-main);
+  font-family: var(--app-font);
+  overflow-x: hidden;
 }
 
-.addproducmaindiv {
-  padding-top: 100px;
-  width: 100%;
-}
-.addprdtsubdiv {
-  width: 500px;
-  margin: auto;
-}
-.addprdformstyle {
-  border: 1px solid lightblue;
-
-  border-radius: 8px;
-  font-family: "Courier New", Courier, monospace;
-}
-.addprdformstyle:hover {
-  border: 1px solid blue;
-}
-.addprdbtnstyle {
-  font-family: "Courier New", Courier, monospace;
-}
-.addprdform {
-  background-image: url("../../public/images/addproductback.avif");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  height: 800px;
-}
-.productcard {
-  width: 200px;
-  height: 150px;
-  border: 2px solid black;
-}
-.producttext {
-  font-size: 8px;
-}
-.prdbodyStyle {
-}
-.prdtextspace {
-  margin-bottom: 0px;
-  font-family: "Courier New", Courier, monospace;
-}
-.homecolone {
-  height: 350px;
-}
-.homecoltwo {
-  height: 200px;
+/* --- Page Wrappers --- */
+.page-container {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 60%),
+              radial-gradient(circle at 100% 50%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+              var(--app-bg);
+  padding-bottom: 5rem;
 }
 
-.cartimg {
-  width: 50px;
-  height: 150px;
+.auth-page-container {
+  min-height: calc(100vh - 75px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
+              radial-gradient(circle at 20% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
+              var(--app-bg);
 }
 
-.cartinnerdiv {
-  max-width: 100rem;
-  margin: auto;
-  height: auto;
-  background-color: #F0F8FF;
-  /* background-image: url("../../public/images/vieworderback.jpg"); */
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+/* --- Glassmorphic Card Container --- */
+.glass-card {
+  background: var(--app-card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--app-card-border);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* --- Form Controls --- */
+.glass-input, .form-control.glass-input, .form-select.glass-input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.95rem !important;
+  font-family: var(--app-font) !important;
+  transition: all 0.25s ease !important;
+}
+
+.glass-input::placeholder {
+  color: #9ca3af !important;
+  opacity: 0.8;
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: var(--app-primary) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25) !important;
+  outline: none !important;
+}
+
+.glass-label {
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.4rem;
   display: block;
 }
-.cartcolstyleone {
-  border: 1px solid white;
-  margin: auto;
-  height: auto;
-  background-color: white;
-  border-radius: 20px;
+
+.glass-error-badge {
+  color: #f87171;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  display: block;
 }
-.cartcolstyle {
-  border: 1px solid white;
-  height: 550px;
-  background-color: white;
-  border-radius: 20px;
-  margin-top: 3rem;
+
+/* --- Buttons --- */
+.btn-glass-primary {
+  background: linear-gradient(135deg, var(--app-primary) 0%, #4338ca 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 0.75rem 1.75rem !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.4) !important;
 }
-.carthead {
-  padding-top: 3rem;
-  padding-left: 6rem;
-  margin-bottom: 2rem;
+
+.btn-glass-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px -4px rgba(99, 102, 241, 0.6) !important;
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
 }
-.cardflex {
-  display: flex;
+
+.btn-glass-secondary {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease !important;
+}
+
+.btn-glass-secondary:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.btn-glass-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 0.6rem 1.25rem !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  transition: all 0.25s ease !important;
+  box-shadow: 0 6px 16px -4px rgba(239, 68, 68, 0.4) !important;
+}
+
+.btn-glass-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -4px rgba(239, 68, 68, 0.6) !important;
+}
+
+.btn-glass-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 0.6rem 1.25rem !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  transition: all 0.25s ease !important;
+}
+
+.btn-glass-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -4px rgba(16, 185, 129, 0.5) !important;
+}
+
+/* --- Status Pills --- */
+.status-pill {
+  display: inline-flex;
   align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.cardflexone {
-  display: flex;
-  justify-content: space-between;
-  margin-left: 15rem;
-}
-.cardtext {
-  /* margin-left: 5rem; */
-}
-.cartcardstyle {
-  margin: auto;
-  border: 1px solid white;
 
-  font-weight: bold;
-  margin-left: 10px;
-  margin-right: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+.status-pill.ordered {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
-.carttitlebar {
-  display: flex;
-  margin-left: 5rem;
 
-  justify-content: space-around;
+.status-pill.processing {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
-.carttitlebartop {
-  margin-left: 30rem;
-  width: 40rem;
-  display: flex;
-  justify-content: space-around;
+
+.status-pill.out-for-delivery {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
 }
-.cartitle {
+
+.status-pill.delivered {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
-.cartbtnstyle {
-  border: 1px solid blue;
-  border-radius: 10px;
-  width: 100px;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+.status-pill.cancelled {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
-.counterflex {
-  display: flex;
+
+.status-pill.out-of-stock {
+  background: rgba(107, 114, 128, 0.2);
+  color: #9ca3af;
+  border: 1px solid rgba(107, 114, 128, 0.4);
 }
-.decrement {
-}
-.carttxtare {
-  background-color: grey;
-  border: 1px solid lavender;
-}
-.formflex {
-  display: flex;
-}
-.carttotaldivflex {
-  display: flex;
-  justify-content: space-between;
-}
-.carttotalstyle {
-  border-radius: 20px;
-  background-color: rgba(244, 164, 96, 0.6);
-  padding: 20px;
-}
-.carttotalbtn {
-  border: 1px solid black;
-  border-radius: 30px;
-  background-color: white;
-}
-.viewproductback {
-  background-color: #F0F8FF;
-  height: 700px;
-}
-.odrsmryback {
-    background-color: #F0F8FF;
-  /* background-color: rgb(230, 230, 250); */
-  height: 700px;
-}
-.odrmaindiv {
-  width: 80rem;
-  margin: auto;
-  margin-top: 5rem;
-  background-color: white;
-  border-radius: 20px;
-  height: auto;
-}
-.ordercolone {
-  background-color: white;
-  border-radius: 20px;
-  height: auto;
-  font-family: "Times New Roman", Times, serif;
-}
-.ordercoltwo {
-  background-color: white;
-  border-radius: 20px;
-  height: auto;
-  font-family: "Times New Roman", Times, serif;
-}
-.odrmaindiv {
-}
-.odraddrsflex {
-  display: flex;
-  justify-content: space-between;
-}
-.radioflex {
-  display: flex;
-  justify-content: space-between;
-}
-.homepage {
-  background-image: url("../../../ecommerceapp/public/images/hompage.jpg");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  height: 900px;
-}
-.hmtextdiv {
-  border: 7px solid white;
-  max-width: 500px;
-  height: 350px;
-  color: white;
-  margin: auto;
+
+/* --- Section Title Headers --- */
+.page-header {
+  padding: 3rem 0 2rem;
   text-align: center;
-  outline: 2px solid white;
-  outline-offset: 6px;
-  text-shadow: 2px 2px black;
-}
-.hnfindstyle {
-  width: 100%;
-  margin-top: 30px;
-  height: 300px;
 }
 
-.hometxt {
-  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-  color: white;
+.page-title {
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  font-weight: 800;
+  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
 }
-.homepagehead {
-  padding-top: 8rem;
-  background-color: lightcoral;
-  width: 500px;
-  margin: auto;
+
+.page-subtitle {
+  color: var(--app-text-muted);
+  font-size: 1rem;
 }
-.homecardflex {
-  display: flex;
+
+/* --- Modal Overrides --- */
+.modal-content.glass-modal {
+  background: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 20px !important;
+  color: #ffffff !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
 }
-.progressbar {
-  background-color: blue;
-  width: 10rem;
-  height: 3px;
+
+.modal-header.glass-modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
-.progressbarone {
-  background-color: grey;
-  width: 10rem;
-  height: 3px;
+
+.modal-footer.glass-modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
-.progressbartwo {
-  background-color: grey;
-  width: 10rem;
-  height: 3px;
+
+.btn-close-white {
+  filter: invert(1);
 }
-.progressflex {
+
+/* --- Counter Quantity Controls --- */
+.quantity-control {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.quantity-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  font-weight: 700;
   display: flex;
   align-items: center;
-}
-.pgstopflex {
-  display: flex;
   justify-content: center;
-  padding-top: 4rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-.viewproductback {
-  background-color: #F0F8FF;
-  width: 100%;
-  height: 900px;
-}
-.viewprdtdiv {
-  font-family: "Courier New", Courier, monospace;
-  padding-top: 100px;
-  font-weight: bold;
-}
-.viewprdctcards {
-  border: 1px solid black;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.viewprdctbtn {
-  display: flex;
-  justify-content: space-around;
-}
-.orderbtns {
-  display: flex;
+.quantity-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.cartbodyres {
-  display: none;
-}
-.cartimg {
-  height: 10rem;
-}
-.viewprdbtnstyle {
-  width: 250px;
-}
-.hmres {
-  display: none;
-}
-.addprdctres {
-  display: none;
-}
-.vieworderres {
-  display: none;
+.quantity-val {
+  padding: 0 0.75rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #ffffff;
 }
 
-@media screen and (max-width: 600px) {
-  .formdiv {
-    width: 300px;
-    padding-top: 50px;
-  }
-  .signuphead {
-    font-size: 20px;
-  }
-  .loginformdiv {
-    width: 300px;
-    padding-top: 150px;
-  }
-  .gridone {
-  }
-  .logingridone {
-    margin-bottom: 20px;
-  }
-  .gridend {
-  }
-  .compsigngridend {
-    margin-bottom: -8px;
-  }
-  .companysignupformdiv {
-    width: 300px;
-    padding-top: 50px;
-  }
-  .formtext {
-  }
-  .addprdformstyle {
-    margin-left: 30px;
-    margin-right: 50px;
-  }
-  .addformfile {
-    margin-left: 50px;
-    margin-right: 50px;
-  }
-  .cardflexoneviewodr {
-  }
-  .viewprdctcards {
-    margin-left: 2.5rem;
-  }
-  .cartbtnstyle {
-    width: 80px;
-  }
-  .progressflex {
-    width: 90px;
-  }
-  .progressbartwo {
-    display: none;
-  }
-  .carthead {
-    padding-left: 3rem;
-  }
-  .cartcardbody {
-    display: none;
-  }
-  .cartbodyres {
-    display: block;
-  }
-  .cartimg {
-    height: 8rem;
-  }
-  .outofstockbtn {
-    width: 300px;
-  }
-  .signupbg {
-    height: auto;
-  }
-  .hmres {
-    display: block;
-  }
-  .hmdiv {
-    display: none;
-  }
-  .hmtextdiv {
-    border: 7px solid white;
-    width: 250px;
-    height: 330px;
-    color: white;
-    text-align: center;
-    outline: 2px solid white;
-    outline-offset: 6px;
-    text-shadow: 2px 2px black;
-    padding-top: 0px;
-  }
-  .homepage {
-    height: 70rem;
-  }
-  .viewprdctcards {
-    margin-left: 90px;
-  }
-  .addprdctres {
-    display: block;
-  }
-  .addprct {
-    display: none;
-  }
-  .vieworderres {
-    display: block;
-  }
-  .cartinnerdiv {
-    display: none;
+/* Responsive Cleanup */
+@media (max-width: 768px) {
+  .glass-card {
+    padding: 1.25rem;
+    border-radius: 16px;
   }
 }

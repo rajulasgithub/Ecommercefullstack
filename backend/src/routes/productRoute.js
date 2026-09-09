@@ -1,12 +1,16 @@
 const express = require("express");
-const productDB = require("../model/addproductsSchema");
-const productRoute = express.Router();
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const productDB = require("../model/addproductsSchema");
 const cartDB = require("../model/cartSchema");
 const checkauth = require("../middleware/checkauth");
+const { checkRole } = require("../middleware/authorize");
+const ROLES = require("../config/roles");
 require("dotenv").config();
+
+const productRoute = express.Router();
+
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_KEY,
@@ -20,34 +24,23 @@ const storageImage = new CloudinaryStorage({
   },
 });
 const uploadImage = multer({ storage: storageImage });
-// const storage= multer.diskStorage({
-//     destination:function(req,file,cb){
-//         cb(null,'../ecommerceapp/public/uploads')
-//     },
-//     filename:function(req,file,cb){
-//         cb(null,file.originalname)
-//     },
 
-// });
-
-// const upload= multer({storage});
-
+// Add Product (Vendor / Admin)
 productRoute.post(
   "/addproduct",
-  uploadImage.array("image", 1),
+  checkauth,
+  checkRole(ROLES.COMPANY, ROLES.ADMIN),
+  uploadImage.array("image", 5),
   async (req, res) => {
-    console.log(req.body);
-
     try {
       const data = {
         prdName: req.body.prdName,
-        image: req.files ? req.files.map((file) => file.path) : null,
+        image: req.files ? req.files.map((file) => file.path) : [],
         prize: req.body.prize,
         size: req.body.size,
         material: req.body.material,
         status: 0,
       };
-      console.log(data);
 
       const result = await productDB(data).save();
       if (result) {
@@ -55,13 +48,13 @@ productRoute.post(
           success: true,
           error: false,
           data: result,
-          message: "successfully Added product",
+          message: "Product added successfully",
         });
       } else {
         return res.status(400).json({
           success: false,
           error: true,
-          message: "not added",
+          message: "Failed to add product",
         });
       }
     } catch (error) {
@@ -69,39 +62,33 @@ productRoute.post(
         success: false,
         error: true,
         errorMessage: error.message,
-        message: "something went wrong",
+        message: "Server error while adding product",
       });
     }
   }
 );
 
+// View Products (Public)
 productRoute.get("/viewproduct", async (req, res) => {
   try {
     const result = await productDB.find();
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully view product",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not viewed",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Products fetched successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while fetching products",
     });
   }
 });
 
+// View Single Product (Public)
 productRoute.get("/viewone/:id", async (req, res) => {
   try {
     const result = await productDB.findOne({ _id: req.params.id });
@@ -110,13 +97,13 @@ productRoute.get("/viewone/:id", async (req, res) => {
         success: true,
         error: false,
         data: result,
-        message: "successfully view product",
+        message: "Product details fetched successfully",
       });
     } else {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         error: true,
-        message: "not viewed",
+        message: "Product not found",
       });
     }
   } catch (error) {
@@ -124,21 +111,16 @@ productRoute.get("/viewone/:id", async (req, res) => {
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while fetching product details",
     });
   }
 });
 
-productRoute.put("/deleteproduct/:id", async (req, res) => {
-  console.log(req.params.id);
+// Soft Delete Product (Vendor / Admin)
+productRoute.put("/deleteproduct/:id", checkauth, checkRole(ROLES.COMPANY, ROLES.ADMIN), async (req, res) => {
   try {
-    const data = {
-      status: 6,
-    };
-    const result = await cartDB.updateMany(
-      { prdId: req.params.id },
-      { $set: data }
-    );
+    const data = { status: 6 };
+    await cartDB.updateMany({ prdId: req.params.id }, { $set: data });
     const prdresult = await productDB.updateOne(
       { _id: req.params.id },
       { $set: data }
@@ -148,13 +130,13 @@ productRoute.put("/deleteproduct/:id", async (req, res) => {
         success: true,
         error: false,
         data: prdresult,
-        message: "successfully deleted product",
+        message: "Product soft deleted successfully",
       });
     } else {
       return res.status(400).json({
         success: false,
         error: true,
-        message: "not deleted",
+        message: "Failed to delete product",
       });
     }
   } catch (error) {
@@ -162,175 +144,128 @@ productRoute.put("/deleteproduct/:id", async (req, res) => {
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while deleting product",
     });
   }
 });
 
+// Update Product (Vendor / Admin)
 productRoute.put(
   "/updateproduct/:id",
-  uploadImage.array("image"),
+  checkauth,
+  checkRole(ROLES.COMPANY, ROLES.ADMIN),
+  uploadImage.array("image", 5),
   async (req, res) => {
-    console.log(req.params.id);
-
     try {
       const oldData = await productDB.findOne({ _id: req.params.id });
+      if (!oldData) {
+        return res.status(404).json({ success: false, error: true, message: "Product not found" });
+      }
+
       const data = {
-        prdName: req.body.prdName ? req.body.prdName : oldData.prdName,
-        image: req.files ? req.files.map((file) => file.path) : oldData.image,
-        prize: req.body.prize ? req.body.prize : oldData.prize,
-        size: req.body.size ? req.body.size : oldData.size,
-        material: req.body.material ? req.body.material : oldData.material,
+        prdName: req.body.prdName || oldData.prdName,
+        image: req.files && req.files.length > 0 ? req.files.map((file) => file.path) : oldData.image,
+        prize: req.body.prize || oldData.prize,
+        size: req.body.size || oldData.size,
+        material: req.body.material || oldData.material,
       };
-      console.log(oldData);
+
       const result = await productDB.updateOne(
         { _id: req.params.id },
         { $set: data }
       );
-      if (result) {
-        return res.status(200).json({
-          success: true,
-          error: false,
-          data: result,
-          message: "successfully updated product",
-        });
-      } else {
-        return res.status(400).json({
-          success: false,
-          error: true,
-          message: "not updated",
-        });
-      }
+      return res.status(200).json({
+        success: true,
+        error: false,
+        data: result,
+        message: "Product updated successfully",
+      });
     } catch (error) {
       return res.status(500).json({
         success: false,
         error: true,
         errorMessage: error.message,
-        message: "something went wrong",
+        message: "Server error while updating product",
       });
     }
   }
 );
 
-productRoute.put("/updateproductstatus/:id/:value", async (req, res) => {
-  console.log(req.params.id);
-  console.log("value", req.params.value);
-
+// Update Product Status (Vendor / Admin)
+productRoute.put("/updateproductstatus/:id/:value", checkauth, checkRole(ROLES.COMPANY, ROLES.ADMIN), async (req, res) => {
   try {
-    const oldData = await productDB.findOne({ _id: req.params.id });
-    const data = {
-      status: req.params.value,
-    };
-    console.log(oldData);
+    const data = { status: req.params.value };
     const result = await productDB.updateOne(
       { _id: req.params.id },
       { $set: data }
     );
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully updated product",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not updated",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Product status updated successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while updating product status",
     });
   }
 });
 
-//add to cart
-
-productRoute.post("/addtocart", checkauth, async (req, res) => {
-  console.log(req.body);
-  // const now=new Date();
-  // const day = now.getDate();
-  // const month = now.getMonth() + 1;
-  // const year = now.getFullYear();
-  // const hours = now.getHours();
-  // const minutes = now.getMinutes();
-  // const seconds = now.getSeconds();
-  // const date=(`${day}-${month}-${year}`);
-  // console.log(hours)
+// Add to Cart (User)
+productRoute.post("/addtocart", checkauth, checkRole(ROLES.USER), async (req, res) => {
   try {
     const data = {
       loginId: req.userData.loginId,
       prdId: req.body.productId,
       quantity: 1,
       status: 1,
-      // date:(`${day}-${month}-${year}`),
-
-      // time:hours+":"+minutes+":"+seconds,
-      // date: new Date(),
     };
-    console.log(data);
 
     const result = await cartDB(data).save();
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully added to cart",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not added to cart",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Product added to cart",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while adding to cart",
     });
   }
 });
 
-productRoute.get("/viewcart", checkauth, async (req, res) => {
+// View Cart (User)
+productRoute.get("/viewcart", checkauth, checkRole(ROLES.USER), async (req, res) => {
   try {
     const result = await cartDB
       .find({ loginId: req.userData.loginId, status: 1 })
       .populate("prdId");
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully viewed ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not viewed",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Cart viewed successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while viewing cart",
     });
   }
 });
 
-productRoute.get("/viewcartcmpny", async (req, res) => {
+// View Company Orders (Vendor / Admin)
+productRoute.get("/viewcartcmpny", checkauth, checkRole(ROLES.COMPANY, ROLES.ADMIN), async (req, res) => {
   try {
     const result = await cartDB.aggregate([
       {
@@ -357,182 +292,147 @@ productRoute.get("/viewcartcmpny", async (req, res) => {
           as: "info",
         },
       },
-      {
-        $unwind: "$result",
-      },
-      {
-        $unwind: "$product",
-      },
-      {
-        $unwind: "$info",
-      },
-    //   {
-    //     $match: {
-    //       loginId: new mongoose.Types.ObjectId(id),
-    //     },
-    //   },
+      { $unwind: "$result" },
+      { $unwind: "$product" },
+      { $unwind: "$info" },
       {
         $group: {
-          _id: "$loginId",
-          firstname: {
-            $first: "$info.firstname",
-          },
-          number: {
-            $first: "$info.number",
-          },
-          image: {
-            $first: "$product.image",
-          },
-          prdName: {
-            $first: "$product.prdName",
-          },
-          prize: {
-            $first: "$product.prize",
-          },
-          size: {
-            $first: "$product.size",
-          },
-          quantity: {
-            $first: "$quantity",
-          },
-          status: {
-            $first: "$status",
-          },
-          address: {
-            $first: "$result.address",
-          },
-          state: {
-            $first: "$result.state",
-          },
-          district: {
-            $first: "$result.district",
-          },
-          pincode: {
-            $first: "$result.pincode",
-          },
-          BuildingNumber: {
-            $first: "$result.BuildingNumber",
-          },
+          _id: "$_id",
+          loginId: { $first: "$loginId" },
+          firstname: { $first: "$info.firstname" },
+          number: { $first: "$info.number" },
+          image: { $first: "$product.image" },
+          prdName: { $first: "$product.prdName" },
+          prize: { $first: "$product.prize" },
+          size: { $first: "$product.size" },
+          quantity: { $first: "$quantity" },
+          status: { $first: "$status" },
+          date: { $first: "$date" },
+          deliveryDate: { $first: "$deliveryDate" },
+          payment: { $first: "$payment" },
+          address: { $first: "$result.address" },
+          state: { $first: "$result.state" },
+          district: { $first: "$result.district" },
+          pincode: { $first: "$result.pincode" },
+          BuildingNumber: { $first: "$result.BuildingNumber" },
         },
       },
     ]);
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully viewed ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not viewed",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Orders list viewed successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while viewing company orders",
     });
   }
 });
 
-productRoute.get("/vieworderuser", checkauth, async (req, res) => {
+// View Orders for Logged-In User
+productRoute.get("/vieworderuser", checkauth, checkRole(ROLES.USER), async (req, res) => {
   try {
     const result = await cartDB
       .find({ loginId: req.userData.loginId })
       .populate("prdId");
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully viewed ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not viewed",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "User orders viewed successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while viewing user orders",
     });
   }
 });
 
-productRoute.put("/incrcart/:id", async (req, res) => {
+// Increase Cart Quantity (User)
+productRoute.put("/incrcart/:id", checkauth, checkRole(ROLES.USER), async (req, res) => {
   try {
-    console.log(req.params.id);
-
-    const oldData = await cartDB.findOne({ _id: req.params.id });
-    console.log(oldData);
-
-    const quantity = oldData.quantity + 1;
+    const oldData = await cartDB.findOne({ _id: req.params.id, loginId: req.userData.loginId });
+    if (!oldData) {
+      return res.status(404).json({ success: false, error: true, message: "Cart item not found" });
+    }
 
     const result = await cartDB.updateOne(
-      { _id: req.params.id },
-      { $set: { quantity: quantity } }
+      { _id: req.params.id, loginId: req.userData.loginId },
+      { $set: { quantity: oldData.quantity + 1 } }
     );
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully updated ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not updated",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Cart quantity increased",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while updating cart item",
     });
   }
 });
 
-productRoute.put("/decrcart/:id", async (req, res) => {
+// Decrease Cart Quantity (User)
+productRoute.put("/decrcart/:id", checkauth, checkRole(ROLES.USER), async (req, res) => {
   try {
-    console.log(req.params.id);
+    const oldData = await cartDB.findOne({ _id: req.params.id, loginId: req.userData.loginId });
+    if (!oldData) {
+      return res.status(404).json({ success: false, error: true, message: "Cart item not found" });
+    }
 
-
-    
-    const oldData = await cartDB.findOne({ _id: req.params.id });
-    console.log(oldData);
-
-    const quantity = oldData.quantity - 1;
-
+    const newQuantity = Math.max(1, oldData.quantity - 1);
     const result = await cartDB.updateOne(
-      { _id: req.params.id },
-      { $set: { quantity: quantity } }
+      { _id: req.params.id, loginId: req.userData.loginId },
+      { $set: { quantity: newQuantity } }
     );
-    if (result) {
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Cart quantity decreased",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while updating cart item",
+    });
+  }
+});
+
+// Delete Cart Item (User)
+const deleteCartItemHandler = async (req, res) => {
+  try {
+    const result = await cartDB.deleteOne({
+      _id: req.params.id,
+      loginId: req.userData.loginId,
+      status: 1
+    });
+    if (result.deletedCount > 0) {
       return res.status(200).json({
         success: true,
         error: false,
         data: result,
-        message: "successfully updated ",
+        message: "Cart item deleted successfully",
       });
     } else {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         error: true,
-        message: "not updated",
+        message: "Cart item not found or already removed",
       });
     }
   } catch (error) {
@@ -540,75 +440,17 @@ productRoute.put("/decrcart/:id", async (req, res) => {
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error while deleting cart item",
     });
   }
-});
+};
 
-productRoute.get("/delcartitem/:id", checkauth, async (req, res) => {
+productRoute.get("/delcartitem/:id", checkauth, checkRole(ROLES.USER), deleteCartItemHandler);
+productRoute.delete("/delcartitem/:id", checkauth, checkRole(ROLES.USER), deleteCartItemHandler);
+
+// Checkout / Place Order (User)
+productRoute.put("/updatecart", checkauth, checkRole(ROLES.USER), async (req, res) => {
   try {
-    const result = await cartDB.deleteOne(
-      { loginId: req.userData.loginId, status: 1 },
-      { _id: req.params.id }
-    );
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully updated ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not updated",
-      });
-    }
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "something went wrong",
-    });
-  }
-});
-
-// productRoute.get('/deletecart/:id',checkauth,async(req,res)=>{
-//     try{
-//         const result= await cartDB.deleteMany({loginId:req.userData.loginId},{_id:req.params.id})
-//         if(result){
-//             return  res.status(200).json({
-//                 success:true,
-//                 error:false,
-//                 data:result,
-//                 message:"successfully deleted ",
-//             })
-//         }
-//         else{
-//             return res.status(400).json({
-//                 success:false,
-//                 error:true,
-//                 message:"not deleted",
-//             })
-//         }
-
-//     }
-//     catch(error)
-//     {
-//         return res.status(500).json({
-//             success:false,
-//             error:true,
-//             errorMessage:error.message,
-//             message:"something went wrong",
-//         })
-//     }
-// })
-
-productRoute.put("/updatecart", checkauth, async (req, res) => {
-  try {
-    const oldData = await cartDB.find({ loginId: req.userData.loginId });
     const now = new Date();
     const day = now.getDate();
     const month = now.getMonth() + 1;
@@ -620,206 +462,141 @@ productRoute.put("/updatecart", checkauth, async (req, res) => {
       deliveryDate: `${day + 5}-${month}-${year}`,
       payment: "Cash on Delivery",
     };
-    const result = await cartDB.updateOne(
+    const result = await cartDB.updateMany(
       { loginId: req.userData.loginId, status: 1 },
       { $set: data }
     );
 
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully updated ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not updated",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Order placed successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error during checkout",
     });
   }
 });
 
-productRoute.put("/updatedeliverydate/:id", async (req, res) => {
-  console.log(req.body);
+// Update Delivery Date (Vendor / Admin)
+productRoute.put("/updatedeliverydate/:id", checkauth, checkRole(ROLES.COMPANY, ROLES.ADMIN), async (req, res) => {
   try {
-    const oldData = await cartDB.find({ _id: req.params.id });
-
-    const data = {
-      deliveryDate: req.body.date,
-    };
-    const result = await cartDB.updateMany(
-      { _id: req.params.id },
-      { $set: data }
-    );
-
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully updated ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not updated",
-      });
-    }
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "something went wrong",
-    });
-  }
-});
-
-productRoute.put("/updatecartstatus/:id/:value", async (req, res) => {
-  try {
-    // const oldData=await cartDB.find({_id:req.params.id})
-    // const val=req.params.value;
-
-    const data = {
-      status: req.params.value,
-    };
+    const data = { deliveryDate: req.body.date };
     const result = await cartDB.updateOne(
       { _id: req.params.id },
       { $set: data }
     );
-
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully updated ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not updated",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Delivery date updated",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error updating delivery date",
     });
   }
 });
 
-productRoute.put("/cancelorder/:id", async (req, res) => {
+// Update Order Status (Vendor / Admin)
+productRoute.put("/updatecartstatus/:id/:value", checkauth, checkRole(ROLES.COMPANY, ROLES.ADMIN), async (req, res) => {
   try {
-    const oldData = await cartDB.find({ _id: req.params.id });
-
-    const data = {
-      status: 3,
-    };
-    const result = await cartDB.updateMany(
+    const data = { status: req.params.value };
+    const result = await cartDB.updateOne(
       { _id: req.params.id },
       { $set: data }
     );
-
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully cancelled ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not cancelled",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Order status updated",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error updating order status",
     });
   }
 });
 
-productRoute.get("/vieworder", checkauth, async (req, res) => {
+// Cancel Order (User)
+productRoute.put("/cancelorder/:id", checkauth, checkRole(ROLES.USER), async (req, res) => {
+  try {
+    const data = { status: 3 };
+    const result = await cartDB.updateOne(
+      { _id: req.params.id, loginId: req.userData.loginId },
+      { $set: data }
+    );
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Order cancelled successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error cancelling order",
+    });
+  }
+});
+
+// View Orders (User)
+productRoute.get("/vieworder", checkauth, checkRole(ROLES.USER), async (req, res) => {
   try {
     const result = await cartDB
       .find({ loginId: req.userData.loginId })
       .populate("prdId");
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: result,
-        message: "successfully Viewed ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "not Viewed",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Orders viewed successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error viewing orders",
     });
   }
 });
 
-productRoute.put("/rejectorder/:id", async (req, res) => {
+// Reject Order (Vendor / Admin)
+productRoute.put("/rejectorder/:id", checkauth, checkRole(ROLES.COMPANY, ROLES.ADMIN), async (req, res) => {
   try {
-    // console.log(req.params);
-    const oldData = await cartDB.find({ _id: req.params.id });
-    //    console.log(oldData.status);
-    const data = {
-      status: 3,
-    };
+    const data = { status: 3 };
     const result = await cartDB.updateOne(
       { _id: req.params.id },
       { $set: data }
     );
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        erorr: false,
-        data: result,
-        message: "successfully updated ",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        Message: "not updated",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Order rejected",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "something went wrong",
+      message: "Server error rejecting order",
     });
   }
 });

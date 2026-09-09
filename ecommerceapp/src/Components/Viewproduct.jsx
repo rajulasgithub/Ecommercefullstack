@@ -1,291 +1,322 @@
-import React, { useState,useEffect } from 'react'
-import './Style.css'
+import React, { useState, useEffect } from 'react';
+import './Style.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import axios from 'axios'
-import Nav from 'react-bootstrap/Nav';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Modal from 'react-bootstrap/Modal';
 import Form from "react-bootstrap/Form";
-
-
-
+import api from '../utils/api';
+import ROLES from '../utils/roles';
 
 const Viewproduct = () => {
-  const role= localStorage.getItem("role");
+  const role = Number(localStorage.getItem("role"));
+  const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
-  const navigate=useNavigate();
-  const[product,setProduct]=useState([]);
-  const[updateprdt,setUpdateprdt]=useState({});
+  const [product, setProduct] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [updateprdt, setUpdateprdt] = useState({});
+  const [activeItemId, setActiveItemId] = useState(null);
   const [show, setShow] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  // const[cart,setAddtocart]=useState("");
- useEffect(() => {
-  axios.get('http://localhost:8080/product/viewproduct').then((response)=>{
-    console.log(response.data.data); 
-    setProduct(response.data.data);
-  }).catch((error)=>{
-    console.log(error);
-    
-  })
- 
-   
- }, [])
- 
-  
-  console.log(product)
-  const token= localStorage.getItem('token')
-  
-  // setAddtocart(localStorage.getItem('token'));
-  // console.log(token);
+  useEffect(() => {
+    api.get('/product/viewproduct')
+      .then((response) => {
+        setProduct(response.data.data || []);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
-  const handleSubmit=(id)=>{
-    const prdId={productId:id}
-    const headers={
-      'Authorization':`bearer ${token}`,
-      // 'Content-Type':'application/json'
+  const handleSubmit = (id) => {
+    if (!token) {
+      navigate('/login');
+      return;
     }
-    
-    axios.post(`http://localhost:8080/product/addtocart`,prdId,{
-      headers:headers
-    }).then((response)=>{
-      console.log(response);
-      navigate('/cart')
-      
-    }).catch((error)=>{
-      console.log(error);
-      
-    })
-  }
 
-const dltproduct=(id)=>{
-  console.log(id);
-   axios.put(`http://localhost:8080/product/deleteproduct/${id}`).then((response)=>{
-    console.log(response);
-    window.location.reload();
-   }).catch((error)=>{
-    console.log(error);  
-   })
-}
-// const updateproduct=(id)=>{
-//   console.log(id);
-//   axios.put(`http://localhost:8080/product/updateproduct/${id}`).then((response)=>{
-//     console.log(response);
-//   }).catch((error)=>{
-//     console.log(error);  
-//   })
-// }
+    const prdId = { productId: id };
+    api.post('/product/addtocart', prdId)
+      .then((response) => {
+        navigate('/cart');
+      })
+      .catch((error) => {
+        const msg = error.response?.data?.message || "Failed to add to cart.";
+        setErrorMsg(msg);
+      });
+  };
 
+  const dltproduct = (id) => {
+    api.put(`/product/deleteproduct/${id}`)
+      .then((response) => {
+        setProduct(product.filter(p => p._id !== id));
+      })
+      .catch((error) => {
+        const msg = error.response?.data?.message || "Failed to delete product.";
+        setErrorMsg(msg);
+      });
+  };
 
-const handleChange=(event)=>{
-  console.log(event);
-  setUpdateprdt({...updateprdt,[event.target.name]:event.target.value});
-}
+  const handleChange = (event) => {
+    setUpdateprdt({ ...updateprdt, [event.target.name]: event.target.value });
+  };
 
-const fileChange=(event)=>{
-  setUpdateprdt({...updateprdt,image:event.target.files[0]})
- }
+  const fileChange = (event) => {
+    setUpdateprdt({ ...updateprdt, image: event.target.files[0] });
+  };
 
- const formdata= new FormData();
- formdata.append('prdName',updateprdt.prdName)
- formdata.append('image',updateprdt.image)
- formdata.append('prize',updateprdt.prize)
- formdata.append('size',updateprdt.size)
- formdata.append('material',updateprdt.material)
+  const handleUpdate = (id) => {
+    const formdata = new FormData();
+    formdata.append('prdName', updateprdt.prdName || '');
+    if (updateprdt.image) formdata.append('image', updateprdt.image);
+    formdata.append('prize', updateprdt.prize || '');
+    formdata.append('size', updateprdt.size || '');
+    formdata.append('material', updateprdt.material || '');
 
+    api.put(`/product/updateproduct/${id}`, formdata)
+      .then((response) => {
+        handleClose();
+        // Refresh product list
+        api.get('/product/viewproduct').then((res) => setProduct(res.data.data || []));
+      })
+      .catch((error) => {
+        const msg = error.response?.data?.message || "Failed to update product.";
+        setErrorMsg(msg);
+      });
+  };
 
- const handleUpdate=(id)=>{
-   axios.put(`http://localhost:8080/product/updateproduct/${id}`,formdata).then((response)=>{
-    console.log(response.data.data);  
-   }).catch((error)=>{
-     console.log(error);
-   })
- }
+  const handleClose = () => {
+    setShow(false);
+    setActiveItemId(null);
+  };
 
+  const handleShow = (id) => {
+    setActiveItemId(id);
+    setShow(true);
+  };
 
-const handleClose = () =>
-  {  
-  setShow(false);
-  window.location.reload();
-  }
+  const setStatus = (id, value) => {
+    api.put(`/product/updateproductstatus/${id}/${value}`)
+      .then((response) => {
+        api.get('/product/viewproduct').then((res) => setProduct(res.data.data || []));
+      })
+      .catch((error) => {
+        const msg = error.response?.data?.message || "Failed to update status.";
+        setErrorMsg(msg);
+      });
+  };
 
-
-const handleShow = () => setShow(true);
-
-const setStatus=(id,value)=>{
-  console.log(value);
-     axios.put(`http://localhost:8080/product/updateproductstatus/${id}/${value}`).then((response)=>{
-      console.log(response);
-      
-     }).catch((error)=>{
-      console.log(error);
-      
-     })
-
-     window.location.reload();
-
-}
+  const filteredProducts = product.filter((item) =>
+    item.prdName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.material?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div>
-      <Header/>
-      <div className='viewproductback'>
-    
-        <div>
-      <div className='viewprdtdiv'>
-       {role==2?
-      
-      <Container >
-      <Row style={{columnGap:30}}>
-      {product.map((item)=>(
-      <Card style={{ width: '15rem',paddingTop:15,marginBottom:30 }} className='viewprdctcards' >
-      <Col sm>
-      <Card.Img variant="top" src={item.image[0]} style={{width:180,height:150,marginLeft:15}}/>
-      <Card.Body>
-        <Card.Title className='text-success'>{item.prdName}</Card.Title>
-        <Card.Text className='text-danger '>
-       Prize: {item.prize}
-       
-        </Card.Text>
-        <Card.Text>
-        Size:{item.size}
-        </Card.Text>
-        <Card.Text>
-       Material: {item.material}
-       
-        </Card.Text>
-        {item.status!==6?
-        <>
-        <Button  size="sm" variant="outline-success" onClick={()=>handleSubmit(item._id)}>Add to Cart</Button>
-        </>:
-        <Button  size="sm" variant="danger" >Out Of Stock</Button>
+    <div className="page-container">
+      <Header />
 
-}
-        </Card.Body>
-      </Col>
-    </Card>
-        
-       
-      ))}
-      </Row>
-      </Container>:
-      
-      <Container >
-      <Row style={{columnGap:30}}>
-      {product.map((item)=>(
-      <Card style={{ width: '15rem',paddingTop:15,marginBottom:30 }} className='viewprdctcards' >
-      <Col sm>
-      <Card.Img variant="top" src={item.image[0]} style={{width:180,height:150,marginLeft:15}}/>
-      <Card.Body>
-        <Card.Title className='text-success'>{item.prdName}</Card.Title>
-        <Card.Text className='text-danger '>
-       Prize: {item.prize}
-       
-        </Card.Text>
-        <Card.Text>
-        Size:{item.size}
-        </Card.Text>
-        <Card.Text>
-       Material: {item.material}
-       </Card.Text>
-        <>
-        {item.status!==6?
-        <div className='viewprdctbtn'>
-        <Button  size="sm" variant="outline-success" onClick={()=>dltproduct(item._id)} >Delete</Button>
-        <Button  size="sm" variant="outline-success" onClick={handleShow}>Update</Button>
-        <Modal show={show} onHide={handleClose} backdrop="static"
-        >
-        <Modal.Header closeButton>
+      <Container className="py-4">
+        {/* Page Header */}
+        <div className="page-header">
+          <span className="status-pill ordered mb-2">Curated Fashion</span>
+          <h1 className="page-title">Explore Our Apparel Collection</h1>
+          <p className="page-subtitle">Discover handcrafted dresses, ethnic wear, and modern outfits</p>
+        </div>
+
+        {errorMsg && (
+          <div className="alert alert-danger text-center mb-4" role="alert" style={{ fontSize: "0.875rem" }}>
+            {errorMsg}
+          </div>
+        )}
+
+        {/* Search & Filter Bar */}
+        <Row className="justify-content-center mb-4">
+          <Col xs={12} md={6}>
+            <Form.Control
+              type="text"
+              placeholder="🔍 Search dresses, fabric, material..."
+              className="glass-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </Col>
+        </Row>
+
+        {/* Products Grid */}
+        <Row className="g-4">
+          {filteredProducts.map((item) => (
+            <Col key={item._id} xs={12} sm={6} md={4} lg={3}>
+              <div className="glass-card h-100 d-flex flex-column justify-content-between p-3">
+                <div>
+                  {/* Product Image */}
+                  <div style={{
+                    borderRadius: "14px",
+                    overflow: "hidden",
+                    height: "220px",
+                    position: "relative",
+                    marginBottom: "1rem",
+                    backgroundColor: "rgba(0,0,0,0.3)"
+                  }}>
+                    <img
+                      src={item.image ? item.image[0] : '/images/ethnic.jpg'}
+                      alt={item.prdName}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transition: "transform 0.4s ease"
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.08)"}
+                      onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
+                    />
+                    <div style={{ position: "absolute", top: "10px", right: "10px" }}>
+                      {item.status !== 6 ? (
+                        <span className="status-pill delivered">In Stock</span>
+                      ) : (
+                        <span className="status-pill out-of-stock">Out of Stock</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Details */}
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.4rem" }}>
+                    {item.prdName}
+                  </h3>
+
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <span style={{ fontSize: "1.25rem", fontWeight: 800, color: "#a5b4fc" }}>
+                      ₹{item.prize}
+                    </span>
+                    <span style={{ fontSize: "0.8rem", color: "#9ca3af", background: "rgba(255,255,255,0.08)", padding: "0.2rem 0.6rem", borderRadius: "6px" }}>
+                      Size: {item.size}
+                    </span>
+                  </div>
+
+                  <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "1rem" }}>
+                    Material: {item.material}
+                  </p>
+                </div>
+
+                {/* Actions depending on Role */}
+                <div>
+                  {role === ROLES.COMPANY || role === ROLES.ADMIN ? (
+                    /* Company Seller Actions */
+                    <div className="d-flex flex-column gap-2">
+                      {item.status !== 6 ? (
+                        <div className="d-flex gap-2">
+                          <Button className="btn-glass-secondary w-50 py-1" size="sm" onClick={() => handleShow(item._id)}>
+                            Edit
+                          </Button>
+                          <Button className="btn-glass-danger w-50 py-1" size="sm" onClick={() => dltproduct(item._id)}>
+                            Delete
+                          </Button>
+                        </div>
+                      ) : (
+                        <Form.Select
+                          className="glass-input text-sm py-1"
+                          style={{ fontSize: "0.85rem" }}
+                          name="status"
+                          onChange={(e) => setStatus(item._id, e.target.value)}
+                        >
+                          <option value="" style={{ color: "#000" }}>-- Select Action --</option>
+                          <option value="0" style={{ color: "#000" }}>Restock Product</option>
+                        </Form.Select>
+                      )}
+                    </div>
+                  ) : (
+                    /* Customer Actions */
+                    <div className="d-grid">
+                      {item.status !== 6 ? (
+                        <Button className="btn-glass-primary" onClick={() => handleSubmit(item._id)}>
+                          Add to Cart
+                        </Button>
+                      ) : (
+                        <Button className="btn-glass-secondary" disabled style={{ opacity: 0.6 }}>
+                          Currently Unavailable
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </Container>
+
+      {/* Edit Product Modal */}
+      <Modal show={show} onHide={handleClose} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>Update Product Details</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-4">
           <Form>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Product Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Product Name"
-                autoFocus
-                name='prdName' 
+                name="prdName"
+                className="glass-input"
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
-              <Form.Control type="file"  placeholder='choose image'  name='image'  onChange={fileChange} />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Product Image</Form.Label>
               <Form.Control
-                type="text"
-                placeholder="Prize"
-                autoFocus 
-                name='prize'
+                type="file"
+                name="image"
+                className="glass-input"
+                onChange={fileChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Price (₹)</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Price"
+                name="prize"
+                className="glass-input"
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Size</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Size"
-                autoFocus
-                name='size'
+                name="size"
+                className="glass-input"
                 onChange={handleChange}
-                
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Material</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Material"
-                autoFocus
-                name='material'
+                name="material"
+                className="glass-input"
                 onChange={handleChange}
               />
             </Form.Group>
-            
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
+        <Modal.Footer className="glass-modal-footer">
+          <Button className="btn-glass-secondary" onClick={handleClose}>
+            Cancel
           </Button>
-          <Button variant="primary" onClick={()=>handleUpdate(item._id)}>
-            Update
+          <Button className="btn-glass-primary" onClick={() => handleUpdate(activeItemId)}>
+            Save Changes
           </Button>
         </Modal.Footer>
       </Modal>
-        </div>:
-        <>
-        <Form.Select aria-label="Default select example" name="status" onChange={(e)=>setStatus(item._id,e.target.value)} >
-        <option  >Out Of Stock</option>
-        <option value="0" >Add Product</option>
-    
-      
-        </Form.Select>
-        {/* <Button variant="danger">Out of Stock</Button> */}
-        </>
-}
-        </>
-      </Card.Body>
-      </Col>
-    </Card>
-          
-      ))}
-      </Row>
-      </Container>
-    
-}
-
-      </div>
-      </div>
-        
-      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Viewproduct
+export default Viewproduct;

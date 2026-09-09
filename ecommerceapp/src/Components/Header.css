@@ -1,13 +1,60 @@
-.navtext{
-    font-size: 13px;
-    color:black;
+.header-navbar {
+  background: rgba(11, 15, 25, 0.85) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.85rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
-.navtext:hover{
-    color:white;
-    border-radius: 10px;
-    background-color:lightblue;
 
+.header-brand {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 1.45rem;
+  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
 }
-.navclr{
-    background-color: white;
+
+.header-nav-link {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.925rem;
+  font-weight: 500;
+  color: #cbd5e1 !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.header-nav-link:hover, .header-nav-link:focus {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.header-cta-link {
+  background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+  color: #ffffff !important;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  transition: all 0.25s ease;
+}
+
+.header-cta-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+}
+
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.navbar-toggler-icon {
+  filter: invert(1);
 }

@@ -1,343 +1,295 @@
-import React from 'react'
-import  { useEffect, useState } from "react";
-
-import './Style.css'
+import React, { useEffect, useState } from 'react';
+import './Style.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import axios from 'axios'
 import Modal from 'react-bootstrap/Modal';
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
-
-
-
-import InputGroup from 'react-bootstrap/InputGroup';
 import Header from './Header';
-
-
-
+import api from '../utils/api';
 
 const OrderSummary = () => {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
-  const[address,setAddress]=useState({});
-  const[shippingaddress,setShippingAddress]=useState({});
-  const[shippinginfo,setShippinginfo]=useState({});
-
-
-  
-
-
+  const [address, setAddress] = useState({});
+  const [shippingaddress, setShippingAddress] = useState({});
+  const [shippinginfo, setShippinginfo] = useState({});
+  const [selectedPayment, setSelectedPayment] = useState("cod");
 
   useEffect(() => {
     const now = new Date();
-    const day= now.getDate();
-    const month = now.getMonth()+1;
+    const day = now.getDate();
+    const month = now.getMonth() + 1;
     const year = now.getFullYear();
-    const exptdeliverydate= (`${day+5}-${month}-${year}`);
-    localStorage.setItem("expdeliverydate",exptdeliverydate)
-    const total=localStorage.setItem('total',(JSON.parse(localStorage.getItem('totalprize')))+40)
-    const token=localStorage.getItem('token');
+    const exptdeliverydate = (`${day + 5}-${month}-${year}`);
+    localStorage.setItem("expdeliverydate", exptdeliverydate);
     
-    const headers = {
-      Authorization: `bearer ${token}`,
-      // 'Content-Type':'application/json'
-    };
-    axios.get('http://localhost:8080/address/getaddress',{headers:headers}).then((response)=>{
-      console.log(response.data.data);
-      setShippingAddress(response.data.data);
-    }).catch((error)=>{
-      console.log(error);
-      
-    })
+    const itemTotal = JSON.parse(localStorage.getItem('totalprize')) || 0;
+    localStorage.setItem('total', itemTotal + 40);
 
-    axios.get('http://localhost:8080/auth/viewinfo',{headers:headers}).then((response)=>{
-      console.log(response);
-      setShippinginfo(response.data.data)
-      
-    }).catch((error)=>{
-      console.log(error);
-      
-    })
-    
-       
+    api.get('/address/getaddress')
+      .then((response) => {
+        setShippingAddress(response.data.data || {});
+      })
+      .catch((error) => console.log(error));
 
-  }, [])
+    api.get('/auth/viewinfo')
+      .then((response) => {
+        setShippinginfo(response.data.data || {});
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
- 
-  const conformOrder=()=>{
-    const token=localStorage.getItem('token');
-    const ordertime = Date.now(); 
+  const conformOrder = () => {
+    const ordertime = Date.now();
     localStorage.setItem("orderedtime", ordertime);
-    
 
-    console.log(token);
-    const headers = {
-      Authorization: `bearer ${token}`,
-      // 'Content-Type':'application/json'
-    };
-    axios.put('http://localhost:8080/product/updatecart',{},{headers:headers}).then((response)=>{
-      console.log(response);  
-    }).catch((error)=>{
-      console.log(error);   
-    })
-    navigate('/vieworders')
-  }
+    api.put('/product/updatecart', {})
+      .then((response) => {
+        navigate('/vieworders');
+      })
+      .catch((error) => console.log(error));
+  };
 
-
-  const handleClose = () =>
-    { 
-    
-      
-      setShow(false);
-    window.location.reload();
-
-    }
+  const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  
-  const handleChange=(event)=>{
-     console.log(event);
-     setAddress({...address,[event.target.name]:event.target.value});
 
-  }
-  console.log(address)
+  const handleChange = (event) => {
+    setAddress({ ...address, [event.target.name]: event.target.value });
+  };
 
-  const updateAdrress=(event)=>{
-    const token = localStorage.getItem("token");
+  const updateAdrress = () => {
+    api.put('/address/changedeliveryaddress', address)
+      .then((response) => {
+        setShippingAddress(response.data.data || address);
+        handleClose();
+      })
+      .catch((error) => console.log(error));
+  };
 
-    const headers = {
-      Authorization: `bearer ${token}`,
-      // 'Content-Type':'application/json'
-    };
-    axios.put('http://localhost:8080/address/changedeliveryaddress',address,{headers:headers}).then((response)=>{
-      console.log(response.data.data);
-    }).catch((error)=>{
-      console.log(error)
-    })
-  }
- 
+  const itemPrice = JSON.parse(localStorage.getItem('totalprize')) || 0;
+  const itemCount = localStorage.getItem('itemcount') || 0;
+  const deliveryCharge = 40;
+  const grandTotal = itemPrice + deliveryCharge;
 
   return (
-    <>
-    <Header/>
-    <div className='odrsmryback'>
-      <div className='pgstopflex'>
-        <div className='progressflex'>
-        <div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"blue"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
-</svg>
-</div>
+    <div className="page-container">
+      <Header />
 
-  <div>
-    <div className='progressbar'>
-      .
-    </div>
-  </div>
-  </div>
+      <Container className="py-4">
+        {/* Step Progress Bar */}
+        <div className="d-flex justify-content-center align-items-center mb-5 gap-3">
+          <div className="d-flex align-items-center gap-2">
+            <span className="status-pill delivered">✓ 1. Shopping Bag</span>
+          </div>
+          <div style={{ height: "2px", width: "60px", background: "var(--app-primary)" }}></div>
+          <div className="d-flex align-items-center gap-2">
+            <span className="status-pill ordered">2. Order Summary</span>
+          </div>
+        </div>
 
-  <div className='progressflex'>
-  <div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"blue"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
-</svg>
-</div>
-<div>
-    <div className='progressbartwo'>
-      .
-    </div>
-  </div>
-</div>
+        {/* Page Header */}
+        <div className="page-header pt-0">
+          <h1 className="page-title">Order Summary & Payment</h1>
+          <p className="page-subtitle">Confirm delivery address and select payment method</p>
+        </div>
 
- 
-  <div >
-  <div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" style={{color:"grey"}} fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
-</svg>
-</div>
+        <Row className="g-4">
+          {/* Shipping Address Card */}
+          <Col xs={12} lg={6}>
+            <div className="glass-card h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>
+                    📍 Delivery Information
+                  </h3>
+                  <Button className="btn-glass-secondary py-1 px-3" size="sm" onClick={handleShow}>
+                    Change Address
+                  </Button>
+                </div>
 
-</div>
+                <div style={{ color: "#e2e8f0", fontSize: "0.95rem", lineHeight: 1.7 }}>
+                  <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#ffffff", marginBottom: "0.5rem" }}>
+                    Recipient: {shippinginfo.firstname || 'Customer'}
+                  </div>
+                  <div><strong>Address:</strong> {shippingaddress.address || 'Not provided'}</div>
+                  <div><strong>Building No:</strong> {shippingaddress.BuildingNumber || 'N/A'}</div>
+                  <div><strong>District & State:</strong> {shippingaddress.district ? `${shippingaddress.district}, ${shippingaddress.state}` : 'N/A'}</div>
+                  <div><strong>Pincode:</strong> {shippingaddress.pincode || 'N/A'}</div>
+                  <div><strong>Contact Phone:</strong> {shippinginfo.number || 'N/A'}</div>
+                </div>
+              </div>
 
+              <div style={{ background: "rgba(255,255,255,0.04)", padding: "1rem", borderRadius: "12px", marginTop: "1.5rem" }}>
+                <span style={{ fontSize: "0.85rem", color: "#9ca3af" }}>📅 Estimated Delivery Date:</span>
+                <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#10b981" }}>
+                  {localStorage.getItem("expdeliverydate")}
+                </div>
+              </div>
+            </div>
+          </Col>
 
-  </div>
-        <div>
-        <Container>
-      <Row className='pt-5'>
-      <Col>
-      <div className='ordercolone'>
-        <div className='odraddrsflex pt-4 ps-4 pe-4'>
-        <h3>deliver to:{shippinginfo.firstname}</h3>
-        <Button variant="outline-primary" onClick={handleShow} >Change</Button>{' '}
-        <Modal show={show} onHide={handleClose} backdrop="static"
-        >
-        <Modal.Header closeButton>
+          {/* Payment Method & Price Details Card */}
+          <Col xs={12} lg={6}>
+            <div className="glass-card">
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#ffffff", marginBottom: "1.25rem" }}>
+                💳 Payment Method
+              </h3>
+
+              <div className="d-flex flex-column gap-2 mb-4">
+                {[
+                  { id: "cod", label: "Cash On Delivery (COD)", icon: "💵" },
+                  { id: "upi", label: "UPI (Google Pay / PhonePe / Paytm)", icon: "⚡" },
+                  { id: "netbanking", label: "Net Banking", icon: "🏦" },
+                  { id: "card", label: "Credit / Debit / ATM Card", icon: "💳" }
+                ].map((method) => (
+                  <label
+                    key={method.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "0.85rem 1rem",
+                      borderRadius: "12px",
+                      background: selectedPayment === method.id ? "rgba(99, 102, 241, 0.2)" : "rgba(255, 255, 255, 0.04)",
+                      border: selectedPayment === method.id ? "1px solid #6366f1" : "1px solid rgba(255, 255, 255, 0.08)",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease"
+                    }}
+                  >
+                    <div className="d-flex align-items-center gap-2">
+                      <span>{method.icon}</span>
+                      <span style={{ fontWeight: 600, color: "#ffffff", fontSize: "0.95rem" }}>{method.label}</span>
+                    </div>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      checked={selectedPayment === method.id}
+                      onChange={() => setSelectedPayment(method.id)}
+                      style={{ accentColor: "#6366f1" }}
+                    />
+                  </label>
+                ))}
+              </div>
+
+              <h4 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.85rem" }}>
+                Bill Details
+              </h4>
+              <div className="d-flex justify-content-between mb-2" style={{ color: "#cbd5e1", fontSize: "0.9rem" }}>
+                <span>Items ({itemCount})</span>
+                <span>₹{itemPrice}</span>
+              </div>
+              <div className="d-flex justify-content-between mb-2" style={{ color: "#cbd5e1", fontSize: "0.9rem" }}>
+                <span>Delivery & Handling Fee</span>
+                <span>₹{deliveryCharge}</span>
+              </div>
+              <hr style={{ borderColor: "rgba(255,255,255,0.15)" }} />
+              <div className="d-flex justify-content-between mb-4" style={{ fontSize: "1.2rem", fontWeight: 800, color: "#ffffff" }}>
+                <span>Total Payable</span>
+                <span style={{ color: "#a5b4fc" }}>₹{grandTotal}</span>
+              </div>
+
+              <Button className="btn-glass-primary w-100 py-3" onClick={conformOrder}>
+                Confirm Order & Pay ₹{grandTotal}
+              </Button>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+
+      {/* Edit Address Modal */}
+      <Modal show={show} onHide={handleClose} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>Update Delivery Address</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-4">
           <Form>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label>Name</Form.Label> */}
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Recipient Name</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter Name"
-                autoFocus
-                name='firstname' 
+                placeholder="Full Name"
+                name="firstname"
+                className="glass-input"
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
-              {/* <Form.Label>Enter Delivery Address</Form.Label> */}
-              <Form.Control as="textarea" rows={2} placeholder='Enter Address'  name='address'  onChange={handleChange} />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label> Building Number</Form.Label> */}
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Street Address</Form.Label>
               <Form.Control
-                type="text"
-                placeholder="Enter Building Number"
-                autoFocus 
-                name='BuildingNumber'
+                as="textarea"
+                rows={2}
+                placeholder="House no, Street, Area"
+                name="address"
+                className="glass-input"
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label> State</Form.Label> */}
+            <Row className="g-2 mb-3">
+              <Col xs={6}>
+                <Form.Control
+                  type="text"
+                  placeholder="Building Number"
+                  name="BuildingNumber"
+                  className="glass-input"
+                  onChange={handleChange}
+                />
+              </Col>
+              <Col xs={6}>
+                <Form.Control
+                  type="text"
+                  placeholder="District"
+                  name="district"
+                  className="glass-input"
+                  onChange={handleChange}
+                />
+              </Col>
+            </Row>
+            <Row className="g-2 mb-3">
+              <Col xs={6}>
+                <Form.Control
+                  type="text"
+                  placeholder="State"
+                  name="state"
+                  className="glass-input"
+                  onChange={handleChange}
+                />
+              </Col>
+              <Col xs={6}>
+                <Form.Control
+                  type="text"
+                  placeholder="Pincode"
+                  name="pincode"
+                  className="glass-input"
+                  onChange={handleChange}
+                />
+              </Col>
+            </Row>
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Phone Number</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter State"
-                autoFocus
-                name='state'
-                onChange={handleChange}
-                
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label> District</Form.Label> */}
-              <Form.Control
-                type="text"
-                placeholder="Enter District"
-                autoFocus
-                name='district'
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label> Pincode</Form.Label> */}
-              <Form.Control
-                type="text"
-                placeholder="Enter Pincode "
-                autoFocus
-                name='pincode'
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              {/* <Form.Label> Phone</Form.Label> */}
-              <Form.Control
-                type="text"
-                placeholder="Enter phone Number"
-                autoFocus
-                name='number'
+                placeholder="Mobile number"
+                name="number"
+                className="glass-input"
                 onChange={handleChange}
               />
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
+        <Modal.Footer className="glass-modal-footer">
+          <Button className="btn-glass-secondary" onClick={handleClose}>
+            Cancel
           </Button>
-          <Button variant="primary" onClick={updateAdrress}>
-            Update
+          <Button className="btn-glass-primary" onClick={updateAdrress}>
+            Update & Save
           </Button>
         </Modal.Footer>
       </Modal>
-        </div>
-        <div className=' ps-4 pe-4'>
-       <h4>Address:{shippingaddress.address}</h4>
-       <div className='adrsdiv pe-5'>
-       <p className='fw-bold '>District:{shippingaddress.district} </p>
-       <p className='fw-bold '>State:{shippingaddress.state}</p>
-       <p className='fw-bold '>Pincode:{shippingaddress.pincode}</p>
-       <p className='fw-bold '>Building Number:{shippingaddress.BuildingNumber}</p>
-       <h6 className=' fw-bold pb-4'>Phone Number:{shippinginfo.number}</h6>
-
-       
-
-        </div>
-       </div>
-
-      </div>
-      
-      </Col>
-      <Col>
-      <div className='ordercoltwo'>
-      <div className=''><h6 className='ps-5 pt-5 fw-bold'>Expected Delivery Date:{" "+localStorage.getItem("expdeliverydate")}</h6></div>
-       <div className='odraddrsflex pt-3 ps-5 pe-5'>
-       <h6 className='fw-bold'>Price Of({localStorage.getItem('itemcount')})</h6>
-       <h6 className='fw-bold'>{localStorage.getItem('totalprize')}</h6>
-       </div>
-       <div className='odraddrsflex pt-3 ps-5 pe-5'>
-       <h6 className='fw-bold'>Delivery Charges:</h6>
-       <h6 className='fw-bold'>RS.40</h6>
-       </div>
-       <div className='odraddrsflex pt-3 ps-5 pe-5 pb-3'>
-       <h6 className='fw-bold'>Total:</h6>
-       <h6 className='fw-bold'>{
-       (JSON.parse(localStorage.getItem('totalprize')))+40}</h6>
-       </div>
-       <div>
-        <h4 className='ps-5 fw-bold'>Payment Method</h4>
-        
-        <div className='radioflex ps-5 fw-bold'>
-     <label class="form-check-label" for="flexRadioDefault1">
-       Cash On delivery
-     </label>
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" className='me-5'/>
-
-        </div>
-        <div className='radioflex ps-5 fw-bold'>
-     <label class="form-check-label" for="flexRadioDefault1">
-       UPI
-     </label>
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"  className='me-5'/>
-
-        </div>
-        <div className='radioflex ps-5 fw-bold'>
-     <label class="form-check-label" for="flexRadioDefault1">
-      Net Banking
-     </label>
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"  className='me-5'/>
-
-        </div>
-        <div className='radioflex ps-5 fw-bold'>
-     <label class="form-check-label" for="flexRadioDefault1">
-       Credit/Debit/ATM Card
-     </label>
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" className='me-5'/>
-
-        </div>
-        </div>
-       <div className='text-center pb-4 mt-5'>
-       <Button variant="warning"  onClick={conformOrder}>Conform Order</Button>{' '}
-       </div>
-         
-        </div>
-      </Col>
-
-
-        
-      </Row>
-      </Container>
-
-        </div>
     </div>
-    </>
-  )
-}
+  );
+};
 
-export default OrderSummary
+export default OrderSummary;

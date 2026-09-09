@@ -1,164 +1,240 @@
-import React, { useState } from 'react'
-import './Style.css'
+import React, { useState } from 'react';
+import './Style.css';
+import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import axios from 'axios'
-import Header from './Header';
-
-
-
-
+import api from '../utils/api';
 
 const Signup = () => {
-const[signup,setSignup]= useState({
-  firstname:"",
-  number:"",
-  state:"",
-  district:"",
-  place:"",
-  pincode:"",
-  gender:"",
-  email:"",
-  password:"",
-})
+  const navigate = useNavigate();
 
-const [error, setError] = useState({});
+  const [signup, setSignup] = useState({
+    firstname: "",
+    number: "",
+    state: "",
+    district: "",
+    place: "",
+    pincode: "",
+    gender: "",
+    email: "",
+    password: "",
+  });
 
+  const [error, setError] = useState({});
+  const [serverError, setServerError] = useState("");
 
-  const handleChange=(event)=>{
-    console.log(event)
-    setSignup({...signup,[event.target.name]:event.target.value})
-  }
-  console.log(signup)
+  const handleChange = (event) => {
+    setSignup({ ...signup, [event.target.name]: event.target.value });
+    setServerError("");
+  };
 
-  
-  
-    const Validate = () => {
-      const errormessage = {};
-      if (!signup.firstname) {
-        errormessage.firstname = "Enter Firstname";
-      }
-      if (!signup.number) {
-        errormessage.number = "Enter Number";
-      }
-      if (!signup.state) {
-        errormessage.state = "Enter State";
-      }
-      if (!signup.district) {
-        errormessage.district = "Enter District";
-      }
-      if (!signup.place) {
-        errormessage.place = "Enter Place";
-      }
-      if (!signup.pincode) {
-        errormessage.pincode = "Enter Pincode";
-      }
-      if (!signup.gender) {
-        errormessage.gender = "Enter Gender";
-      }
-      if (!signup.email) {
-        errormessage.email = "Enter email";
-      }
-      if (!signup.password) {
-        errormessage.password = "Enter password";
-      }
-      setError(errormessage)
-      return Object.keys(errormessage).length===0
-    };
-  
-  
-    const handleSubmit = async () => {
-      if (!Validate()) {
-        console.log("error")
-        return
-      }
-    
-    axios.post('http://localhost:8080/auth/signup',signup).then((response)=>{
-      console.log(response); 
-    }).catch((error) => {
-      console.log(error);
-    });
-  }
+  const Validate = () => {
+    const errormessage = {};
+    if (!signup.firstname) errormessage.firstname = "Firstname is required";
+    if (!signup.number) errormessage.number = "Phone number is required";
+    if (!signup.state) errormessage.state = "State is required";
+    if (!signup.district) errormessage.district = "District is required";
+    if (!signup.place) errormessage.place = "Place is required";
+    if (!signup.pincode) errormessage.pincode = "Pincode is required";
+    if (!signup.gender) errormessage.gender = "Gender is required";
+    if (!signup.email) errormessage.email = "Email is required";
+    if (!signup.password) errormessage.password = "Password is required";
 
+    setError(errormessage);
+    return Object.keys(errormessage).length === 0;
+  };
 
- 
- 
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+    if (!Validate()) return;
+
+    try {
+      const response = await api.post('/auth/signup', signup);
+      if (response.data && response.data.success) {
+        navigate('/login');
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Registration failed. Please try again.";
+      setServerError(msg);
+    }
+  };
+
   return (
-    <>
-    <Header/>
-    <div className='signupbg'>
-        <div className='formdiv'> 
-          {/* <div className='signuphead'> */}
-        <div className='text-center text-white mb-4 signuphead'>Signup</div>
-        {/* </div> */}
-        <div className='forminnerdiv'>
-      <Form className='text-center'>
-        <div className="">
-      <Row className="mb-1 justify-content-center">
-        <Form.Group as={Col} sm={6} controlId="formGridEmail" className=' gridone ' >
-        <Form.Label className="labelstyle">{error.firstname}</Form.Label>
-        <Form.Control type="text" placeholder="Firstname" className='formborder'  name="firstname" onChange={handleChange}  />
-        </Form.Group>
-        
-        <Form.Group as={Col} sm={6} controlId="formGridPassword" className='gridend' >
-        <Form.Label className="labelstyle">{error.number}</Form.Label>
-          <Form.Control type="text" placeholder="Number" className='formborder' name="number"  onChange={handleChange} />
-        </Form.Group>
-      </Row>
+    <div className="page-container">
+      <Header />
+      <div className="auth-page-container">
+        <Container style={{ maxWidth: "680px" }}>
+          <div className="glass-card">
+            <div className="text-center mb-4">
+              <span className="status-pill ordered mb-2">Create Account</span>
+              <h2 className="page-title" style={{ fontSize: "2rem" }}>Join TrendLife</h2>
+              <p className="page-subtitle" style={{ fontSize: "0.9rem" }}>Sign up to enjoy personalized shopping and fast checkout</p>
+            </div>
+
+            {serverError && (
+              <div className="alert alert-danger text-center mb-3" role="alert" style={{ fontSize: "0.875rem" }}>
+                {serverError}
+              </div>
+            )}
+
+            <Form onSubmit={handleSubmit}>
+              <Row className="g-3 mb-2">
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">First Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="e.g. Rahul"
+                      name="firstname"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.firstname && <span className="glass-error-badge">{error.firstname}</span>}
+                  </Form.Group>
+                </Col>
+
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Phone Number</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="e.g. 9876543210"
+                      name="number"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.number && <span className="glass-error-badge">{error.number}</span>}
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="g-3 mb-2">
+                <Col xs={12} sm={4}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">State</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="State"
+                      name="state"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.state && <span className="glass-error-badge">{error.state}</span>}
+                  </Form.Group>
+                </Col>
+
+                <Col xs={12} sm={4}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">District</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="District"
+                      name="district"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.district && <span className="glass-error-badge">{error.district}</span>}
+                  </Form.Group>
+                </Col>
+
+                <Col xs={12} sm={4}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Place</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Place"
+                      name="place"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.place && <span className="glass-error-badge">{error.place}</span>}
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="g-3 mb-2">
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Pincode</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="e.g. 682001"
+                      name="pincode"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.pincode && <span className="glass-error-badge">{error.pincode}</span>}
+                  </Form.Group>
+                </Col>
+
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Gender</Form.Label>
+                    <Form.Select
+                      name="gender"
+                      className="glass-input"
+                      onChange={handleChange}
+                    >
+                      <option value="" style={{ color: '#000' }}>Select Gender</option>
+                      <option value="Male" style={{ color: '#000' }}>Male</option>
+                      <option value="Female" style={{ color: '#000' }}>Female</option>
+                      <option value="Other" style={{ color: '#000' }}>Other</option>
+                    </Form.Select>
+                    {error.gender && <span className="glass-error-badge">{error.gender}</span>}
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="g-3 mb-4">
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Email Address</Form.Label>
+                    <Form.Control
+                      type="email"
+                      placeholder="name@example.com"
+                      name="email"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.email && <span className="glass-error-badge">{error.email}</span>}
+                  </Form.Group>
+                </Col>
+
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Password</Form.Label>
+                    <Form.Control
+                      type="password"
+                      placeholder="••••••••"
+                      name="password"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.password && <span className="glass-error-badge">{error.password}</span>}
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <div className="d-grid mb-3">
+                <Button type="submit" className="btn-glass-primary">
+                  Create Account
+                </Button>
+              </div>
+
+              <div className="text-center mt-3" style={{ fontSize: "0.875rem", color: "#9ca3af" }}>
+                Already have an account?{" "}
+                <Link to="/login" style={{ color: "#a5b4fc", textDecoration: "none", fontWeight: 600 }}>
+                  Sign In
+                </Link>
+              </div>
+            </Form>
+          </div>
+        </Container>
       </div>
-      
-      <Row className="mb-1 justify-content-center">
-        <Form.Group as={Col} sm={4} controlId="formGridState" className='gridone'>
-        <Form.Label className="labelstyle">{error.state}</Form.Label>
-          <Form.Control type="text" placeholder="Enter State" className='formborder'  name="state" onChange={handleChange} />
-        </Form.Group>
-
-        <Form.Group as={Col} sm={4} controlId="formGridCity" className='gridone'>
-        <Form.Label className="labelstyle">{error.district}</Form.Label>
-          <Form.Control type="text" placeholder="Enter district" name="district" onChange={handleChange} />
-
-        </Form.Group>
-        <Form.Group as={Col} sm={4} controlId="formGridPassword" className='gridend'>
-        <Form.Label className="labelstyle">{error.place}</Form.Label>
-          <Form.Control type="text" placeholder="Enter Place" className='formborder' name="place" onChange={handleChange}/>
-        </Form.Group>
-
-       
-      </Row>
-      <Row className="mb-1 justify-content-center">
-      <Form.Group as={Col} sm={6} controlId="formGridPincode" className='gridone'>
-      <Form.Label className="labelstyle">{error.pincode}</Form.Label>
-      <Form.Control type="text" placeholder="Enter Pincode"  className='formborder'  name="pincode"  onChange={handleChange}/>
-        </Form.Group>
-
-        <Form.Group as={Col} sm={6} controlId="formGridPassword" className='gridend'>
-        <Form.Label className="labelstyle">{error.gender}</Form.Label>
-          <Form.Control type="text" placeholder="enter Gender" className='formborder'  name="gender" onChange={handleChange}/>
-        </Form.Group>
-      </Row>
-      <Row className="mb-1 justify-content-center">
-        <Form.Group as={Col} sm={6} controlId="formGridEmail" className='gridone'>
-        <Form.Label className="labelstyle">{error.email}</Form.Label>
-          <Form.Control type="email" placeholder="Enter  Email" className='formborder' name="email" onChange={handleChange} />
-        </Form.Group>
-
-        <Form.Group as={Col} sm={6} controlId="formGridPassword" className='gridend'>
-        <Form.Label className="labelstyle">{error.password}</Form.Label>
-          <Form.Control type="password" placeholder="Enter Password" className='formborder'  name="password" onChange={handleChange} />
-        </Form.Group>
-      </Row>
-      <Button variant="warning" size="sm"  className='btnstyle mb-4 mt-3' onClick={handleSubmit} >
-          SignUp
-        </Button>
-    </Form>
     </div>
-    </div>
-        
-    </div>
-    </>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;

@@ -1,260 +1,130 @@
-const express=require("express");
+const express = require("express");
 const addressDB = require("../model/addressSchema");
-const checkauth = require("../middleware/checkauth");
-const productDB = require("../model/addproductsSchema");
 const signupDB = require("../model/signupSchema");
-const { default: mongoose } = require("mongoose");
-const  addressRoute= express.Router();
+const checkauth = require("../middleware/checkauth");
+const { checkRole } = require("../middleware/authorize");
+const ROLES = require("../config/roles");
 
-addressRoute.post('/addAddress',checkauth,async(req,res)=>{
-    try{
-        const data={
-    loginId:req.userData.loginId,
-    address:req.body.address,
-    state:req.body.state,
-    district:req.body.district,                     
-    pincode:req.body.pincode,
-    BuildingNumber:req.body.BuildingNumber,
-        }
-const result=await addressDB(data).save();
-if(result){
-    return  res.status(200).json({
-        success:true,
-        error:false,
-        data:result,
-        message:"address added",
-    }) 
-}
-else{
-    return res.status(400).json({
-        success:false,
-        error:true,
-        message:"address not added",
-    })
-}
+const addressRoute = express.Router();
 
+// Add Address (User)
+addressRoute.post('/addAddress', checkauth, checkRole(ROLES.USER), async (req, res) => {
+  try {
+    const data = {
+      loginId: req.userData.loginId,
+      address: req.body.address,
+      state: req.body.state,
+      district: req.body.district,
+      pincode: req.body.pincode,
+      BuildingNumber: req.body.BuildingNumber,
+    };
+
+    const result = await addressDB(data).save();
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Address added successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Failed to add address",
+    });
+  }
+});
+
+// Get Address (User)
+addressRoute.get('/getaddress', checkauth, checkRole(ROLES.USER), async (req, res) => {
+  try {
+    const data = await addressDB.findOne({ loginId: req.userData.loginId });
+    if (data) {
+      return res.status(200).json({
+        success: true,
+        error: false,
+        data: data,
+        message: "Address found",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        error: true,
+        message: "Address not found",
+      });
     }
-    catch(error){
-       
-            return res.status(500).json({
-                success:false,
-                error:true,
-                errorMessage:error.message,
-                message:"something went wrong",
-            })
-        }   
-    
-})
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Failed to retrieve address",
+    });
+  }
+});
 
-// addressRoute.get('/carttotal',async(req,res)=>{
-//     try{
-//    const cart= await cartdb.find();
-//    const product=await productDB.find();
+// Update Address (User)
+addressRoute.put('/updateaddress', checkauth, checkRole(ROLES.USER), async (req, res) => {
+  try {
+    const data = {
+      address: req.body.address,
+      state: req.body.state,
+      district: req.body.district,
+      pincode: req.body.pincode,
+      BuildingNumber: req.body.BuildingNumber,
+    };
+    const result = await addressDB.updateOne({ loginId: req.userData.loginId }, { $set: data });
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "Address updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Failed to update address",
+    });
+  }
+});
 
+// Change Delivery Address & Contact (User)
+addressRoute.put('/changedeliveryaddress', checkauth, checkRole(ROLES.USER), async (req, res) => {
+  try {
+    const signup = await signupDB.findOne({ loginId: req.userData.loginId });
+    const address = await addressDB.findOne({ loginId: req.userData.loginId });
 
-//     catch(error){
-//         return res.status(500).json({
-//             success:false,
-//             error:true,
-//             errorMessage:error.message,
-//             message:"something went wrong",
-//         })
-//     }
-// })
+    const signupdata = {
+      firstname: req.body.firstname || (signup ? signup.firstname : ""),
+      number: req.body.number || (signup ? signup.number : ""),
+    };
+    const addressdata = {
+      address: req.body.address || (address ? address.address : ""),
+      state: req.body.state || (address ? address.state : ""),
+      district: req.body.district || (address ? address.district : ""),
+      pincode: req.body.pincode || (address ? address.pincode : ""),
+      BuildingNumber: req.body.BuildingNumber || (address ? address.BuildingNumber : ""),
+    };
 
-addressRoute.get('/getaddress',checkauth,async(req,res)=>{
-    try{
-      const data= await addressDB.findOne({loginId:req.userData.loginId})
-      if(data){
-        return  res.status(200).json({
-            success:true,
-            error:false,
-            data:data,
-            message:"address found",
-        }) 
-      }
-    
-    else{
-        return res.status(400).json({
-            success:false,
-            error:true,
-            message:"address not found",
-        })
-    }}
-    catch(error){
-        return res.status(500).json({
-                        success:false,
-                        error:true,
-                        errorMessage:error.message,
-                        message:"something went wrong",
-         })
-    
-}})
+    let resulttwo = await addressDB.updateOne({ loginId: req.userData.loginId }, { $set: addressdata });
+    let resultone = await signupDB.updateOne({ loginId: req.userData.loginId }, { $set: signupdata });
 
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Delivery details updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Failed to update delivery address",
+    });
+  }
+});
 
-addressRoute.put('/updateaddress',checkauth,async(req,res)=>{
-    try{
-       const oldData= await addressDB.findOne({loginId:req.userData.loginId})
-       const data={
-        address:req.body.address,
-        state:req.body.state,
-        district:req.body.district,
-        pincode:req.body.pincode,
-        BuildingNumber:req.body.BuildingNumber,
-       }
-       const result=await addressDB.updateOne({loginId:req.userData.loginId},{$set:data})
-       if(result){
-        return  res.status(200).json({
-            success:true,
-            error:false,
-            data:result,
-            message:"address updated",
-        }) 
-    }
-    else{
-        return res.status(400).json({
-            success:false,
-            error:true,
-            message:"address not updated",
-        })
-    }
-    }
-    catch(error){
-        return res.status(500).json({
-                        success:false,
-                        error:true,
-                        errorMessage:error.message,
-                        message:"something went wrong",
-         })}
-})
-
-
-addressRoute.put('/changedeliveryaddress',checkauth,async(req,res)=>{
-    try{
-      const signup=await signupDB.find({loginId:req.userData.loginId});
-      const address=await addressDB.find({loginId:req.userData.loginId});
-      const signupdata={
-        firstname:req.body.firstname?req.body.firstname:signup.firstname,
-        number:req.body.number?req.body.number:signup.number,
-      }
-      const addressdata={
-        address:req.body.address?req.body.address:address.address,
-        state:req.body.state?req.body.state:address.state,
-        district:req.body.district?req.body.district:address.district,
-        pincode:req.body.pincode?req.body.pincode:address.pincode,
-        BuildingNumber:req.body.BuildingNumber?req.body.BuildingNumber:address.BuildingNumber,
-      }
-      const resulttwo=await addressDB.updateOne({loginId:req.userData.loginId},{$set:addressdata})
-
-      const resultone=await signupDB.updateOne({loginId:req.userData.loginId},{$set:signupdata})
-      if(resultone&&resulttwo){
-        return  res.status(200).json({
-            success:true,
-            error:false,
-            data:resultone,
-            data:resulttwo,
-            message:"address updated",
-        }) 
-      }
-
-      else{
-        return res.status(400).json({
-            success:false,
-            error:true,
-            message:"address not updated",
-        })
-    }
-      
-    }
-    catch(error){
-        return res.status(500).json({
-            success:false,
-            error:true,
-            errorMessage:error.message,
-            message:"something went wrong",
-})
-    }
-})
-
-
-
-// addressRoute.get('/getnewaddress/:id',checkauth,async(req,res)=>{
-//   console.log(req.userData.loginId)
-//   const loginId=req.userData.loginId;
-//     try{
-
-//         const data= await addressDB.aggregate([
-//           {
-//             '$lookup': {
-//               'from': 'addresslists', 
-//               'localField': 'loginId', 
-//               'foreignField': 'loginId', 
-//               'as': 'result'
-//             }
-//             }, 
-//             {
-//               $unwind: {
-//                 path: '$result',
-//               },
-//             },
-//             {
-//                 $match: {
-                 
-//                   loginId:new mongoose.Types.ObjectId(id),
-//                 },
-//               },
-//              {
-//               $group: {
-//                 _id: "$loginId", 
-//                 number: {
-//                   $first: '$number'
-//                 }, 
-//                 firstname: {
-//                   $first: '$firstname'
-//                 }, 
-//                 address: {
-//                   $first: '$result.address'
-//                 }, 
-//                 district: {
-//                   $first: '$result.district'
-//                 }, 
-//                 state: {
-//                   $first: '$result.state'
-//                 }, 
-//                 pincode: {
-//                   $first: '$result.pincode'
-//                 }, 
-//                 BuildingNumber: {
-//                   $first: '$result.BuildingNumber'
-//                 }
-//               }
-//             }
-//           ]);
-//           if (data) {
-//             res.status(200).json({
-//               success: true,
-//               error: false,
-//               data: data,
-//               message: "address viewed successfully",
-//             });
-//           } else {
-//             res.status(400).json({
-//               success: false,
-//               error: true,
-//               message: "address not viewed ",
-//             });
-//           }
-//     }catch(error){
-//         res.status(500).json({
-//             success: false,
-//             error: true,
-//             errorMessage: error.message,
-//             message: "something went wrong",
-//           });
-//     }
-// })
-
-
-
-
-module.exports=addressRoute;
+module.exports = addressRoute;

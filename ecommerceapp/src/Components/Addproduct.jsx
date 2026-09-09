@@ -1,118 +1,145 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import './Style.css'
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-// import Image from 'react-bootstrap/Image';
-// import Col from 'react-bootstrap/Col';
-import axios from 'axios'
+import api from '../utils/api';
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
-
-
-
-
+import './Style.css';
 
 const Addproduct = () => {
-const[addproduct,setAddproduct]=useState({})
-  const handleChange=(event)=>{
-    
-    setAddproduct({...addproduct,[event.target.name]:event.target.value})
+  const navigate = useNavigate();
+  const [addproduct, setAddproduct] = useState({});
+  const [serverError, setServerError] = useState('');
 
-  }
-  
- const fileChange=(event)=>{
-  setAddproduct({...addproduct,image:event.target.files[0]})
- }
+  const handleChange = (event) => {
+    setAddproduct({ ...addproduct, [event.target.name]: event.target.value });
+    setServerError('');
+  };
 
- 
-  const formdata= new FormData();
-  formdata.append('prdName',addproduct.prdName)
-  formdata.append('image',addproduct.image)
-  formdata.append('prize',addproduct.prize)
-  formdata.append('size',addproduct.size)
-  formdata.append('material',addproduct.material)
-  
+  const fileChange = (event) => {
+    setAddproduct({ ...addproduct, image: event.target.files[0] });
+    setServerError('');
+  };
 
-  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formdata = new FormData();
+    formdata.append('prdName', addproduct.prdName || '');
+    formdata.append('image', addproduct.image || '');
+    formdata.append('prize', addproduct.prize || '');
+    formdata.append('size', addproduct.size || '');
+    formdata.append('material', addproduct.material || '');
 
+    try {
+      const response = await api.post('/product/addproduct', formdata);
+      if (response.data && response.data.success) {
+        navigate('/viewproduct');
+      }
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Failed to upload product. Check your vendor permissions.';
+      setServerError(msg);
+    }
+  };
 
-  console.log(addproduct);
-  
-const handleSubmit= async (event)=>{
-  event.preventDefault();
-
-  axios.post('http://localhost:8080/product/addproduct',formdata).then((response)=>{
-    console.log(response);   
-  }).catch((error)=>{
-    console.log(error);
-    
-  })
-}
-  
   return (
-    <>
-    <Header/>
-    <div className='addprdform' style={{backgroundColor:"white"}}>
-        <div className='addproducmaindiv' >
-          <div className='addprct'>
-          <div className='addprdtsubdiv'>
-        <Form  encType="multpart/form-data"  onSubmit={handleSubmit}>
-          <h2 className='text-center mb-5 ' style={{fontFamily:"monospace"}}>ADD PRODUCT</h2>
-      
-      <Form.Group className="mb-3 addformfile " style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}} >
-        <Form.Control type="file"  name="image"  onChange={fileChange} />
-      </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle " style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
-        <Form.Control type="text" placeholder="Product Name" className='text-center'   name='prdName' onChange={handleChange} />
-      </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}} >
-        <Form.Control type="text" placeholder="Product Prize" className='text-center'  name='prize' onChange={handleChange} />
-      </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
-        <Form.Control type="text" placeholder="Product Size" className='text-center'  name='size' onChange={handleChange}  />
-      </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}>
-        <Form.Control type="text" placeholder="Product Material" className='text-center'  name='material' onChange={handleChange} />
-      </Form.Group>
-      <div className='text-center addprdbtnstyle ' >
-      <Button variant="success" size="sm" type='submit'>Add Product</Button>{' '}
-      </div>
-    </Form>
-    </div>
-    </div>
-    <div className='addprdctres'>
-    <div className='addprdtsubdiv'>
-        <Form  encType="multpart/form-data"  onSubmit={handleSubmit}>
-          <h2 className=' mb-5 ' style={{fontFamily:"monospace",marginLeft:"6rem"}}>ADD PRODUCT</h2>
-      
-      <Form.Group className="mb-3 addprdformstyle " style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}} >
-        <Form.Control type="file"  name="image"  onChange={fileChange} />
-      </Form.Group>
-      <Form.Group className="mb-3   addprdformstyle " style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}}>
-        <Form.Control type="text" placeholder="Product Name" className='text-center'   name='prdName' onChange={handleChange} />
-      </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}} >
-        <Form.Control type="text" placeholder="Product Prize" className='text-center'  name='prize' onChange={handleChange} />
-      </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}}>
-        <Form.Control type="text" placeholder="Product Size" className='text-center'  name='size' onChange={handleChange}  />
-      </Form.Group>
-      <Form.Group className="mb-3 addprdformstyle" style={{boxShadow:"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",width:"300px"}}>
-        <Form.Control type="text" placeholder="Product Material" className='text-center'  name='material' onChange={handleChange} />
-      </Form.Group>
-      <div className=' addprdbtnstyle ' style={{marginLeft:"8rem"}} >
-      <Button variant="success" size="sm" type='submit'>Add Product</Button>{' '}
-      </div>
-    </Form>
-    </div>
-      
-    </div>
-    <div>
-   
-    </div>
-    </div>
-    </div>
-    </>
-  )
-}
+    <div className="page-container">
+      <Header />
+      <Container className="py-5" style={{ maxWidth: "650px" }}>
+        <div className="glass-card">
+          <div className="text-center mb-4">
+            <span className="status-pill processing mb-2">Inventory Management</span>
+            <h2 className="page-title" style={{ fontSize: "2rem" }}>Add New Product</h2>
+            <p className="page-subtitle" style={{ fontSize: "0.9rem" }}>Upload apparel listings with details and image</p>
+          </div>
 
-export default Addproduct
+          {serverError && (
+            <div className="alert alert-danger text-center mb-3" role="alert" style={{ fontSize: '0.875rem' }}>
+              {serverError}
+            </div>
+          )}
+
+          <Form onSubmit={handleSubmit} encType="multipart/form-data">
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Product Image</Form.Label>
+              <Form.Control
+                type="file"
+                name="image"
+                className="glass-input"
+                onChange={fileChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Product Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="e.g. Silk Designer Anarkali Suit"
+                name="prdName"
+                className="glass-input"
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <Row className="g-3 mb-3">
+              <Col xs={12} sm={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Price (₹)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="e.g. 2499"
+                    name="prize"
+                    className="glass-input"
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col xs={12} sm={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Size</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="e.g. M, L, XL"
+                    name="size"
+                    className="glass-input"
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Form.Group className="mb-4">
+              <Form.Label className="glass-label">Material & Fabric Info</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="e.g. Pure Georgette with Embroidery"
+                name="material"
+                className="glass-input"
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <div className="d-flex gap-3 justify-content-end">
+              <Button type="button" className="btn-glass-secondary" onClick={() => navigate('/viewproduct')}>
+                Cancel
+              </Button>
+              <Button type="submit" className="btn-glass-primary">
+                Upload Product
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </Container>
+    </div>
+  );
+};
+
+export default Addproduct;

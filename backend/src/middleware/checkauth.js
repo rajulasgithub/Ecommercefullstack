@@ -1,23 +1,52 @@
-const jwt=require('jsonwebtoken');
-module.exports=(req,res,next)=>{
-  try{
-    console.log(req.headers.authorization.split(' ')[1]);
-    const token=req.headers.authorization.split(' ')[1];  
-    const decodeToken=jwt.verify(token,"encryptkey")
-    req.userData={
-        loginId:decodeToken.loginId,
-        role:decodeToken.role,
-    }
-    next();
-  }
-  catch(error){
-    return  res.status(400).json({
-        success:false,
-        error:true,
-        errorMessage:error,
-        
-        message:"auth failed",
-    }) 
-  }
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-}
+module.exports = (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({
+        success: false,
+        error: true,
+        message: "Access denied. No authorization token provided."
+      });
+    }
+
+    let token = authHeader;
+    if (authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (authHeader.includes(' ')) {
+      token = authHeader.split(' ')[1];
+    }
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        error: true,
+        message: "Access denied. Malformed token format."
+      });
+    }
+
+    const secret = process.env.JWT_SECRET || "encryptkey";
+    const decodeToken = jwt.verify(token, secret);
+
+    req.userData = {
+      loginId: decodeToken.loginId,
+      role: Number(decodeToken.role),
+      email: decodeToken.email
+    };
+    next();
+  } catch (error) {
+    let message = "Authentication failed. Token is invalid or expired.";
+    if (error.name === 'TokenExpiredError') {
+      message = "Session expired. Please log in again.";
+    }
+
+    return res.status(401).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: message
+    });
+  }
+};
