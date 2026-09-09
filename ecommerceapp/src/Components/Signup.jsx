@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
@@ -54,7 +55,7 @@ const Signup = () => {
     try {
       const response = await api.post('/auth/signup', signup);
       if (response.data && response.data.success) {
-        navigate('/login');
+        navigate('/viewproduct');
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Registration failed. Please try again.";
