@@ -4,8 +4,9 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
 import api from './../utils/api';
+import { useNavigate, Link } from 'react-router-dom';
+import Header from './Header';
 
 const Companysignup = () => {
   const navigate = useNavigate();
