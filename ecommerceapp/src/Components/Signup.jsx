@@ -55,6 +55,11 @@ const Signup = () => {
     try {
       const response = await api.post('/auth/signup', signup);
       if (response.data && response.data.success) {
+        if (response.data.token) {
+          localStorage.setItem("loginId", response.data.loginId);
+          localStorage.setItem("role", response.data.role);
+          localStorage.setItem("token", response.data.token);
+        }
         navigate('/viewproduct');
       }
     } catch (err) {

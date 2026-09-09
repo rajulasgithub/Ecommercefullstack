@@ -41,7 +41,12 @@ const Companysignup = () => {
     try {
       const response = await api.post('/auth/companysignup', formdata);
       if (response.data && response.data.success) {
-        navigate('/login');
+        if (response.data.token) {
+          localStorage.setItem("loginId", response.data.loginId);
+          localStorage.setItem("role", response.data.role);
+          localStorage.setItem("token", response.data.token);
+        }
+        navigate('/vieworders');
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Company registration failed. Please try again.";

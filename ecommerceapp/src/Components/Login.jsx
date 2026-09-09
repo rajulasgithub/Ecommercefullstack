@@ -50,7 +50,7 @@ const Login = () => {
         localStorage.setItem("token", response.data.token);
 
         const roleNum = Number(response.data.role);
-        if (roleNum === ROLES.COMPANY) {
+        if (roleNum === ROLES.COMPANY || roleNum === ROLES.ADMIN) {
           navigate('/vieworders');
         } else {
           navigate('/viewproduct');

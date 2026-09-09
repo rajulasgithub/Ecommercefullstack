@@ -68,10 +68,21 @@ authroutes.post('/signup', async (req, res) => {
 
     const signupresult = await signupDB(signupData).save();
     if (signupresult) {
+      const secret = process.env.JWT_SECRET || "encryptkey";
+      const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
+      const token = jwt.sign(
+        { loginId: loginresult._id, role: ROLES.USER, email: loginresult.email },
+        secret,
+        { expiresIn }
+      );
+
       return res.status(200).json({
         success: true,
         error: false,
         data: signupresult,
+        token: token,
+        role: ROLES.USER,
+        loginId: loginresult._id,
         message: "Successfully registered user",
       });
     } else {
@@ -319,10 +330,21 @@ authroutes.post('/companysignup', upload.single("image"), async (req, res) => {
     };
 
     const result = await companysignupDB(data).save();
+    const secret = process.env.JWT_SECRET || "encryptkey";
+    const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
+    const token = jwt.sign(
+      { loginId: loginresult._id, role: ROLES.COMPANY, email: loginresult.email },
+      secret,
+      { expiresIn }
+    );
+
     return res.status(200).json({
       success: true,
       error: false,
       data: result,
+      token: token,
+      role: ROLES.COMPANY,
+      loginId: loginresult._id,
       message: "Company registered successfully",
     });
   } catch (error) {
