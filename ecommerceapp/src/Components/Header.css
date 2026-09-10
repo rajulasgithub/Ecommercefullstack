@@ -1,60 +1,225 @@
+/* Ultra-modern Frosted Glass Navbar Header */
 .header-navbar {
-  background: rgba(11, 15, 25, 0.85) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(11, 15, 25, 0.88) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0.85rem 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Brand Identity */
 .header-brand {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 800;
-  font-size: 1.45rem;
-  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  text-decoration: none;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+.header-logo-icon {
+  font-size: 1.35rem;
+  background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -0.02em;
+  filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.4));
 }
 
+.header-brand-text {
+  font-weight: 800;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.03em;
+  transition: opacity 0.25s ease;
+}
+
+.header-brand:hover .header-brand-text {
+  opacity: 0.9;
+}
+
+/* Navigation Links */
 .header-nav-link {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   font-size: 0.925rem;
   font-weight: 500;
-  color: #cbd5e1 !important;
-  padding: 0.5rem 1rem !important;
-  border-radius: 8px;
-  transition: all 0.25s ease;
+  color: #94a3b8 !important;
+  padding: 0.55rem 1rem !important;
+  border-radius: 10px;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
 }
 
-.header-nav-link:hover, .header-nav-link:focus {
+.header-nav-link:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.header-nav-link.active {
+  color: #ffffff !important;
+  font-weight: 600;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.header-seller-link {
+  color: #a5b4fc !important;
+  font-weight: 600;
+}
+
+.header-seller-link:hover {
+  background: rgba(165, 180, 252, 0.12) !important;
+  color: #ffffff !important;
+}
+
+/* Shopping Bag Cart Badge Dot */
+.cart-badge-dot {
+  background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+  color: #ffffff;
+  font-size: 0.725rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.5);
+  line-height: 1;
+}
+
+/* Divider */
+.header-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Role Indicator Badges */
+.role-user-badge, .role-seller-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+}
+
+.role-user-badge {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.role-seller-badge {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.user-dot, .seller-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.user-dot {
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+}
+
+.seller-dot {
+  background: #a5b4fc;
+  box-shadow: 0 0 8px #a5b4fc;
+}
+
+/* Buttons */
+.header-login-btn {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: #e2e8f0 !important;
+  padding: 0.55rem 1.15rem !important;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-login-btn:hover {
   color: #ffffff !important;
   background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .header-cta-link {
-  background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color: #ffffff !important;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: 0.925rem;
   font-weight: 600;
-  border-radius: 8px;
-  padding: 0.5rem 1.25rem !important;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
-  transition: all 0.25s ease;
+  border-radius: 10px;
+  padding: 0.55rem 1.35rem !important;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .header-cta-link:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
   background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
 }
 
-.navbar-toggler {
-  border-color: rgba(255, 255, 255, 0.2) !important;
+.btn-header-logout {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  font-size: 0.825rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.navbar-toggler-icon {
+.btn-header-logout:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #ffffff;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Mobile Toggler Customization */
+.custom-toggler {
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  transition: all 0.2s ease;
+}
+
+.custom-toggler:focus {
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+}
+
+.custom-toggler .navbar-toggler-icon {
   filter: invert(1);
+  width: 1.25em;
+  height: 1.25em;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    background: rgba(15, 23, 42, 0.95);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-top: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .header-nav-link {
+    padding: 0.65rem 1rem !important;
+  }
 }
