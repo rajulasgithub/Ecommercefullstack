@@ -1,7 +1,9 @@
 import express from "express";
+import { body } from "express-validator";
 import checkauth from "../middleware/checkauth.js";
 import { checkRole } from "../middleware/authorize.js";
 import { uploadCompanyLogo } from "../middleware/upload.js";
+import { handleValidationErrors } from "../middleware/validateResult.js";
 import {
   signup,
   login,
@@ -18,11 +20,36 @@ import {
 
 const authroutes = express.Router();
 
+// User Signup Validation Rules
+const signupValidation = [
+  body("email").trim().isEmail().withMessage("Please provide a valid email address"),
+  body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+  body("firstname").trim().notEmpty().withMessage("First name is required"),
+  body("number").trim().notEmpty().withMessage("Phone number is required"),
+  handleValidationErrors,
+];
+
+// User/Company Login Validation Rules
+const loginValidation = [
+  body("email").trim().isEmail().withMessage("Please provide a valid email address"),
+  body("password").notEmpty().withMessage("Password is required"),
+  handleValidationErrors,
+];
+
+// Company Signup Validation Rules
+const companySignupValidation = [
+  body("email").trim().isEmail().withMessage("Please provide a valid email address"),
+  body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+  body("companyName").trim().notEmpty().withMessage("Company name is required"),
+  body("contactNumber").trim().notEmpty().withMessage("Contact number is required"),
+  handleValidationErrors,
+];
+
 // User Signup
-authroutes.post('/signup', signup);
+authroutes.post('/signup', signupValidation, signup);
 
 // User/Company Login
-authroutes.post('/login', login);
+authroutes.post('/login', loginValidation, login);
 
 // View Profile (Logged In User)
 authroutes.get('/viewinfo', checkauth, viewProfile);
@@ -37,7 +64,7 @@ authroutes.delete('/delete/:id', checkauth, checkRole("admin"), deleteUser);
 authroutes.put('/update/:id', checkauth, updateUser);
 
 // Company / Seller Signup
-authroutes.post('/companysignup', uploadCompanyLogo.single("image"), companySignup);
+authroutes.post('/companysignup', uploadCompanyLogo.single("image"), companySignupValidation, companySignup);
 
 // View All Companies (Admin, Seller)
 authroutes.get('/viewcompany', checkauth, checkRole("admin", "seller"), viewCompanies);
