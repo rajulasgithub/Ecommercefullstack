@@ -61,6 +61,19 @@ const Viewproduct = () => {
       });
   };
 
+  const deleteAllProductsHandler = () => {
+    if (window.confirm("⚠️ Are you sure you want to delete ALL product listings?")) {
+      api.delete('/product/deleteallproduct')
+        .then(() => {
+          setProduct([]);
+        })
+        .catch((error) => {
+          const msg = error.response?.data?.message || "Failed to delete all products.";
+          setErrorMsg(msg);
+        });
+    }
+  };
+
   const handleChange = (event) => {
     setUpdateprdt({ ...updateprdt, [event.target.name]: event.target.value });
   };
@@ -134,8 +147,8 @@ const Viewproduct = () => {
         )}
 
         {/* Search & Filter Bar */}
-        <Row className="justify-content-center mb-4">
-          <Col xs={12} md={6}>
+        <Row className="justify-content-center align-items-center mb-4 g-2">
+          <Col xs={12} md={role === ROLES.COMPANY || role === ROLES.ADMIN ? 7 : 8}>
             <Form.Control
               type="text"
               placeholder="🔍 Search dresses, fabric, material..."
@@ -144,6 +157,13 @@ const Viewproduct = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </Col>
+          {(role === ROLES.COMPANY || role === ROLES.ADMIN) && product.length > 0 && (
+            <Col xs={12} md={3} className="text-md-end">
+              <Button className="btn-glass-danger py-2 w-100" onClick={deleteAllProductsHandler}>
+                🗑️ Delete All Products
+              </Button>
+            </Col>
+          )}
         </Row>
 
         {/* Products Grid */}

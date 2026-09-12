@@ -178,3 +178,25 @@ export const updateProductStatus = async (req, res) => {
     });
   }
 };
+
+// Delete All Products (Vendor / Admin)
+export const deleteAllProducts = async (req, res) => {
+  try {
+    const data = { status: 6 };
+    await cartDB.updateMany({}, { $set: data });
+    const result = await productDB.updateMany({}, { $set: data });
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      message: "All products deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while deleting all products",
+    });
+  }
+};

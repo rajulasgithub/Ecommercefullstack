@@ -11,6 +11,7 @@ import {
   deleteProduct,
   updateProduct,
   updateProductStatus,
+  deleteAllProducts,
 } from "../controllers/productController.js";
 
 const productRoute = express.Router();
@@ -54,5 +55,9 @@ productRoute.put(
 
 // Update Product Status (Seller / Admin)
 productRoute.put("/updateproductstatus/:id/:value", checkauth, checkRole("seller", "admin"), updateProductStatus);
+
+// Delete All Products (Seller / Admin)
+productRoute.delete("/deleteallproduct", checkauth, checkRole("seller", "admin"), deleteAllProducts);
+productRoute.put("/deleteallproduct", checkauth, checkRole("seller", "admin"), deleteAllProducts);
 
 export default productRoute;
