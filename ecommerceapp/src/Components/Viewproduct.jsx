@@ -12,7 +12,7 @@ import api from '../utils/api';
 import ROLES from '../utils/roles';
 
 const Viewproduct = () => {
-  const role = Number(localStorage.getItem("role"));
+  const role = localStorage.getItem("role");
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ const Viewproduct = () => {
     }
 
     const prdId = { productId: id };
-    api.post('/product/addtocart', prdId)
+    api.post('/cart/addtocart', prdId)
       .then((response) => {
         navigate('/cart');
       })

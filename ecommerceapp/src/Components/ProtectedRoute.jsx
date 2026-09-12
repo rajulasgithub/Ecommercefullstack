@@ -4,7 +4,7 @@ import ROLES from '../utils/roles';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token');
-  const role = Number(localStorage.getItem('role'));
+  const role = localStorage.getItem('role');
 
   if (!token || !role) {
     return <Navigate to="/login" replace />;

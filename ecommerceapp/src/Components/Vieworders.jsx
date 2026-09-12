@@ -11,7 +11,7 @@ import api from "../utils/api";
 import ROLES from "../utils/roles";
 
 const Vieworders = () => {
-  const role = Number(localStorage.getItem("role"));
+  const role = localStorage.getItem("role");
   const [order, setOrder] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -32,13 +32,13 @@ const Vieworders = () => {
     }
 
     if (role === ROLES.COMPANY || role === ROLES.ADMIN) {
-      api.get("/product/viewcartcmpny")
+      api.get("/cart/viewcartcmpny")
         .then((response) => {
           setOrder(response.data.data || []);
         })
         .catch((error) => console.log(error));
     } else {
-      api.get("/product/vieworderuser")
+      api.get("/cart/vieworderuser")
         .then((response) => {
           setOrder(response.data.data || []);
         })
@@ -60,7 +60,7 @@ const Vieworders = () => {
   }, [order]);
 
   const cancelOrder = (id) => {
-    api.put(`/product/cancelorder/${id}`)
+    api.put(`/cart/cancelorder/${id}`)
       .then(() => {
         setFilteredData(filteredData.map(item => item._id === id ? { ...item, status: 3 } : item));
       })
@@ -68,7 +68,7 @@ const Vieworders = () => {
   };
 
   const statusChange = (id, value) => {
-    api.put(`/product/updatecartstatus/${id}/${value}`)
+    api.put(`/cart/updatecartstatus/${id}/${value}`)
       .then(() => {
         setFilteredData(filteredData.map(item => item._id === id ? { ...item, status: parseInt(value) } : item));
       })
@@ -82,7 +82,7 @@ const Vieworders = () => {
   const handleClose = () => setShow(false);
 
   const dateChange = () => {
-    api.put(`/product/updatedeliverydate/${getid}`, { date: deliveryDate })
+    api.put(`/cart/updatedeliverydate/${getid}`, { date: deliveryDate })
       .then(() => {
         setFilteredData(filteredData.map(item => item._id === getid ? { ...item, deliveryDate: deliveryDate } : item));
         handleClose();

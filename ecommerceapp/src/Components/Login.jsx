@@ -49,8 +49,8 @@ const Login = () => {
         localStorage.setItem("role", response.data.role);
         localStorage.setItem("token", response.data.token);
 
-        const roleNum = Number(response.data.role);
-        if (roleNum === ROLES.COMPANY || roleNum === ROLES.ADMIN) {
+        const userRole = response.data.role;
+        if (userRole === ROLES.COMPANY || userRole === ROLES.ADMIN) {
           navigate('/vieworders');
         } else {
           navigate('/viewproduct');

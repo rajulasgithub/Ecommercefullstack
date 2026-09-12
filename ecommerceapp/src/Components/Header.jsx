@@ -14,7 +14,7 @@ const Header = () => {
 
   useEffect(() => {
     const data = localStorage.getItem("role");
-    setRole(data ? Number(data) : null);
+    setRole(data || null);
   }, [location]);
 
   const logout = () => {

@@ -14,7 +14,7 @@ import './Style.css';
 const SingleProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const role = Number(localStorage.getItem("role"));
+  const role = localStorage.getItem("role");
   const token = localStorage.getItem('token');
 
   const [product, setProduct] = useState(null);
@@ -60,7 +60,7 @@ const SingleProduct = () => {
     setError('');
 
     try {
-      const response = await api.post('/product/addtocart', { productId: id });
+      const response = await api.post('/cart/addtocart', { productId: id });
       if (response.data && response.data.success) {
         setSuccessMsg('✨ Item added to your shopping bag!');
         setTimeout(() => setSuccessMsg(''), 4000);

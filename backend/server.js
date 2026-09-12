@@ -22,7 +22,6 @@ app.use("/auth", authroutes);
 app.use("/product", productRoute);
 app.use("/address", addressRoute);
 app.use("/cart", cartRoute);
-app.use("/product", cartRoute); // Backward compatibility for frontend calls
 
 app.listen(process.env.PORT, (req, res) => {
   console.log(`server is running on: http://localhost:${process.env.PORT}`);

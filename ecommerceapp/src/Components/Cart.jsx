@@ -17,7 +17,7 @@ const Cart = () => {
   const [totalValue, setTotalValue] = useState(0);
 
   useEffect(() => {
-    api.get("/product/viewcart")
+    api.get("/cart/viewcart")
       .then((response) => {
         setCartitem(response.data.data || []);
       })
@@ -27,7 +27,7 @@ const Cart = () => {
   }, []);
 
   const decrement = (id) => {
-    api.put(`/product/decrcart/${id}`)
+    api.put(`/cart/decrcart/${id}`)
       .then(() => {
         const updated = cartitem.map((data) => {
           if (data._id === id && data.quantity > 1) {
@@ -43,7 +43,7 @@ const Cart = () => {
   };
 
   const increment = (id) => {
-    api.put(`/product/incrcart/${id}`)
+    api.put(`/cart/incrcart/${id}`)
       .then(() => {
         const updated = cartitem.map((data) => {
           if (data._id === id) {
@@ -103,13 +103,13 @@ const Cart = () => {
   };
 
   const removeItem = (id) => {
-    api.delete(`/product/delcartitem/${id}`)
+    api.delete(`/cart/delcartitem/${id}`)
       .then(() => {
         setCartitem(cartitem.filter((data) => data._id !== id));
       })
       .catch((error) => {
         // Fallback for GET method
-        api.get(`/product/delcartitem/${id}`)
+        api.get(`/cart/delcartitem/${id}`)
           .then(() => {
             setCartitem(cartitem.filter((data) => data._id !== id));
           })
