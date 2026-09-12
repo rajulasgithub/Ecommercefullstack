@@ -25,7 +25,7 @@ app.use("/cart", cartRoute);
 app.use("/product", cartRoute); // Backward compatibility for frontend calls
 
 app.listen(process.env.PORT, (req, res) => {
-  console.log("server is running on: http://localhost:8080");
+  console.log(`server is running on: http://localhost:${process.env.PORT}`);
 });
 
 export default app;
