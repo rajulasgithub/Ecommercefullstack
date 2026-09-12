@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import authroutes from "./src/routes/authRoute.js";
 import productRoute from "./src/routes/productRoute.js";
 import addressRoute from "./src/routes/addressRoute.js";
+import cartRoute from "./src/routes/cartRoute.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -28,6 +29,8 @@ mongoose
 app.use("/auth", authroutes);
 app.use("/product", productRoute);
 app.use("/address", addressRoute);
+app.use("/cart", cartRoute);
+app.use("/product", cartRoute); // Backward compatibility for frontend calls
 
 app.listen(process.env.PORT, (req, res) => {
   console.log("server is running on: http://localhost:8080");
