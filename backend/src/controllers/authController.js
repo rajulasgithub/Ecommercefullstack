@@ -304,7 +304,7 @@ export const companySignup = async (req, res) => {
 
     const data = {
       loginId: loginresult._id,
-      image: req.file ? req.file.filename : "",
+      image: req.file ? req.file.path || req.file.filename : "",
       companyName,
       state,
       district,

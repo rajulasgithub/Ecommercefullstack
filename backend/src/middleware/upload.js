@@ -5,29 +5,28 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Local Multer storage for company logos
-const companyLogoStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "../ecommerceapp/public/companylogo");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "_" + file.originalname);
-  },
-});
-
-export const uploadCompanyLogo = multer({ storage: companyLogoStorage });
-
-// Cloudinary storage for product images
+// Configure Cloudinary credentials
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_KEY,
   api_secret: process.env.CLOUD_SECKEY,
 });
 
+// Cloudinary storage for company logos
+const companyLogoStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "ecommerceapp/companylogos",
+  },
+});
+
+export const uploadCompanyLogo = multer({ storage: companyLogoStorage });
+
+// Cloudinary storage for product images
 const productImageStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "ecommerceapp",
+    folder: "ecommerceapp/products",
   },
 });
 
