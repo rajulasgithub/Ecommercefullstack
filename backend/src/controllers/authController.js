@@ -9,6 +9,7 @@ dotenv.config();
 
 // User Signup
 export const signup = async (req, res) => {
+  let loginresult = null;
   try {
     const { email, password, firstName, lastName, number, gender, state, district, pincode, place } = req.body;
     
@@ -37,7 +38,7 @@ export const signup = async (req, res) => {
       role: "user",
     };
 
-    const loginresult = await loginDB(loginData).save();
+    loginresult = await loginDB(loginData).save();
 
     const signupData = {
       loginId: loginresult._id,
@@ -72,6 +73,9 @@ export const signup = async (req, res) => {
         message: "Successfully registered user",
       });
     } else {
+      if (loginresult && loginresult._id) {
+        await loginDB.deleteOne({ _id: loginresult._id }).catch(() => {});
+      }
       return res.status(400).json({
         success: false,
         error: true,
@@ -79,6 +83,9 @@ export const signup = async (req, res) => {
       });
     }
   } catch (error) {
+    if (loginresult && loginresult._id) {
+      await loginDB.deleteOne({ _id: loginresult._id }).catch(() => {});
+    }
     return res.status(500).json({
       success: false,
       error: true,
@@ -275,6 +282,7 @@ export const updateUser = async (req, res) => {
 
 // Company / Seller Signup
 export const companySignup = async (req, res) => {
+  let loginresult = null;
   try {
     const { email, password, companyName, state, district, pincode, contactNumber, regNumber, gstNumber } = req.body;
 
@@ -302,7 +310,7 @@ export const companySignup = async (req, res) => {
       password: hashedPassword,
       role: "seller",
     };
-    const loginresult = await loginDB(logindata).save();
+    loginresult = await loginDB(logindata).save();
 
     const data = {
       loginId: loginresult._id,
@@ -336,6 +344,9 @@ export const companySignup = async (req, res) => {
       message: "Company registered successfully",
     });
   } catch (error) {
+    if (loginresult && loginresult._id) {
+      await loginDB.deleteOne({ _id: loginresult._id }).catch(() => {});
+    }
     return res.status(500).json({
       success: false,
       error: true,

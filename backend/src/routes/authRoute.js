@@ -27,6 +27,11 @@ const signupValidation = [
   body("firstName").trim().notEmpty().withMessage("First name is required"),
   body("lastName").trim().notEmpty().withMessage("Last name is required"),
   body("number").trim().notEmpty().withMessage("Phone number is required"),
+  body("gender").trim().notEmpty().withMessage("Gender is required"),
+  body("state").trim().notEmpty().withMessage("State is required"),
+  body("district").trim().notEmpty().withMessage("District is required"),
+  body("place").trim().notEmpty().withMessage("Place is required"),
+  body("pincode").trim().notEmpty().withMessage("Pincode is required"),
   handleValidationErrors,
 ];
 
