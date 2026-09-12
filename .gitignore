@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+**/node_modules/
 
 # Environment Variables & Secrets
 .env
@@ -13,10 +14,11 @@ build/
 out/
 
 # Dynamic Uploads
-public/companylogo/*
-!public/companylogo/.gitkeep
-public/uploads/*
-!public/uploads/.gitkeep
+uploads/
+**/public/companylogo/*
+!**/public/companylogo/.gitkeep
+**/public/uploads/*
+!**/public/uploads/.gitkeep
 
 # Logs & Debug
 logs/
