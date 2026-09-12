@@ -46,7 +46,7 @@ const OrderSummary = () => {
     const ordertime = Date.now();
     localStorage.setItem("orderedtime", ordertime);
 
-    api.put('/cart/updatecart', {})
+    api.put('/order/updatecart', {})
       .then((response) => {
         navigate('/vieworders');
       })

@@ -32,13 +32,13 @@ const Vieworders = () => {
     }
 
     if (role === ROLES.COMPANY || role === ROLES.ADMIN) {
-      api.get("/cart/viewcartcmpny")
+      api.get("/order/viewcartcmpny")
         .then((response) => {
           setOrder(response.data.data || []);
         })
         .catch((error) => console.log(error));
     } else {
-      api.get("/cart/vieworderuser")
+      api.get("/order/vieworderuser")
         .then((response) => {
           setOrder(response.data.data || []);
         })
@@ -60,7 +60,7 @@ const Vieworders = () => {
   }, [order]);
 
   const cancelOrder = (id) => {
-    api.put(`/cart/cancelorder/${id}`)
+    api.put(`/order/cancelorder/${id}`)
       .then(() => {
         setFilteredData(filteredData.map(item => item._id === id ? { ...item, status: 3 } : item));
       })
@@ -68,7 +68,7 @@ const Vieworders = () => {
   };
 
   const statusChange = (id, value) => {
-    api.put(`/cart/updatecartstatus/${id}/${value}`)
+    api.put(`/order/updatecartstatus/${id}/${value}`)
       .then(() => {
         setFilteredData(filteredData.map(item => item._id === id ? { ...item, status: parseInt(value) } : item));
       })
@@ -82,7 +82,7 @@ const Vieworders = () => {
   const handleClose = () => setShow(false);
 
   const dateChange = () => {
-    api.put(`/cart/updatedeliverydate/${getid}`, { date: deliveryDate })
+    api.put(`/order/updatedeliverydate/${getid}`, { date: deliveryDate })
       .then(() => {
         setFilteredData(filteredData.map(item => item._id === getid ? { ...item, deliveryDate: deliveryDate } : item));
         handleClose();

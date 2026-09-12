@@ -6,6 +6,7 @@ import authroutes from "./src/routes/authRoute.js";
 import productRoute from "./src/routes/productRoute.js";
 import addressRoute from "./src/routes/addressRoute.js";
 import cartRoute from "./src/routes/cartRoute.js";
+import orderRoute from "./src/routes/orderRoute.js";
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ app.use("/auth", authroutes);
 app.use("/product", productRoute);
 app.use("/address", addressRoute);
 app.use("/cart", cartRoute);
+app.use("/order", orderRoute);
+app.use("/cart", orderRoute); // Fallback for backward compatibility
 
 app.listen(process.env.PORT, (req, res) => {
   console.log(`server is running on: http://localhost:${process.env.PORT}`);
