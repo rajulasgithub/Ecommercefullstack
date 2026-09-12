@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const addressSchema = new mongoose.Schema({
   loginId: { type: mongoose.Types.ObjectId, ref: "login" },
@@ -10,4 +10,4 @@ const addressSchema = new mongoose.Schema({
 });
 
 const addressDB = mongoose.model("addresslist", addressSchema);
-module.exports = addressDB;
+export default addressDB;

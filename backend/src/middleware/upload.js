@@ -1,7 +1,9 @@
-const multer = require("multer");
-const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-require("dotenv").config();
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Local Multer storage for company logos
 const companyLogoStorage = multer.diskStorage({
@@ -13,7 +15,7 @@ const companyLogoStorage = multer.diskStorage({
   },
 });
 
-const uploadCompanyLogo = multer({ storage: companyLogoStorage });
+export const uploadCompanyLogo = multer({ storage: companyLogoStorage });
 
 // Cloudinary storage for product images
 cloudinary.config({
@@ -29,9 +31,4 @@ const productImageStorage = new CloudinaryStorage({
   },
 });
 
-const uploadProductImage = multer({ storage: productImageStorage });
-
-module.exports = {
-  uploadCompanyLogo,
-  uploadProductImage,
-};
+export const uploadProductImage = multer({ storage: productImageStorage });

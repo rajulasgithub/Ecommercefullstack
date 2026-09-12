@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const loginSchema = new mongoose.Schema({
   email: { type: String, required: true },
@@ -7,4 +7,4 @@ const loginSchema = new mongoose.Schema({
 });
 
 const loginDB = mongoose.model("login", loginSchema);
-module.exports = loginDB;
+export default loginDB;

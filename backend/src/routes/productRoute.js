@@ -1,8 +1,8 @@
-const express = require("express");
-const checkauth = require("../middleware/checkauth");
-const { checkRole } = require("../middleware/authorize");
-const { uploadProductImage } = require("../middleware/upload");
-const {
+import express from "express";
+import checkauth from "../middleware/checkauth.js";
+import { checkRole } from "../middleware/authorize.js";
+import { uploadProductImage } from "../middleware/upload.js";
+import {
   addProduct,
   getAllProducts,
   getProductById,
@@ -22,7 +22,7 @@ const {
   cancelOrder,
   viewOrders,
   rejectOrder,
-} = require("../controllers/productController");
+} from "../controllers/productController.js";
 
 const productRoute = express.Router();
 
@@ -96,4 +96,4 @@ productRoute.get("/vieworder", checkauth, checkRole("user"), viewOrders);
 // Reject Order (Seller / Admin)
 productRoute.put("/rejectorder/:id", checkauth, checkRole("seller", "admin"), rejectOrder);
 
-module.exports = productRoute;
+export default productRoute;

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const companySchema = new mongoose.Schema({
   loginId: { type: mongoose.Types.ObjectId, ref: "login" },
@@ -14,4 +14,4 @@ const companySchema = new mongoose.Schema({
 });
 
 const companyDB = mongoose.model("companylist", companySchema);
-module.exports = companyDB;
+export default companyDB;

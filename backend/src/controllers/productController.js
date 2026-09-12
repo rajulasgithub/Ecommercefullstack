@@ -1,8 +1,8 @@
-const productDB = require("../model/product");
-const cartDB = require("../model/cart");
+import productDB from "../model/product.js";
+import cartDB from "../model/cart.js";
 
 // Add Product (Vendor / Admin)
-const addProduct = async (req, res) => {
+export const addProduct = async (req, res) => {
   try {
     const data = {
       prdName: req.body.prdName,
@@ -39,7 +39,7 @@ const addProduct = async (req, res) => {
 };
 
 // View Products (Public)
-const getAllProducts = async (req, res) => {
+export const getAllProducts = async (req, res) => {
   try {
     const result = await productDB.find();
     return res.status(200).json({
@@ -59,7 +59,7 @@ const getAllProducts = async (req, res) => {
 };
 
 // View Single Product (Public)
-const getProductById = async (req, res) => {
+export const getProductById = async (req, res) => {
   try {
     const result = await productDB.findOne({ _id: req.params.id });
     if (result) {
@@ -87,7 +87,7 @@ const getProductById = async (req, res) => {
 };
 
 // Soft Delete Product (Vendor / Admin)
-const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res) => {
   try {
     const data = { status: 6 };
     await cartDB.updateMany({ prdId: req.params.id }, { $set: data });
@@ -120,7 +120,7 @@ const deleteProduct = async (req, res) => {
 };
 
 // Update Product (Vendor / Admin)
-const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res) => {
   try {
     const oldData = await productDB.findOne({ _id: req.params.id });
     if (!oldData) {
@@ -156,7 +156,7 @@ const updateProduct = async (req, res) => {
 };
 
 // Update Product Status (Vendor / Admin)
-const updateProductStatus = async (req, res) => {
+export const updateProductStatus = async (req, res) => {
   try {
     const data = { status: req.params.value };
     const result = await productDB.updateOne(
@@ -180,7 +180,7 @@ const updateProductStatus = async (req, res) => {
 };
 
 // Add to Cart (User)
-const addToCart = async (req, res) => {
+export const addToCart = async (req, res) => {
   try {
     const data = {
       loginId: req.userData.loginId,
@@ -207,7 +207,7 @@ const addToCart = async (req, res) => {
 };
 
 // View Cart (User)
-const getCart = async (req, res) => {
+export const getCart = async (req, res) => {
   try {
     const result = await cartDB
       .find({ loginId: req.userData.loginId, status: 1 })
@@ -229,7 +229,7 @@ const getCart = async (req, res) => {
 };
 
 // View Company Orders (Vendor / Admin)
-const getCompanyOrders = async (req, res) => {
+export const getCompanyOrders = async (req, res) => {
   try {
     const result = await cartDB.aggregate([
       {
@@ -299,7 +299,7 @@ const getCompanyOrders = async (req, res) => {
 };
 
 // View Orders for Logged-In User
-const getUserOrders = async (req, res) => {
+export const getUserOrders = async (req, res) => {
   try {
     const result = await cartDB
       .find({ loginId: req.userData.loginId })
@@ -321,7 +321,7 @@ const getUserOrders = async (req, res) => {
 };
 
 // Increase Cart Quantity (User)
-const increaseCartQuantity = async (req, res) => {
+export const increaseCartQuantity = async (req, res) => {
   try {
     const oldData = await cartDB.findOne({ _id: req.params.id, loginId: req.userData.loginId });
     if (!oldData) {
@@ -349,7 +349,7 @@ const increaseCartQuantity = async (req, res) => {
 };
 
 // Decrease Cart Quantity (User)
-const decreaseCartQuantity = async (req, res) => {
+export const decreaseCartQuantity = async (req, res) => {
   try {
     const oldData = await cartDB.findOne({ _id: req.params.id, loginId: req.userData.loginId });
     if (!oldData) {
@@ -378,7 +378,7 @@ const decreaseCartQuantity = async (req, res) => {
 };
 
 // Delete Cart Item (User)
-const deleteCartItem = async (req, res) => {
+export const deleteCartItem = async (req, res) => {
   try {
     const result = await cartDB.deleteOne({
       _id: req.params.id,
@@ -410,7 +410,7 @@ const deleteCartItem = async (req, res) => {
 };
 
 // Checkout / Place Order (User)
-const checkoutCart = async (req, res) => {
+export const checkoutCart = async (req, res) => {
   try {
     const now = new Date();
     const day = now.getDate();
@@ -445,7 +445,7 @@ const checkoutCart = async (req, res) => {
 };
 
 // Update Delivery Date (Vendor / Admin)
-const updateDeliveryDate = async (req, res) => {
+export const updateDeliveryDate = async (req, res) => {
   try {
     const data = { deliveryDate: req.body.date };
     const result = await cartDB.updateOne(
@@ -469,7 +469,7 @@ const updateDeliveryDate = async (req, res) => {
 };
 
 // Update Order Status (Vendor / Admin)
-const updateOrderStatus = async (req, res) => {
+export const updateOrderStatus = async (req, res) => {
   try {
     const data = { status: req.params.value };
     const result = await cartDB.updateOne(
@@ -493,7 +493,7 @@ const updateOrderStatus = async (req, res) => {
 };
 
 // Cancel Order (User)
-const cancelOrder = async (req, res) => {
+export const cancelOrder = async (req, res) => {
   try {
     const data = { status: 3 };
     const result = await cartDB.updateOne(
@@ -517,7 +517,7 @@ const cancelOrder = async (req, res) => {
 };
 
 // View Orders (User)
-const viewOrders = async (req, res) => {
+export const viewOrders = async (req, res) => {
   try {
     const result = await cartDB
       .find({ loginId: req.userData.loginId })
@@ -539,7 +539,7 @@ const viewOrders = async (req, res) => {
 };
 
 // Reject Order (Vendor / Admin)
-const rejectOrder = async (req, res) => {
+export const rejectOrder = async (req, res) => {
   try {
     const data = { status: 3 };
     const result = await cartDB.updateOne(
@@ -560,26 +560,4 @@ const rejectOrder = async (req, res) => {
       message: "Server error rejecting order",
     });
   }
-};
-
-module.exports = {
-  addProduct,
-  getAllProducts,
-  getProductById,
-  deleteProduct,
-  updateProduct,
-  updateProductStatus,
-  addToCart,
-  getCart,
-  getCompanyOrders,
-  getUserOrders,
-  increaseCartQuantity,
-  decreaseCartQuantity,
-  deleteCartItem,
-  checkoutCart,
-  updateDeliveryDate,
-  updateOrderStatus,
-  cancelOrder,
-  viewOrders,
-  rejectOrder,
 };

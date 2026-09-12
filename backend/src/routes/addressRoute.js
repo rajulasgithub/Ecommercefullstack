@@ -1,12 +1,12 @@
-const express = require("express");
-const checkauth = require("../middleware/checkauth");
-const { checkRole } = require("../middleware/authorize");
-const {
+import express from "express";
+import checkauth from "../middleware/checkauth.js";
+import { checkRole } from "../middleware/authorize.js";
+import {
   addAddress,
   getAddress,
   updateAddress,
   changeDeliveryAddress,
-} = require("../controllers/addressController");
+} from "../controllers/addressController.js";
 
 const addressRoute = express.Router();
 
@@ -22,4 +22,4 @@ addressRoute.put('/updateaddress', checkauth, checkRole("user"), updateAddress);
 // Change Delivery Address & Contact (User role)
 addressRoute.put('/changedeliveryaddress', checkauth, checkRole("user"), changeDeliveryAddress);
 
-module.exports = addressRoute;
+export default addressRoute;

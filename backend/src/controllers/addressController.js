@@ -1,8 +1,8 @@
-const addressDB = require("../model/address");
-const userDB = require("../model/user");
+import addressDB from "../model/address.js";
+import userDB from "../model/user.js";
 
 // Add Address (User)
-const addAddress = async (req, res) => {
+export const addAddress = async (req, res) => {
   try {
     const data = {
       loginId: req.userData.loginId,
@@ -31,7 +31,7 @@ const addAddress = async (req, res) => {
 };
 
 // Get Address (User)
-const getAddress = async (req, res) => {
+export const getAddress = async (req, res) => {
   try {
     const data = await addressDB.findOne({ loginId: req.userData.loginId });
     if (data) {
@@ -59,7 +59,7 @@ const getAddress = async (req, res) => {
 };
 
 // Update Address (User)
-const updateAddress = async (req, res) => {
+export const updateAddress = async (req, res) => {
   try {
     const data = {
       address: req.body.address,
@@ -86,7 +86,7 @@ const updateAddress = async (req, res) => {
 };
 
 // Change Delivery Address & Contact (User)
-const changeDeliveryAddress = async (req, res) => {
+export const changeDeliveryAddress = async (req, res) => {
   try {
     const signup = await userDB.findOne({ loginId: req.userData.loginId });
     const address = await addressDB.findOne({ loginId: req.userData.loginId });
@@ -119,11 +119,4 @@ const changeDeliveryAddress = async (req, res) => {
       message: "Failed to update delivery address",
     });
   }
-};
-
-module.exports = {
-  addAddress,
-  getAddress,
-  updateAddress,
-  changeDeliveryAddress,
 };

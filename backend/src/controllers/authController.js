@@ -1,12 +1,14 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const loginDB = require("../model/login");
-const userDB = require("../model/user");
-const companyDB = require("../model/company");
-require('dotenv').config();
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import loginDB from "../model/login.js";
+import userDB from "../model/user.js";
+import companyDB from "../model/company.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // User Signup
-const signup = async (req, res) => {
+export const signup = async (req, res) => {
   try {
     const { email, password, firstname, number, gender, state, district, pincode, place } = req.body;
     
@@ -86,7 +88,7 @@ const signup = async (req, res) => {
 };
 
 // User/Company Login
-const login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -155,7 +157,7 @@ const login = async (req, res) => {
 };
 
 // View Profile (Logged In User)
-const viewProfile = async (req, res) => {
+export const viewProfile = async (req, res) => {
   try {
     const result = await userDB.findOne({ loginId: req.userData.loginId });
     if (result) {
@@ -183,7 +185,7 @@ const viewProfile = async (req, res) => {
 };
 
 // View All Users (Admin Only)
-const viewAllUsers = async (req, res) => {
+export const viewAllUsers = async (req, res) => {
   try {
     const result = await userDB.find().populate('loginId', 'email role');
     return res.status(200).json({
@@ -203,7 +205,7 @@ const viewAllUsers = async (req, res) => {
 };
 
 // Delete User (Admin Only)
-const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     const result = await userDB.deleteOne({ _id: req.params.id });
     if (result.deletedCount > 0) {
@@ -230,7 +232,7 @@ const deleteUser = async (req, res) => {
 };
 
 // Update Profile
-const updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
   try {
     const targetUser = await userDB.findOne({ _id: req.params.id });
     if (!targetUser) {
@@ -270,7 +272,7 @@ const updateUser = async (req, res) => {
 };
 
 // Company / Seller Signup
-const companySignup = async (req, res) => {
+export const companySignup = async (req, res) => {
   try {
     const { email, password, companyName, state, district, pincode, contactNumber, regNumber, gstNumber } = req.body;
 
@@ -342,7 +344,7 @@ const companySignup = async (req, res) => {
 };
 
 // View All Companies (Admin/Seller)
-const viewCompanies = async (req, res) => {
+export const viewCompanies = async (req, res) => {
   try {
     const result = await companyDB.find().populate('loginId', 'email role');
     return res.status(200).json({
@@ -362,7 +364,7 @@ const viewCompanies = async (req, res) => {
 };
 
 // View Single Company
-const viewSingleCompany = async (req, res) => {
+export const viewSingleCompany = async (req, res) => {
   try {
     const result = await companyDB.findOne({ _id: req.params.id });
     if (result) {
@@ -390,7 +392,7 @@ const viewSingleCompany = async (req, res) => {
 };
 
 // Delete Company (Admin/Seller)
-const deleteCompany = async (req, res) => {
+export const deleteCompany = async (req, res) => {
   try {
     const company = await companyDB.findOne({ _id: req.params.id });
     if (!company) {
@@ -420,7 +422,7 @@ const deleteCompany = async (req, res) => {
 };
 
 // Update Company Info
-const updateCompany = async (req, res) => {
+export const updateCompany = async (req, res) => {
   try {
     const olddata = await companyDB.findOne({ _id: req.params.id });
     if (!olddata) {
@@ -456,18 +458,4 @@ const updateCompany = async (req, res) => {
       message: "Error updating company",
     });
   }
-};
-
-module.exports = {
-  signup,
-  login,
-  viewProfile,
-  viewAllUsers,
-  deleteUser,
-  updateUser,
-  companySignup,
-  viewCompanies,
-  viewSingleCompany,
-  deleteCompany,
-  updateCompany,
 };

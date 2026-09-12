@@ -1,8 +1,8 @@
-const express = require("express");
-const checkauth = require("../middleware/checkauth");
-const { checkRole } = require("../middleware/authorize");
-const { uploadCompanyLogo } = require("../middleware/upload");
-const {
+import express from "express";
+import checkauth from "../middleware/checkauth.js";
+import { checkRole } from "../middleware/authorize.js";
+import { uploadCompanyLogo } from "../middleware/upload.js";
+import {
   signup,
   login,
   viewProfile,
@@ -14,7 +14,7 @@ const {
   viewSingleCompany,
   deleteCompany,
   updateCompany,
-} = require("../controllers/authController");
+} from "../controllers/authController.js";
 
 const authroutes = express.Router();
 
@@ -51,4 +51,4 @@ authroutes.delete('/deletecompany/:id', checkauth, checkRole("admin", "seller"),
 // Update Company Info (Admin, Seller)
 authroutes.put('/updatecompany/:id', checkauth, checkRole("admin", "seller"), updateCompany);
 
-module.exports = authroutes;
+export default authroutes;
