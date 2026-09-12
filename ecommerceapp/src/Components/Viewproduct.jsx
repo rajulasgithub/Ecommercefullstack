@@ -63,7 +63,7 @@ const Viewproduct = () => {
 
   const deleteAllProductsHandler = () => {
     if (window.confirm("⚠️ Are you sure you want to delete ALL product listings?")) {
-      api.delete('/product/deleteallproduct')
+      api.put('/product/deleteallproduct')
         .then(() => {
           setProduct([]);
         })
