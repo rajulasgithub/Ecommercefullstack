@@ -1,5 +1,5 @@
-const productDB = require("../model/addproductsSchema");
-const cartDB = require("../model/cartSchema");
+const productDB = require("../model/product");
+const cartDB = require("../model/cart");
 
 // Add Product (Vendor / Admin)
 const addProduct = async (req, res) => {

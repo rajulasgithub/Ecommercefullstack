@@ -27,9 +27,7 @@ mongoose.connect(process.env.MONGO_URL).then((response)=>{
 app.use('/auth',authroutes)
 app.use('/product',productRoute)
 app.use('/address',addressRoute)
-app.get('/',(req,res)=>{
-    res.send('hiiii')
-})
+
 app.listen(process.env.PORT,(req,res)=>{
     console.log("server is running  on:http://localhost:8080");
 })

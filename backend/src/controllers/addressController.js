@@ -1,5 +1,5 @@
-const addressDB = require("../model/addressSchema");
-const signupDB = require("../model/signupSchema");
+const addressDB = require("../model/address");
+const userDB = require("../model/user");
 
 // Add Address (User)
 const addAddress = async (req, res) => {
@@ -88,7 +88,7 @@ const updateAddress = async (req, res) => {
 // Change Delivery Address & Contact (User)
 const changeDeliveryAddress = async (req, res) => {
   try {
-    const signup = await signupDB.findOne({ loginId: req.userData.loginId });
+    const signup = await userDB.findOne({ loginId: req.userData.loginId });
     const address = await addressDB.findOne({ loginId: req.userData.loginId });
 
     const signupdata = {
@@ -104,7 +104,7 @@ const changeDeliveryAddress = async (req, res) => {
     };
 
     let resulttwo = await addressDB.updateOne({ loginId: req.userData.loginId }, { $set: addressdata });
-    let resultone = await signupDB.updateOne({ loginId: req.userData.loginId }, { $set: signupdata });
+    let resultone = await userDB.updateOne({ loginId: req.userData.loginId }, { $set: signupdata });
 
     return res.status(200).json({
       success: true,

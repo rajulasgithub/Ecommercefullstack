@@ -1,8 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const loginDB = require("../model/loginSchema");
-const signupDB = require("../model/signupSchema");
-const companysignupDB = require("../model/companysignupSchema");
+const loginDB = require("../model/login");
+const userDB = require("../model/user");
+const companyDB = require("../model/company");
 const ROLES = require("../config/roles");
 require('dotenv').config();
 
@@ -49,7 +49,7 @@ const signup = async (req, res) => {
       place,
     };
 
-    const signupresult = await signupDB(signupData).save();
+    const signupresult = await userDB(signupData).save();
     if (signupresult) {
       const secret = process.env.JWT_SECRET || "encryptkey";
       const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
@@ -157,7 +157,7 @@ const login = async (req, res) => {
 // View Profile (Logged In User)
 const viewProfile = async (req, res) => {
   try {
-    const result = await signupDB.findOne({ loginId: req.userData.loginId });
+    const result = await userDB.findOne({ loginId: req.userData.loginId });
     if (result) {
       return res.status(200).json({
         success: true,
@@ -185,7 +185,7 @@ const viewProfile = async (req, res) => {
 // View All Users (Admin Only)
 const viewAllUsers = async (req, res) => {
   try {
-    const result = await signupDB.find().populate('loginId', 'email role');
+    const result = await userDB.find().populate('loginId', 'email role');
     return res.status(200).json({
       success: true,
       error: false,
@@ -205,7 +205,7 @@ const viewAllUsers = async (req, res) => {
 // Delete User (Admin Only)
 const deleteUser = async (req, res) => {
   try {
-    const result = await signupDB.deleteOne({ _id: req.params.id });
+    const result = await userDB.deleteOne({ _id: req.params.id });
     if (result.deletedCount > 0) {
       return res.status(200).json({
         success: true,
@@ -232,7 +232,7 @@ const deleteUser = async (req, res) => {
 // Update Profile
 const updateUser = async (req, res) => {
   try {
-    const targetUser = await signupDB.findOne({ _id: req.params.id });
+    const targetUser = await userDB.findOne({ _id: req.params.id });
     if (!targetUser) {
       return res.status(404).json({ success: false, error: true, message: "User profile not found" });
     }
@@ -252,7 +252,7 @@ const updateUser = async (req, res) => {
       place: req.body.place || targetUser.place,
     };
 
-    const result = await signupDB.updateOne({ _id: req.params.id }, { $set: data });
+    const result = await userDB.updateOne({ _id: req.params.id }, { $set: data });
     return res.status(200).json({
       success: true,
       error: false,
@@ -312,7 +312,7 @@ const companySignup = async (req, res) => {
       gstNumber,
     };
 
-    const result = await companysignupDB(data).save();
+    const result = await companyDB(data).save();
     const secret = process.env.JWT_SECRET || "encryptkey";
     const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
     const token = jwt.sign(
@@ -343,7 +343,7 @@ const companySignup = async (req, res) => {
 // View All Companies (Admin/Company)
 const viewCompanies = async (req, res) => {
   try {
-    const result = await companysignupDB.find().populate('loginId', 'email role');
+    const result = await companyDB.find().populate('loginId', 'email role');
     return res.status(200).json({
       success: true,
       error: false,
@@ -363,7 +363,7 @@ const viewCompanies = async (req, res) => {
 // View Single Company
 const viewSingleCompany = async (req, res) => {
   try {
-    const result = await companysignupDB.findOne({ _id: req.params.id });
+    const result = await companyDB.findOne({ _id: req.params.id });
     if (result) {
       return res.status(200).json({
         success: true,
@@ -391,7 +391,7 @@ const viewSingleCompany = async (req, res) => {
 // Delete Company (Admin/Company)
 const deleteCompany = async (req, res) => {
   try {
-    const company = await companysignupDB.findOne({ _id: req.params.id });
+    const company = await companyDB.findOne({ _id: req.params.id });
     if (!company) {
       return res.status(404).json({ success: false, error: true, message: "Company not found" });
     }
@@ -400,7 +400,7 @@ const deleteCompany = async (req, res) => {
       return res.status(403).json({ success: false, error: true, message: "Forbidden. Cannot delete another company." });
     }
 
-    await companysignupDB.deleteOne({ _id: req.params.id });
+    await companyDB.deleteOne({ _id: req.params.id });
     await loginDB.deleteOne({ _id: company.loginId });
 
     return res.status(200).json({
@@ -421,7 +421,7 @@ const deleteCompany = async (req, res) => {
 // Update Company Info
 const updateCompany = async (req, res) => {
   try {
-    const olddata = await companysignupDB.findOne({ _id: req.params.id });
+    const olddata = await companyDB.findOne({ _id: req.params.id });
     if (!olddata) {
       return res.status(404).json({ success: false, error: true, message: "Company not found" });
     }
@@ -440,7 +440,7 @@ const updateCompany = async (req, res) => {
       gstNumber: req.body.gstNumber || olddata.gstNumber,
     };
 
-    const result = await companysignupDB.updateOne({ _id: req.params.id }, { $set: data });
+    const result = await companyDB.updateOne({ _id: req.params.id }, { $set: data });
     return res.status(200).json({
       success: true,
       error: false,
