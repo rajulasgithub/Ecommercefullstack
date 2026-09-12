@@ -13,7 +13,8 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const [signup, setSignup] = useState({
-    firstname: "",
+    firstName: "",
+    lastName: "",
     number: "",
     state: "",
     district: "",
@@ -34,7 +35,8 @@ const Signup = () => {
 
   const Validate = () => {
     const errormessage = {};
-    if (!signup.firstname) errormessage.firstname = "Firstname is required";
+    if (!signup.firstName) errormessage.firstName = "First name is required";
+    if (!signup.lastName) errormessage.lastName = "Last name is required";
     if (!signup.number) errormessage.number = "Phone number is required";
     if (!signup.state) errormessage.state = "State is required";
     if (!signup.district) errormessage.district = "District is required";
@@ -94,14 +96,30 @@ const Signup = () => {
                     <Form.Control
                       type="text"
                       placeholder="e.g. Rahul"
-                      name="firstname"
+                      name="firstName"
                       className="glass-input"
                       onChange={handleChange}
                     />
-                    {error.firstname && <span className="glass-error-badge">{error.firstname}</span>}
+                    {error.firstName && <span className="glass-error-badge">{error.firstName}</span>}
                   </Form.Group>
                 </Col>
 
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Last Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="e.g. Sharma"
+                      name="lastName"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.lastName && <span className="glass-error-badge">{error.lastName}</span>}
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="g-3 mb-2">
                 <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">Phone Number</Form.Label>
@@ -113,6 +131,23 @@ const Signup = () => {
                       onChange={handleChange}
                     />
                     {error.number && <span className="glass-error-badge">{error.number}</span>}
+                  </Form.Group>
+                </Col>
+
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Gender</Form.Label>
+                    <Form.Select
+                      name="gender"
+                      className="glass-input"
+                      onChange={handleChange}
+                    >
+                      <option value="" style={{ color: '#000' }}>Select Gender</option>
+                      <option value="Male" style={{ color: '#000' }}>Male</option>
+                      <option value="Female" style={{ color: '#000' }}>Female</option>
+                      <option value="Other" style={{ color: '#000' }}>Other</option>
+                    </Form.Select>
+                    {error.gender && <span className="glass-error-badge">{error.gender}</span>}
                   </Form.Group>
                 </Col>
               </Row>
@@ -162,7 +197,7 @@ const Signup = () => {
               </Row>
 
               <Row className="g-3 mb-2">
-                <Col xs={12} sm={6}>
+                <Col xs={12} sm={12}>
                   <Form.Group>
                     <Form.Label className="glass-label">Pincode</Form.Label>
                     <Form.Control
@@ -173,23 +208,6 @@ const Signup = () => {
                       onChange={handleChange}
                     />
                     {error.pincode && <span className="glass-error-badge">{error.pincode}</span>}
-                  </Form.Group>
-                </Col>
-
-                <Col xs={12} sm={6}>
-                  <Form.Group>
-                    <Form.Label className="glass-label">Gender</Form.Label>
-                    <Form.Select
-                      name="gender"
-                      className="glass-input"
-                      onChange={handleChange}
-                    >
-                      <option value="" style={{ color: '#000' }}>Select Gender</option>
-                      <option value="Male" style={{ color: '#000' }}>Male</option>
-                      <option value="Female" style={{ color: '#000' }}>Female</option>
-                      <option value="Other" style={{ color: '#000' }}>Other</option>
-                    </Form.Select>
-                    {error.gender && <span className="glass-error-badge">{error.gender}</span>}
                   </Form.Group>
                 </Col>
               </Row>

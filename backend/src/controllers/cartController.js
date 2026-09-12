@@ -84,7 +84,8 @@ export const getCompanyOrders = async (req, res) => {
         $group: {
           _id: "$_id",
           loginId: { $first: "$loginId" },
-          firstname: { $first: "$info.firstname" },
+          firstName: { $first: "$info.firstName" },
+          lastName: { $first: "$info.lastName" },
           number: { $first: "$info.number" },
           image: { $first: "$product.image" },
           prdName: { $first: "$product.prdName" },

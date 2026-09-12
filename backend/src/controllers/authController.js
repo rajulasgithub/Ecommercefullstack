@@ -10,7 +10,7 @@ dotenv.config();
 // User Signup
 export const signup = async (req, res) => {
   try {
-    const { email, password, firstname, number, gender, state, district, pincode, place } = req.body;
+    const { email, password, firstName, lastName, number, gender, state, district, pincode, place } = req.body;
     
     if (!email || !password) {
       return res.status(400).json({
@@ -41,7 +41,8 @@ export const signup = async (req, res) => {
 
     const signupData = {
       loginId: loginresult._id,
-      firstname,
+      firstName,
+      lastName,
       number,
       gender,
       state,
@@ -245,7 +246,8 @@ export const updateUser = async (req, res) => {
     }
 
     const data = {
-      firstname: req.body.firstname || targetUser.firstname,
+      firstName: req.body.firstName || targetUser.firstName,
+      lastName: req.body.lastName || targetUser.lastName,
       number: req.body.number || targetUser.number,
       gender: req.body.gender || targetUser.gender,
       state: req.body.state || targetUser.state,

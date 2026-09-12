@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
   loginId: { type: mongoose.Types.ObjectId, ref: "login" },
-  firstname: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
   number: { type: Number, required: true },
   gender: { type: String, required: true },
   state: { type: String, required: true },

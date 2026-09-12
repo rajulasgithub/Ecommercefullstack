@@ -92,7 +92,8 @@ export const changeDeliveryAddress = async (req, res) => {
     const address = await addressDB.findOne({ loginId: req.userData.loginId });
 
     const signupdata = {
-      firstname: req.body.firstname || (signup ? signup.firstname : ""),
+      firstName: req.body.firstName || (signup ? signup.firstName : ""),
+      lastName: req.body.lastName || (signup ? signup.lastName : ""),
       number: req.body.number || (signup ? signup.number : ""),
     };
     const addressdata = {

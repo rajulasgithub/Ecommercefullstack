@@ -163,7 +163,7 @@ const Vieworders = () => {
                     {/* Customer Shipping Info display for Company */}
                     {(role === ROLES.COMPANY || role === ROLES.ADMIN) && (
                       <div style={{ background: "rgba(255,255,255,0.04)", padding: "0.6rem 0.8rem", borderRadius: "10px", fontSize: "0.85rem", color: "#cbd5e1" }}>
-                        <strong>Customer Details:</strong> {item.firstname} | {item.address}, {item.district}, {item.state} - {item.pincode} | Ph: {item.number}
+                        <strong>Customer Details:</strong> {item.firstName} {item.lastName || ''} | {item.address}, {item.district}, {item.state} - {item.pincode} | Ph: {item.number}
                       </div>
                     )}
 

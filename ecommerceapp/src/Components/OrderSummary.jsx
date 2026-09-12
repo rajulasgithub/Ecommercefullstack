@@ -112,7 +112,7 @@ const OrderSummary = () => {
 
                 <div style={{ color: "#e2e8f0", fontSize: "0.95rem", lineHeight: 1.7 }}>
                   <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#ffffff", marginBottom: "0.5rem" }}>
-                    Recipient: {shippinginfo.firstname || 'Customer'}
+                    Recipient: {shippinginfo.firstName ? `${shippinginfo.firstName} ${shippinginfo.lastName || ''}`.trim() : 'Customer'}
                   </div>
                   <div><strong>Address:</strong> {shippingaddress.address || 'Not provided'}</div>
                   <div><strong>Building No:</strong> {shippingaddress.BuildingNumber || 'N/A'}</div>
@@ -206,16 +206,32 @@ const OrderSummary = () => {
         </Modal.Header>
         <Modal.Body className="p-4">
           <Form>
-            <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Recipient Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Full Name"
-                name="firstname"
-                className="glass-input"
-                onChange={handleChange}
-              />
-            </Form.Group>
+            <Row className="g-2 mb-3">
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">First Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="First Name"
+                    name="firstName"
+                    className="glass-input"
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Last Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Last Name"
+                    name="lastName"
+                    className="glass-input"
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Street Address</Form.Label>
               <Form.Control
