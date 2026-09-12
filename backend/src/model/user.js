@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   district: { type: String, required: true },
   pincode: { type: Number, required: true },
   place: { type: String, required: true },
+  role: { type: String, required: true, default: "user" }
 });
 
 const userDB = mongoose.model("registration", userSchema);

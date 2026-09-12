@@ -1,9 +1,10 @@
-const mongoose= require("mongoose");
-const loginSchema=new mongoose.Schema({ 
-    email:{type:String,required:true},
-    password:{type:String,required:true},
-    role:{type:Number,required:true},
-})
+const mongoose = require("mongoose");
 
-const loginDB= new mongoose.model('login',loginSchema);
-module.exports=loginDB;
+const loginSchema = new mongoose.Schema({
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  role: { type: String, required: true },
+});
+
+const loginDB = mongoose.model("login", loginSchema);
+module.exports = loginDB;

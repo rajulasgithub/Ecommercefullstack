@@ -10,6 +10,7 @@ const companySchema = new mongoose.Schema({
   contactNumber: { type: Number, required: true },
   regNumber: { type: Number, required: true },
   gstNumber: { type: Number, required: true },
+  role: { type: String, required: true, default: "seller" },
 });
 
 const companyDB = mongoose.model("companylist", companySchema);

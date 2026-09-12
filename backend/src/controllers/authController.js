@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const loginDB = require("../model/login");
 const userDB = require("../model/user");
 const companyDB = require("../model/company");
-const ROLES = require("../config/roles");
 require('dotenv').config();
 
 // User Signup
@@ -33,7 +32,7 @@ const signup = async (req, res) => {
     const loginData = {
       email,
       password: hashedPassword,
-      role: ROLES.USER,
+      role: "user",
     };
 
     const loginresult = await loginDB(loginData).save();
@@ -47,6 +46,7 @@ const signup = async (req, res) => {
       district,
       pincode,
       place,
+      role: "user",
     };
 
     const signupresult = await userDB(signupData).save();
@@ -54,7 +54,7 @@ const signup = async (req, res) => {
       const secret = process.env.JWT_SECRET || "encryptkey";
       const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
       const token = jwt.sign(
-        { loginId: loginresult._id, role: ROLES.USER, email: loginresult.email },
+        { loginId: loginresult._id, role: "user", email: loginresult.email },
         secret,
         { expiresIn }
       );
@@ -64,7 +64,7 @@ const signup = async (req, res) => {
         error: false,
         data: signupresult,
         token: token,
-        role: ROLES.USER,
+        role: "user",
         loginId: loginresult._id,
         message: "Successfully registered user",
       });
@@ -237,8 +237,8 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ success: false, error: true, message: "User profile not found" });
     }
 
-    // Verify ownership or Admin role
-    if (targetUser.loginId.toString() !== req.userData.loginId && req.userData.role !== ROLES.ADMIN) {
+    // Verify ownership or Admin role ("admin")
+    if (targetUser.loginId.toString() !== req.userData.loginId && req.userData.role !== "admin") {
       return res.status(403).json({ success: false, error: true, message: "Forbidden. Cannot update another user's profile." });
     }
 
@@ -269,7 +269,7 @@ const updateUser = async (req, res) => {
   }
 };
 
-// Company Signup
+// Company / Seller Signup
 const companySignup = async (req, res) => {
   try {
     const { email, password, companyName, state, district, pincode, contactNumber, regNumber, gstNumber } = req.body;
@@ -296,7 +296,7 @@ const companySignup = async (req, res) => {
     const logindata = {
       email,
       password: hashedPassword,
-      role: ROLES.COMPANY,
+      role: "seller",
     };
     const loginresult = await loginDB(logindata).save();
 
@@ -310,13 +310,14 @@ const companySignup = async (req, res) => {
       contactNumber,
       regNumber,
       gstNumber,
+      role: "seller",
     };
 
     const result = await companyDB(data).save();
     const secret = process.env.JWT_SECRET || "encryptkey";
     const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
     const token = jwt.sign(
-      { loginId: loginresult._id, role: ROLES.COMPANY, email: loginresult.email },
+      { loginId: loginresult._id, role: "seller", email: loginresult.email },
       secret,
       { expiresIn }
     );
@@ -326,7 +327,7 @@ const companySignup = async (req, res) => {
       error: false,
       data: result,
       token: token,
-      role: ROLES.COMPANY,
+      role: "seller",
       loginId: loginresult._id,
       message: "Company registered successfully",
     });
@@ -340,7 +341,7 @@ const companySignup = async (req, res) => {
   }
 };
 
-// View All Companies (Admin/Company)
+// View All Companies (Admin/Seller)
 const viewCompanies = async (req, res) => {
   try {
     const result = await companyDB.find().populate('loginId', 'email role');
@@ -388,7 +389,7 @@ const viewSingleCompany = async (req, res) => {
   }
 };
 
-// Delete Company (Admin/Company)
+// Delete Company (Admin/Seller)
 const deleteCompany = async (req, res) => {
   try {
     const company = await companyDB.findOne({ _id: req.params.id });
@@ -396,7 +397,7 @@ const deleteCompany = async (req, res) => {
       return res.status(404).json({ success: false, error: true, message: "Company not found" });
     }
 
-    if (company.loginId.toString() !== req.userData.loginId && req.userData.role !== ROLES.ADMIN) {
+    if (company.loginId.toString() !== req.userData.loginId && req.userData.role !== "admin") {
       return res.status(403).json({ success: false, error: true, message: "Forbidden. Cannot delete another company." });
     }
 
@@ -426,7 +427,7 @@ const updateCompany = async (req, res) => {
       return res.status(404).json({ success: false, error: true, message: "Company not found" });
     }
 
-    if (olddata.loginId.toString() !== req.userData.loginId && req.userData.role !== ROLES.ADMIN) {
+    if (olddata.loginId.toString() !== req.userData.loginId && req.userData.role !== "admin") {
       return res.status(403).json({ success: false, error: true, message: "Forbidden. Cannot update another company." });
     }
 

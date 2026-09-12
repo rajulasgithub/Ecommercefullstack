@@ -2,7 +2,6 @@ const express = require("express");
 const checkauth = require("../middleware/checkauth");
 const { checkRole } = require("../middleware/authorize");
 const { uploadCompanyLogo } = require("../middleware/upload");
-const ROLES = require("../config/roles");
 const {
   signup,
   login,
@@ -29,27 +28,27 @@ authroutes.post('/login', login);
 authroutes.get('/viewinfo', checkauth, viewProfile);
 
 // View All Users (Admin Only)
-authroutes.get('/view', checkauth, checkRole(ROLES.ADMIN), viewAllUsers);
+authroutes.get('/view', checkauth, checkRole("admin"), viewAllUsers);
 
 // Delete User (Admin Only)
-authroutes.delete('/delete/:id', checkauth, checkRole(ROLES.ADMIN), deleteUser);
+authroutes.delete('/delete/:id', checkauth, checkRole("admin"), deleteUser);
 
 // Update Profile
 authroutes.put('/update/:id', checkauth, updateUser);
 
-// Company Signup
+// Company / Seller Signup
 authroutes.post('/companysignup', uploadCompanyLogo.single("image"), companySignup);
 
-// View All Companies (Admin/Company)
-authroutes.get('/viewcompany', checkauth, checkRole(ROLES.ADMIN, ROLES.COMPANY), viewCompanies);
+// View All Companies (Admin, Seller)
+authroutes.get('/viewcompany', checkauth, checkRole("admin", "seller"), viewCompanies);
 
 // View Single Company
 authroutes.get('/viewonecompany/:id', checkauth, viewSingleCompany);
 
-// Delete Company (Admin/Company)
-authroutes.delete('/deletecompany/:id', checkauth, checkRole(ROLES.ADMIN, ROLES.COMPANY), deleteCompany);
+// Delete Company (Admin, Seller)
+authroutes.delete('/deletecompany/:id', checkauth, checkRole("admin", "seller"), deleteCompany);
 
-// Update Company Info
-authroutes.put('/updatecompany/:id', checkauth, checkRole(ROLES.ADMIN, ROLES.COMPANY), updateCompany);
+// Update Company Info (Admin, Seller)
+authroutes.put('/updatecompany/:id', checkauth, checkRole("admin", "seller"), updateCompany);
 
 module.exports = authroutes;

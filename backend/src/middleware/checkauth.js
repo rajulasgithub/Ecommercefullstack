@@ -32,7 +32,7 @@ module.exports = (req, res, next) => {
 
     req.userData = {
       loginId: decodeToken.loginId,
-      role: Number(decodeToken.role),
+      role: decodeToken.role,
       email: decodeToken.email
     };
     next();

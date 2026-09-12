@@ -1,6 +1,6 @@
 const checkRole = (...allowedRoles) => {
   return (req, res, next) => {
-    if (!req.userData || req.userData.role === undefined) {
+    if (!req.userData || !req.userData.role) {
       return res.status(401).json({
         success: false,
         error: true,
@@ -8,8 +8,8 @@ const checkRole = (...allowedRoles) => {
       });
     }
 
-    const userRole = Number(req.userData.role);
-    const hasRole = allowedRoles.map(Number).includes(userRole);
+    const userRole = String(req.userData.role).toLowerCase();
+    const hasRole = allowedRoles.map(r => String(r).toLowerCase()).includes(userRole);
 
     if (!hasRole) {
       return res.status(403).json({

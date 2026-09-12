@@ -1,7 +1,6 @@
 const express = require("express");
 const checkauth = require("../middleware/checkauth");
 const { checkRole } = require("../middleware/authorize");
-const ROLES = require("../config/roles");
 const {
   addAddress,
   getAddress,
@@ -11,16 +10,16 @@ const {
 
 const addressRoute = express.Router();
 
-// Add Address (User)
-addressRoute.post('/addAddress', checkauth, checkRole(ROLES.USER), addAddress);
+// Add Address (User role)
+addressRoute.post('/addAddress', checkauth, checkRole("user"), addAddress);
 
-// Get Address (User)
-addressRoute.get('/getaddress', checkauth, checkRole(ROLES.USER), getAddress);
+// Get Address (User role)
+addressRoute.get('/getaddress', checkauth, checkRole("user"), getAddress);
 
-// Update Address (User)
-addressRoute.put('/updateaddress', checkauth, checkRole(ROLES.USER), updateAddress);
+// Update Address (User role)
+addressRoute.put('/updateaddress', checkauth, checkRole("user"), updateAddress);
 
-// Change Delivery Address & Contact (User)
-addressRoute.put('/changedeliveryaddress', checkauth, checkRole(ROLES.USER), changeDeliveryAddress);
+// Change Delivery Address & Contact (User role)
+addressRoute.put('/changedeliveryaddress', checkauth, checkRole("user"), changeDeliveryAddress);
 
 module.exports = addressRoute;
