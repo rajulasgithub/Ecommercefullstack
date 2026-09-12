@@ -9,5 +9,5 @@ const productSchema = new mongoose.Schema({
   status: { type: Number, required: true },
 });
 
-const productDB = mongoose.model("productlist", productSchema);
+const productDB = mongoose.model("Product", productSchema);
 export default productDB;

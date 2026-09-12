@@ -9,5 +9,5 @@ const addressSchema = new mongoose.Schema({
   BuildingNumber: { type: Number, required: true },
 });
 
-const addressDB = mongoose.model("addresslist", addressSchema);
+const addressDB = mongoose.model("Address", addressSchema);
 export default addressDB;

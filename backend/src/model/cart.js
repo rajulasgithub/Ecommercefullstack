@@ -11,5 +11,5 @@ const cartSchema = new mongoose.Schema({
   payment: { type: String },
 });
 
-const cartDB = mongoose.model("cartlist", cartSchema);
+const cartDB = mongoose.model("Cart", cartSchema);
 export default cartDB;

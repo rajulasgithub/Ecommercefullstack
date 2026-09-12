@@ -13,5 +13,5 @@ const userSchema = new mongoose.Schema({
   role: { type: String, required: true, default: "user" },
 });
 
-const userDB = mongoose.model("registration", userSchema);
+const userDB = mongoose.model("User", userSchema);
 export default userDB;

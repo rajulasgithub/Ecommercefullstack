@@ -6,5 +6,5 @@ const loginSchema = new mongoose.Schema({
   role: { type: String, required: true },
 });
 
-const loginDB = mongoose.model("login", loginSchema);
+const loginDB = mongoose.model("Login", loginSchema);
 export default loginDB;
