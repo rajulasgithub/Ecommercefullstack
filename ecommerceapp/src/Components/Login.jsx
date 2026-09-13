@@ -18,7 +18,6 @@ const Login = () => {
   const [login, setLogin] = useState({
     email: "",
     password: "",
-    role: "",
   });
 
   const [error, setError] = useState({});
@@ -93,20 +92,6 @@ const Login = () => {
             )}
 
             <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3">
-                <Form.Label className="glass-label">Account Type</Form.Label>
-                <Form.Select
-                  name="role"
-                  className="glass-input"
-                  value={login.role}
-                  onChange={handleChange}
-                >
-                  <option value="" style={{ color: '#000' }}>Auto Detect Account</option>
-                  <option value="user" style={{ color: '#000' }}>Customer / User</option>
-                  <option value="seller" style={{ color: '#000' }}>Seller / Company</option>
-                </Form.Select>
-              </Form.Group>
-
               <Form.Group className="mb-3">
                 <Form.Label className="glass-label">Email Address</Form.Label>
                 <Form.Control
