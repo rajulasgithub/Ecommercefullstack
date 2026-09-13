@@ -80,6 +80,22 @@ export const validatePhone = (phone, label = "Phone number") => {
 
 export const GENDERS = ["Male", "Female", "Other"];
 
+export const MATERIALS = [
+  "Cotton",
+  "Silk",
+  "Georgette",
+  "Polyester",
+  "Wool",
+  "Linen",
+  "Denim",
+  "Velvet",
+  "Chiffon",
+  "Satin",
+  "Rayon",
+  "Blend",
+  "Other"
+];
+
 export const validateGender = (gender) => {
   if (!gender || typeof gender !== 'string' || gender.trim() === '') {
     return "Gender is required";

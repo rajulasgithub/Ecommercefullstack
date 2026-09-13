@@ -1,5 +1,21 @@
 import mongoose from "mongoose";
 
+export const MATERIALS = [
+  "Cotton",
+  "Silk",
+  "Georgette",
+  "Polyester",
+  "Wool",
+  "Linen",
+  "Denim",
+  "Velvet",
+  "Chiffon",
+  "Satin",
+  "Rayon",
+  "Blend",
+  "Other"
+];
+
 const productSchema = new mongoose.Schema({
   prdName: { type: String, required: true, trim: true },
   description: { type: String, required: true, trim: true, default: "", minlength: 10, maxlength: 1000 },
@@ -9,7 +25,13 @@ const productSchema = new mongoose.Schema({
   prize: { type: Number, required: true, min: [0.01, "Price must be greater than 0"] },
   size: { type: String, required: true, trim: true, default: "M" },
   stock: { type: String, required: true, trim: true, default: "In Stock" },
-  material: { type: String, required: true, trim: true },
+  material: {
+    type: String,
+    required: true,
+    trim: true,
+    enum: MATERIALS,
+    default: "Cotton",
+  },
   status: { type: String, required: true, trim: true, default: "active" },
 });
 

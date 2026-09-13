@@ -1,5 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
+import { MATERIALS } from "../model/product.js";
 import checkauth from "../middleware/checkauth.js";
 import { checkRole } from "../middleware/authorize.js";
 import { uploadProductImage } from "../middleware/upload.js";
@@ -40,7 +41,12 @@ const addProductValidation = [
     .withMessage("Price must be a positive number greater than 0"),
   body("stock").trim().notEmpty().withMessage("Stock status is required"),
   body("size").trim().notEmpty().withMessage("At least one product size must be selected"),
-  body("material").trim().notEmpty().withMessage("Material is required"),
+  body("material")
+    .trim()
+    .notEmpty()
+    .withMessage("Material is required")
+    .isIn(MATERIALS)
+    .withMessage(`Material must be one of: ${MATERIALS.join(", ")}`),
   handleValidationErrors,
 ];
 

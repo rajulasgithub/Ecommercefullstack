@@ -8,7 +8,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
-import { isEmpty, isNumeric } from '../utils/validation';
+import { isEmpty, isNumeric, MATERIALS } from '../utils/validation';
 import './Style.css';
 
 const Addproduct = () => {
@@ -282,13 +282,19 @@ const Addproduct = () => {
               <Col xs={12} sm={6}>
                 <Form.Group>
                   <Form.Label className="glass-label">Material & Fabric Info</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="e.g. Pure Georgette with Embroidery"
+                  <Form.Select
                     name="material"
                     className="glass-input"
                     onChange={handleChange}
-                  />
+                    value={addproduct.material || ''}
+                  >
+                    <option value="" style={{ color: '#000' }}>Select Material</option>
+                    {MATERIALS.map((mat) => (
+                      <option key={mat} value={mat} style={{ color: '#000' }}>
+                        {mat}
+                      </option>
+                    ))}
+                  </Form.Select>
                   {error.material && <span className="glass-error-badge">{error.material}</span>}
                 </Form.Group>
               </Col>

@@ -11,7 +11,7 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import api from '../utils/api';
 import ROLES from '../utils/roles';
-import { isNumeric, isEmpty } from '../utils/validation';
+import { isNumeric, isEmpty, MATERIALS } from '../utils/validation';
 
 const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStatus, handleSubmit }) => {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
@@ -661,14 +661,19 @@ const Viewproduct = () => {
               <Col xs={12}>
                 <Form.Group>
                   <Form.Label className="glass-label">Material & Fabric Info</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Material"
+                  <Form.Select
                     name="material"
                     className="glass-input"
                     value={updateprdt.material || ''}
                     onChange={handleChange}
-                  />
+                  >
+                    <option value="" style={{ color: '#000' }}>Select Material</option>
+                    {MATERIALS.map((mat) => (
+                      <option key={mat} value={mat} style={{ color: '#000' }}>
+                        {mat}
+                      </option>
+                    ))}
+                  </Form.Select>
                   {modalError.material && <span className="glass-error-badge">{modalError.material}</span>}
                 </Form.Group>
               </Col>

@@ -10,7 +10,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Header from './Header';
 import api from '../utils/api';
 import ROLES from '../utils/roles';
-import { isEmpty, isNumeric } from '../utils/validation';
+import { isEmpty, isNumeric, MATERIALS } from '../utils/validation';
 import './Style.css';
 
 const SingleProduct = () => {
@@ -700,13 +700,19 @@ const SingleProduct = () => {
               <Col xs={12}>
                 <Form.Group>
                   <Form.Label className="glass-label">Material & Fabric Info</Form.Label>
-                  <Form.Control
-                    type="text"
+                  <Form.Select
                     name="material"
-                    defaultValue={product.material}
+                    defaultValue={product.material || ''}
                     className="glass-input"
                     onChange={handleEditChange}
-                  />
+                  >
+                    <option value="" style={{ color: '#000' }}>Select Material</option>
+                    {MATERIALS.map((mat) => (
+                      <option key={mat} value={mat} style={{ color: '#000' }}>
+                        {mat}
+                      </option>
+                    ))}
+                  </Form.Select>
                   {editErrors.material && <span className="glass-error-badge">{editErrors.material}</span>}
                 </Form.Group>
               </Col>
