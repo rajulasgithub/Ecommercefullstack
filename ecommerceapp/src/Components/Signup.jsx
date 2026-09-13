@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
 import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
@@ -14,6 +15,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [signup, setSignup] = useState({
     firstName: "",
@@ -84,6 +86,7 @@ const Signup = () => {
 
     const { confirmPassword, ...signupPayload } = signup;
 
+    setLoading(true);
     try {
       const response = await api.post('/auth/signup', signupPayload);
       if (response.data && response.data.success) {
@@ -97,6 +100,8 @@ const Signup = () => {
     } catch (err) {
       const msg = err.response?.data?.message || "Registration failed. Please try again.";
       setServerError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -334,8 +339,22 @@ const Signup = () => {
               </Row>
 
               <div className="d-grid mb-3">
-                <Button type="submit" className="btn-glass-primary">
-                  Create Account
+                <Button type="submit" className="btn-glass-primary" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        className="me-2"
+                      />
+                      Creating Account...
+                    </>
+                  ) : (
+                    "Create Account"
+                  )}
                 </Button>
               </div>
 

@@ -3,6 +3,7 @@ import "./Style.css";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
+import Spinner from "react-bootstrap/Spinner";
 import { useNavigate, Link } from 'react-router-dom';
 import Header from "./Header";
 import api from "../utils/api";
@@ -13,6 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [login, setLogin] = useState({
     email: "",
     password: "",
@@ -49,6 +51,7 @@ const Login = () => {
       return;
     }
 
+    setLoading(true);
     try {
       const response = await api.post("/auth/login", login);
       if (response.data && response.data.success) {
@@ -66,6 +69,8 @@ const Login = () => {
     } catch (err) {
       const msg = err.response?.data?.message || "Login failed. Please check your credentials.";
       setServerError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -150,8 +155,22 @@ const Login = () => {
               </Form.Group>
 
               <div className="d-grid mb-3">
-                <Button type="submit" className="btn-glass-primary">
-                  Sign In
+                <Button type="submit" className="btn-glass-primary" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        className="me-2"
+                      />
+                      Signing In...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
                 </Button>
               </div>
 
