@@ -259,7 +259,13 @@ const Viewproduct = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedStyle, setSelectedStyle] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+
   const [updateprdt, setUpdateprdt] = useState({});
   const [modalError, setModalError] = useState({});
   const [activeItemId, setActiveItemId] = useState(null);
@@ -267,15 +273,42 @@ const Viewproduct = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [updating, setUpdating] = useState(false);
 
-  useEffect(() => {
-    api.get('/product/viewproduct')
+  const fetchProducts = () => {
+    setLoadingProducts(true);
+    const params = {};
+    if (searchQuery.trim()) params.search = searchQuery.trim();
+    if (selectedCategory) params.category = selectedCategory;
+    if (selectedStyle) params.style = selectedStyle;
+    if (minPrice !== '') params.minPrice = minPrice;
+    if (maxPrice !== '') params.maxPrice = maxPrice;
+
+    api.get('/product/viewproduct', { params })
       .then((response) => {
         setProduct(response.data.data || []);
       })
       .catch((error) => {
         console.log(error);
+        setErrorMsg("Failed to fetch products.");
+      })
+      .finally(() => {
+        setLoadingProducts(false);
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProducts();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery, selectedCategory, selectedStyle, minPrice, maxPrice]);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedCategory("");
+    setSelectedStyle("");
+    setMinPrice("");
+    setMaxPrice("");
+  };
 
   const handleSubmit = (id) => {
     if (!token) {
@@ -426,8 +459,7 @@ const Viewproduct = () => {
     api.put(`/product/updateproduct/${id}`, formdata)
       .then((response) => {
         handleClose();
-        // Refresh product list
-        api.get('/product/viewproduct').then((res) => setProduct(res.data.data || []));
+        fetchProducts();
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to update product.";
@@ -466,7 +498,7 @@ const Viewproduct = () => {
   const setStatus = (id, value) => {
     api.put(`/product/updateproductstatus/${id}/${value}`)
       .then((response) => {
-        api.get('/product/viewproduct').then((res) => setProduct(res.data.data || []));
+        fetchProducts();
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to update status.";
@@ -503,39 +535,132 @@ const Viewproduct = () => {
         )}
 
         {/* Search & Filter Bar */}
-        <Row className="justify-content-center align-items-center mb-4 g-2">
-          <Col xs={12} md={role === ROLES.COMPANY || role === ROLES.ADMIN ? 7 : 8}>
-            <Form.Control
-              type="text"
-              placeholder="🔍 Search dresses, fabric, material..."
-              className="glass-input"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </Col>
-          {(role === ROLES.COMPANY || role === ROLES.ADMIN) && product.length > 0 && (
-            <Col xs={12} md={3} className="text-md-end">
-              <Button className="btn-glass-danger py-2 w-100" onClick={deleteAllProductsHandler}>
-                🗑️ Delete All Products
+        <div className="glass-card p-3 mb-4">
+          <Row className="g-3 align-items-end">
+            <Col xs={12} md={4} lg={3}>
+              <Form.Group>
+                <Form.Label className="glass-label" style={{ fontSize: '0.8rem', marginBottom: '0.2rem' }}>Search Name / Keyword</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="🔍 Search products..."
+                  className="glass-input"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+
+            <Col xs={6} md={3} lg={2}>
+              <Form.Group>
+                <Form.Label className="glass-label" style={{ fontSize: '0.8rem', marginBottom: '0.2rem' }}>Category</Form.Label>
+                <Form.Select
+                  className="glass-input"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="" style={{ color: '#000' }}>All Categories</option>
+                  <option value="Women" style={{ color: '#000' }}>Women</option>
+                  <option value="Men" style={{ color: '#000' }}>Men</option>
+                  <option value="Kids" style={{ color: '#000' }}>Kids</option>
+                  <option value="Unisex" style={{ color: '#000' }}>Unisex</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+
+            <Col xs={6} md={3} lg={2}>
+              <Form.Group>
+                <Form.Label className="glass-label" style={{ fontSize: '0.8rem', marginBottom: '0.2rem' }}>Style</Form.Label>
+                <Form.Select
+                  className="glass-input"
+                  value={selectedStyle}
+                  onChange={(e) => setSelectedStyle(e.target.value)}
+                >
+                  <option value="" style={{ color: '#000' }}>All Styles</option>
+                  {STYLES.map((st) => (
+                    <option key={st} value={st} style={{ color: '#000' }}>
+                      {st}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+
+            <Col xs={6} md={3} lg={2}>
+              <Form.Group>
+                <Form.Label className="glass-label" style={{ fontSize: '0.8rem', marginBottom: '0.2rem' }}>Min Price (₹)</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Min ₹"
+                  className="glass-input"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+
+            <Col xs={6} md={3} lg={2}>
+              <Form.Group>
+                <Form.Label className="glass-label" style={{ fontSize: '0.8rem', marginBottom: '0.2rem' }}>Max Price (₹)</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Max ₹"
+                  className="glass-input"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+
+            <Col xs={12} lg={1} className="d-flex gap-2 justify-content-end">
+              <Button
+                className="btn-glass-secondary py-2 w-100"
+                style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}
+                onClick={clearFilters}
+              >
+                Reset
               </Button>
             </Col>
+          </Row>
+
+          {(role === ROLES.COMPANY || role === ROLES.ADMIN) && product.length > 0 && (
+            <div className="mt-3 pt-2 border-top border-secondary text-end">
+              <Button className="btn-glass-danger py-1 px-3" size="sm" onClick={deleteAllProductsHandler}>
+                🗑️ Delete All Products
+              </Button>
+            </div>
           )}
-        </Row>
+        </div>
 
         {/* Products Grid */}
         <Row className="g-4">
-          {filteredProducts.map((item) => (
-            <ProductCardItem
-              key={item._id}
-              item={item}
-              role={role}
-              navigate={navigate}
-              handleShow={handleShow}
-              dltproduct={dltproduct}
-              setStatus={setStatus}
-              handleSubmit={handleSubmit}
-            />
-          ))}
+          {loadingProducts ? (
+            <Col xs={12} className="text-center py-5">
+              <Spinner animation="border" style={{ color: '#a5b4fc' }} />
+              <p className="mt-2 style-loader" style={{ color: '#9ca3af' }}>Filtering products...</p>
+            </Col>
+          ) : product.length === 0 ? (
+            <Col xs={12} className="text-center py-5">
+              <div className="glass-card py-5" style={{ maxWidth: '450px', margin: '0 auto' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🔍</div>
+                <h4 style={{ color: '#ffffff', fontWeight: 600 }}>No Products Found</h4>
+                <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>Try adjusting your search query, price range, category, or style filters.</p>
+                <Button className="btn-glass-secondary size-sm" onClick={clearFilters}>Reset Filters</Button>
+              </div>
+            </Col>
+          ) : (
+            product.map((item) => (
+              <ProductCardItem
+                key={item._id}
+                item={item}
+                role={role}
+                navigate={navigate}
+                handleShow={handleShow}
+                dltproduct={dltproduct}
+                setStatus={setStatus}
+                handleSubmit={handleSubmit}
+              />
+            ))
+          )}
         </Row>
       </Container>
 

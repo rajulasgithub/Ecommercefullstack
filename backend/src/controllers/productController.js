@@ -47,9 +47,45 @@ export const addProduct = async (req, res) => {
 // View Products (Public)
 export const getAllProducts = async (req, res) => {
   try {
-    const result = await productDB.find({
+    const { search, category, style, minPrice, maxPrice } = req.query;
+
+    const query = {
       status: { $nin: ["deleted", "Deleted", "DELETED"], $not: /^deleted$/i }
-    }).sort({ createdAt: -1, _id: -1 });
+    };
+
+    if (search && search.trim() !== '') {
+      const searchRegex = new RegExp(search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      query.$or = [
+        { prdName: searchRegex },
+        { description: searchRegex },
+        { material: searchRegex },
+        { category: searchRegex },
+        { style: searchRegex }
+      ];
+    }
+
+    if (category && category.trim() !== '') {
+      query.category = category.trim();
+    }
+
+    if (style && style.trim() !== '') {
+      query.style = style.trim();
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const priceQuery = {};
+      if (minPrice !== undefined && minPrice !== '' && !isNaN(minPrice)) {
+        priceQuery.$gte = Number(minPrice);
+      }
+      if (maxPrice !== undefined && maxPrice !== '' && !isNaN(maxPrice)) {
+        priceQuery.$lte = Number(maxPrice);
+      }
+      if (Object.keys(priceQuery).length > 0) {
+        query.prize = priceQuery;
+      }
+    }
+
+    const result = await productDB.find(query).sort({ createdAt: -1, _id: -1 });
     return res.status(200).json({
       success: true,
       error: false,
