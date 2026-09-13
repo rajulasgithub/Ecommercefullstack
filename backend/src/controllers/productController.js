@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 import productDB from "../model/product.js";
 import cartDB from "../model/cart.js";
 
@@ -47,11 +48,39 @@ export const addProduct = async (req, res) => {
 // View Products (Public)
 export const getAllProducts = async (req, res) => {
   try {
-    const { search, category, style, minPrice, maxPrice, page, limit } = req.query;
+    const { search, category, style, minPrice, maxPrice, page, limit, excludeLoginId } = req.query;
 
     const query = {
       status: { $nin: ["deleted", "Deleted", "DELETED"], $not: /^deleted$/i }
     };
+
+    // Exclude products added by the currently logged-in seller
+    let sellerToExclude = excludeLoginId;
+
+    if (!sellerToExclude && req.headers.authorization) {
+      try {
+        const authHeader = req.headers.authorization;
+        let token = authHeader;
+        if (authHeader.startsWith('Bearer ')) {
+          token = authHeader.split(' ')[1];
+        } else if (authHeader.includes(' ')) {
+          token = authHeader.split(' ')[1];
+        }
+        if (token) {
+          const secret = process.env.JWT_SECRET || "encryptkey";
+          const decoded = jwt.verify(token, secret);
+          if (decoded && decoded.loginId) {
+            sellerToExclude = decoded.loginId;
+          }
+        }
+      } catch (e) {
+        // Token invalid or expired, ignore for public view
+      }
+    }
+
+    if (sellerToExclude && mongoose.Types.ObjectId.isValid(sellerToExclude)) {
+      query.loginId = { $ne: sellerToExclude };
+    }
 
     if (search && search.trim() !== '') {
       const searchRegex = new RegExp(search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');

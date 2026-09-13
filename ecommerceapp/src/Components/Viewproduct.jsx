@@ -255,10 +255,12 @@ const Viewproduct = () => {
 
   const fetchProducts = (targetPage = page) => {
     setLoadingProducts(true);
+    const loggedInLoginId = localStorage.getItem("loginId");
     const params = {
       page: targetPage,
       limit: limit
     };
+    if (loggedInLoginId) params.excludeLoginId = loggedInLoginId;
     if (searchQuery.trim()) params.search = searchQuery.trim();
     if (selectedCategory) params.category = selectedCategory;
     if (selectedStyle) params.style = selectedStyle;
