@@ -8,14 +8,17 @@ import Row from 'react-bootstrap/Row';
 import api from './../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
+import { isValidEmail, isEmpty, isMinLength } from '../utils/validation';
 
 const Companysignup = () => {
   const navigate = useNavigate();
   const [companysignup, setCompanysignup] = useState({});
+  const [error, setError] = useState({});
   const [serverError, setServerError] = useState("");
 
   const handleChange = (event) => {
     setCompanysignup({ ...companysignup, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: "" });
     setServerError("");
   };
 
@@ -24,8 +27,31 @@ const Companysignup = () => {
     setServerError("");
   };
 
+  const Validate = () => {
+    const errormessage = {};
+    if (isEmpty(companysignup.companyName)) errormessage.companyName = "Company name is required";
+    if (isEmpty(companysignup.contactNumber)) errormessage.contactNumber = "Contact number is required";
+
+    if (isEmpty(companysignup.email)) {
+      errormessage.email = "Please provide a valid email address";
+    } else if (!isValidEmail(companysignup.email)) {
+      errormessage.email = "Please provide a valid email address";
+    }
+
+    if (isEmpty(companysignup.password)) {
+      errormessage.password = "Password must be at least 6 characters long";
+    } else if (!isMinLength(companysignup.password, 6)) {
+      errormessage.password = "Password must be at least 6 characters long";
+    }
+
+    setError(errormessage);
+    return Object.keys(errormessage).length === 0;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!Validate()) return;
+
     const formdata = new FormData();
     if (companysignup.image) formdata.append("image", companysignup.image);
     formdata.append("companyName", companysignup.companyName || "");
@@ -96,6 +122,7 @@ const Companysignup = () => {
                       className="glass-input"
                       onChange={handleChange}
                     />
+                    {error.companyName && <span className="glass-error-badge">{error.companyName}</span>}
                   </Form.Group>
                 </Col>
               </Row>
@@ -152,6 +179,7 @@ const Companysignup = () => {
                       className="glass-input"
                       onChange={handleChange}
                     />
+                    {error.contactNumber && <span className="glass-error-badge">{error.contactNumber}</span>}
                   </Form.Group>
                 </Col>
 
@@ -193,6 +221,7 @@ const Companysignup = () => {
                       className="glass-input"
                       onChange={handleChange}
                     />
+                    {error.email && <span className="glass-error-badge">{error.email}</span>}
                   </Form.Group>
                 </Col>
 
@@ -206,6 +235,7 @@ const Companysignup = () => {
                       className="glass-input"
                       onChange={handleChange}
                     />
+                    {error.password && <span className="glass-error-badge">{error.password}</span>}
                   </Form.Group>
                 </Col>
               </Row>

@@ -9,6 +9,7 @@ import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 import Header from './Header';
 import api from '../utils/api';
+import { isEmpty } from '../utils/validation';
 
 const OrderSummary = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const OrderSummary = () => {
   const [shippingaddress, setShippingAddress] = useState({});
   const [shippinginfo, setShippinginfo] = useState({});
   const [selectedPayment, setSelectedPayment] = useState("cod");
+  const [addrErrors, setAddrErrors] = useState({});
 
   useEffect(() => {
     const now = new Date();
@@ -53,17 +55,72 @@ const OrderSummary = () => {
       .catch((error) => console.log(error));
   };
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => {
+    setShow(false);
+    setAddrErrors({});
+  };
+  const handleShow = () => {
+    setAddress({
+      firstName: shippinginfo.firstName || '',
+      lastName: shippinginfo.lastName || '',
+      address: shippingaddress.address || '',
+      BuildingNumber: shippingaddress.BuildingNumber || '',
+      district: shippingaddress.district || '',
+      state: shippingaddress.state || '',
+      pincode: shippingaddress.pincode || '',
+      number: shippinginfo.number || '',
+    });
+    setAddrErrors({});
+    setShow(true);
+  };
 
   const handleChange = (event) => {
     setAddress({ ...address, [event.target.name]: event.target.value });
+    setAddrErrors({ ...addrErrors, [event.target.name]: '' });
+  };
+
+  const validateAddress = () => {
+    const fn = address.firstName !== undefined ? address.firstName : shippinginfo.firstName;
+    const ln = address.lastName !== undefined ? address.lastName : shippinginfo.lastName;
+    const addr = address.address !== undefined ? address.address : shippingaddress.address;
+    const bldg = address.BuildingNumber !== undefined ? address.BuildingNumber : shippingaddress.BuildingNumber;
+    const dist = address.district !== undefined ? address.district : shippingaddress.district;
+    const st = address.state !== undefined ? address.state : shippingaddress.state;
+    const pin = address.pincode !== undefined ? address.pincode : shippingaddress.pincode;
+    const num = address.number !== undefined ? address.number : shippinginfo.number;
+
+    const errs = {};
+    if (isEmpty(fn)) errs.firstName = "First name is required";
+    if (isEmpty(ln)) errs.lastName = "Last name is required";
+    if (isEmpty(addr)) errs.address = "Address field is required";
+    if (isEmpty(bldg)) errs.BuildingNumber = "Building number is required";
+    if (isEmpty(dist)) errs.district = "District field is required";
+    if (isEmpty(st)) errs.state = "State field is required";
+    if (isEmpty(pin)) errs.pincode = "Pincode field is required";
+    if (isEmpty(num)) errs.number = "Phone number is required";
+
+    setAddrErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
   const updateAdrress = () => {
+    if (!validateAddress()) return;
+
     api.put('/address/changedeliveryaddress', address)
       .then((response) => {
-        setShippingAddress(response.data.data || address);
+        setShippingAddress({
+          address: address.address,
+          BuildingNumber: address.BuildingNumber,
+          district: address.district,
+          state: address.state,
+          pincode: address.pincode,
+        });
+        setShippinginfo({
+          ...shippinginfo,
+          firstName: address.firstName,
+          lastName: address.lastName,
+          number: address.number,
+        });
         handleClose();
       })
       .catch((error) => console.log(error));
@@ -215,8 +272,10 @@ const OrderSummary = () => {
                     placeholder="First Name"
                     name="firstName"
                     className="glass-input"
+                    value={address.firstName || ''}
                     onChange={handleChange}
                   />
+                  {addrErrors.firstName && <span className="glass-error-badge">{addrErrors.firstName}</span>}
                 </Form.Group>
               </Col>
               <Col xs={6}>
@@ -227,8 +286,10 @@ const OrderSummary = () => {
                     placeholder="Last Name"
                     name="lastName"
                     className="glass-input"
+                    value={address.lastName || ''}
                     onChange={handleChange}
                   />
+                  {addrErrors.lastName && <span className="glass-error-badge">{addrErrors.lastName}</span>}
                 </Form.Group>
               </Col>
             </Row>
@@ -240,47 +301,69 @@ const OrderSummary = () => {
                 placeholder="House no, Street, Area"
                 name="address"
                 className="glass-input"
+                value={address.address || ''}
                 onChange={handleChange}
               />
+              {addrErrors.address && <span className="glass-error-badge">{addrErrors.address}</span>}
             </Form.Group>
             <Row className="g-2 mb-3">
               <Col xs={6}>
-                <Form.Control
-                  type="text"
-                  placeholder="Building Number"
-                  name="BuildingNumber"
-                  className="glass-input"
-                  onChange={handleChange}
-                />
+                <Form.Group>
+                  <Form.Label className="glass-label">Building Number</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Building Number"
+                    name="BuildingNumber"
+                    className="glass-input"
+                    value={address.BuildingNumber || ''}
+                    onChange={handleChange}
+                  />
+                  {addrErrors.BuildingNumber && <span className="glass-error-badge">{addrErrors.BuildingNumber}</span>}
+                </Form.Group>
               </Col>
               <Col xs={6}>
-                <Form.Control
-                  type="text"
-                  placeholder="District"
-                  name="district"
-                  className="glass-input"
-                  onChange={handleChange}
-                />
+                <Form.Group>
+                  <Form.Label className="glass-label">District</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="District"
+                    name="district"
+                    className="glass-input"
+                    value={address.district || ''}
+                    onChange={handleChange}
+                  />
+                  {addrErrors.district && <span className="glass-error-badge">{addrErrors.district}</span>}
+                </Form.Group>
               </Col>
             </Row>
             <Row className="g-2 mb-3">
               <Col xs={6}>
-                <Form.Control
-                  type="text"
-                  placeholder="State"
-                  name="state"
-                  className="glass-input"
-                  onChange={handleChange}
-                />
+                <Form.Group>
+                  <Form.Label className="glass-label">State</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="State"
+                    name="state"
+                    className="glass-input"
+                    value={address.state || ''}
+                    onChange={handleChange}
+                  />
+                  {addrErrors.state && <span className="glass-error-badge">{addrErrors.state}</span>}
+                </Form.Group>
               </Col>
               <Col xs={6}>
-                <Form.Control
-                  type="text"
-                  placeholder="Pincode"
-                  name="pincode"
-                  className="glass-input"
-                  onChange={handleChange}
-                />
+                <Form.Group>
+                  <Form.Label className="glass-label">Pincode</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Pincode"
+                    name="pincode"
+                    className="glass-input"
+                    value={address.pincode || ''}
+                    onChange={handleChange}
+                  />
+                  {addrErrors.pincode && <span className="glass-error-badge">{addrErrors.pincode}</span>}
+                </Form.Group>
               </Col>
             </Row>
             <Form.Group className="mb-3">
@@ -290,8 +373,10 @@ const OrderSummary = () => {
                 placeholder="Mobile number"
                 name="number"
                 className="glass-input"
+                value={address.number || ''}
                 onChange={handleChange}
               />
+              {addrErrors.number && <span className="glass-error-badge">{addrErrors.number}</span>}
             </Form.Group>
           </Form>
         </Modal.Body>

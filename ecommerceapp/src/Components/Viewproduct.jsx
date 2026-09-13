@@ -10,6 +10,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from "react-bootstrap/Form";
 import api from '../utils/api';
 import ROLES from '../utils/roles';
+import { isNumeric, isEmpty } from '../utils/validation';
 
 const Viewproduct = () => {
   const role = localStorage.getItem("role");
@@ -19,6 +20,7 @@ const Viewproduct = () => {
   const [product, setProduct] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [updateprdt, setUpdateprdt] = useState({});
+  const [modalError, setModalError] = useState({});
   const [activeItemId, setActiveItemId] = useState(null);
   const [show, setShow] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -76,13 +78,37 @@ const Viewproduct = () => {
 
   const handleChange = (event) => {
     setUpdateprdt({ ...updateprdt, [event.target.name]: event.target.value });
+    setModalError({ ...modalError, [event.target.name]: '' });
   };
 
   const fileChange = (event) => {
     setUpdateprdt({ ...updateprdt, image: event.target.files[0] });
   };
 
+  const validateUpdate = () => {
+    const errs = {};
+    if (updateprdt.prdName !== undefined && isEmpty(updateprdt.prdName)) {
+      errs.prdName = "Product name is required";
+    }
+    if (updateprdt.prize !== undefined && isEmpty(updateprdt.prize)) {
+      errs.prize = "Price must be a valid number";
+    } else if (updateprdt.prize !== undefined && !isNumeric(updateprdt.prize)) {
+      errs.prize = "Price must be a valid number";
+    }
+    if (updateprdt.size !== undefined && isEmpty(updateprdt.size)) {
+      errs.size = "Product size is required";
+    }
+    if (updateprdt.material !== undefined && isEmpty(updateprdt.material)) {
+      errs.material = "Material is required";
+    }
+
+    setModalError(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleUpdate = (id) => {
+    if (!validateUpdate()) return;
+
     const formdata = new FormData();
     formdata.append('prdName', updateprdt.prdName || '');
     if (updateprdt.image) formdata.append('image', updateprdt.image);
@@ -105,10 +131,19 @@ const Viewproduct = () => {
   const handleClose = () => {
     setShow(false);
     setActiveItemId(null);
+    setModalError({});
   };
 
   const handleShow = (id) => {
+    const currentItem = product.find(p => p._id === id) || {};
     setActiveItemId(id);
+    setUpdateprdt({
+      prdName: currentItem.prdName || '',
+      prize: currentItem.prize || '',
+      size: currentItem.size || '',
+      material: currentItem.material || ''
+    });
+    setModalError({});
     setShow(true);
   };
 
@@ -294,8 +329,10 @@ const Viewproduct = () => {
                 placeholder="Product Name"
                 name="prdName"
                 className="glass-input"
+                value={updateprdt.prdName || ''}
                 onChange={handleChange}
               />
+              {modalError.prdName && <span className="glass-error-badge">{modalError.prdName}</span>}
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Product Image</Form.Label>
@@ -313,8 +350,10 @@ const Viewproduct = () => {
                 placeholder="Price"
                 name="prize"
                 className="glass-input"
+                value={updateprdt.prize || ''}
                 onChange={handleChange}
               />
+              {modalError.prize && <span className="glass-error-badge">{modalError.prize}</span>}
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Size</Form.Label>
@@ -323,8 +362,10 @@ const Viewproduct = () => {
                 placeholder="Size"
                 name="size"
                 className="glass-input"
+                value={updateprdt.size || ''}
                 onChange={handleChange}
               />
+              {modalError.size && <span className="glass-error-badge">{modalError.size}</span>}
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Material</Form.Label>
@@ -333,8 +374,10 @@ const Viewproduct = () => {
                 placeholder="Material"
                 name="material"
                 className="glass-input"
+                value={updateprdt.material || ''}
                 onChange={handleChange}
               />
+              {modalError.material && <span className="glass-error-badge">{modalError.material}</span>}
             </Form.Group>
           </Form>
         </Modal.Body>

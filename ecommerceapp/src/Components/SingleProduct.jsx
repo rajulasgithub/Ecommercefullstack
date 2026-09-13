@@ -9,6 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 import Header from './Header';
 import api from '../utils/api';
 import ROLES from '../utils/roles';
+import { isEmpty, isNumeric } from '../utils/validation';
 import './Style.css';
 
 const SingleProduct = () => {
@@ -27,6 +28,7 @@ const SingleProduct = () => {
   // Edit modal states for company
   const [showEdit, setShowEdit] = useState(false);
   const [updateData, setUpdateData] = useState({});
+  const [editErrors, setEditErrors] = useState({});
 
   useEffect(() => {
     fetchProductDetails();
@@ -85,13 +87,32 @@ const SingleProduct = () => {
 
   const handleEditChange = (e) => {
     setUpdateData({ ...updateData, [e.target.name]: e.target.value });
+    setEditErrors({ ...editErrors, [e.target.name]: '' });
   };
 
   const handleFileChange = (e) => {
     setUpdateData({ ...updateData, image: e.target.files[0] });
   };
 
+  const validateEditForm = () => {
+    const nameVal = updateData.prdName !== undefined ? updateData.prdName : product.prdName;
+    const priceVal = updateData.prize !== undefined ? updateData.prize : product.prize;
+    const sizeVal = updateData.size !== undefined ? updateData.size : product.size;
+    const matVal = updateData.material !== undefined ? updateData.material : product.material;
+
+    const errs = {};
+    if (isEmpty(nameVal)) errs.prdName = "Product name is required";
+    if (isEmpty(priceVal) || !isNumeric(priceVal)) errs.prize = "Price must be a valid number";
+    if (isEmpty(sizeVal)) errs.size = "Product size is required";
+    if (isEmpty(matVal)) errs.material = "Material is required";
+
+    setEditErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleSaveUpdate = async () => {
+    if (!validateEditForm()) return;
+
     const formdata = new FormData();
     formdata.append('prdName', updateData.prdName || product.prdName);
     if (updateData.image) formdata.append('image', updateData.image);
@@ -102,6 +123,7 @@ const SingleProduct = () => {
     try {
       await api.put(`/product/updateproduct/${id}`, formdata);
       setShowEdit(false);
+      setEditErrors({});
       fetchProductDetails();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update product details.');
@@ -370,6 +392,7 @@ const SingleProduct = () => {
                 className="glass-input"
                 onChange={handleEditChange}
               />
+              {editErrors.prdName && <span className="glass-error-badge">{editErrors.prdName}</span>}
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Product Image</Form.Label>
@@ -389,6 +412,7 @@ const SingleProduct = () => {
                 className="glass-input"
                 onChange={handleEditChange}
               />
+              {editErrors.prize && <span className="glass-error-badge">{editErrors.prize}</span>}
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Size</Form.Label>
@@ -399,6 +423,7 @@ const SingleProduct = () => {
                 className="glass-input"
                 onChange={handleEditChange}
               />
+              {editErrors.size && <span className="glass-error-badge">{editErrors.size}</span>}
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Material</Form.Label>
@@ -409,6 +434,7 @@ const SingleProduct = () => {
                 className="glass-input"
                 onChange={handleEditChange}
               />
+              {editErrors.material && <span className="glass-error-badge">{editErrors.material}</span>}
             </Form.Group>
           </Form>
         </Modal.Body>

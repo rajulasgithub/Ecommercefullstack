@@ -7,6 +7,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Header from "./Header";
 import api from "../utils/api";
 import ROLES from "../utils/roles";
+import { isValidEmail, isEmpty } from "../utils/validation";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,15 +22,19 @@ const Login = () => {
 
   const handleChange = (event) => {
     setLogin({ ...login, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: "" });
     setServerError("");
   };
 
   const Validate = () => {
     const errormessage = {};
-    if (!login.email) {
-      errormessage.email = "Email address is required";
+    if (isEmpty(login.email)) {
+      errormessage.email = "Please provide a valid email address";
+    } else if (!isValidEmail(login.email)) {
+      errormessage.email = "Please provide a valid email address";
     }
-    if (!login.password) {
+
+    if (isEmpty(login.password)) {
       errormessage.password = "Password is required";
     }
     setError(errormessage);

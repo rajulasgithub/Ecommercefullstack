@@ -7,15 +7,18 @@ import Button from 'react-bootstrap/Button';
 import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { isEmpty, isNumeric } from '../utils/validation';
 import './Style.css';
 
 const Addproduct = () => {
   const navigate = useNavigate();
   const [addproduct, setAddproduct] = useState({});
+  const [error, setError] = useState({});
   const [serverError, setServerError] = useState('');
 
   const handleChange = (event) => {
     setAddproduct({ ...addproduct, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: '' });
     setServerError('');
   };
 
@@ -24,8 +27,31 @@ const Addproduct = () => {
     setServerError('');
   };
 
+  const Validate = () => {
+    const errormessage = {};
+    if (isEmpty(addproduct.prdName)) {
+      errormessage.prdName = "Product name is required";
+    }
+    if (isEmpty(addproduct.prize)) {
+      errormessage.prize = "Price must be a valid number";
+    } else if (!isNumeric(addproduct.prize)) {
+      errormessage.prize = "Price must be a valid number";
+    }
+    if (isEmpty(addproduct.size)) {
+      errormessage.size = "Product size is required";
+    }
+    if (isEmpty(addproduct.material)) {
+      errormessage.material = "Material is required";
+    }
+
+    setError(errormessage);
+    return Object.keys(errormessage).length === 0;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!Validate()) return;
+
     const formdata = new FormData();
     formdata.append('prdName', addproduct.prdName || '');
     formdata.append('image', addproduct.image || '');
@@ -61,7 +87,7 @@ const Addproduct = () => {
             </div>
           )}
 
-          <Form onSubmit={handleSubmit} encType="multipart/form-data">
+          <Form onSubmit={handleSubmit} encType="multipart/form-data" noValidate>
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Product Image</Form.Label>
               <Form.Control
@@ -69,7 +95,6 @@ const Addproduct = () => {
                 name="image"
                 className="glass-input"
                 onChange={fileChange}
-                required
               />
             </Form.Group>
 
@@ -81,8 +106,8 @@ const Addproduct = () => {
                 name="prdName"
                 className="glass-input"
                 onChange={handleChange}
-                required
               />
+              {error.prdName && <span className="glass-error-badge">{error.prdName}</span>}
             </Form.Group>
 
             <Row className="g-3 mb-3">
@@ -95,8 +120,8 @@ const Addproduct = () => {
                     name="prize"
                     className="glass-input"
                     onChange={handleChange}
-                    required
                   />
+                  {error.prize && <span className="glass-error-badge">{error.prize}</span>}
                 </Form.Group>
               </Col>
 
@@ -109,8 +134,8 @@ const Addproduct = () => {
                     name="size"
                     className="glass-input"
                     onChange={handleChange}
-                    required
                   />
+                  {error.size && <span className="glass-error-badge">{error.size}</span>}
                 </Form.Group>
               </Col>
             </Row>
@@ -123,8 +148,8 @@ const Addproduct = () => {
                 name="material"
                 className="glass-input"
                 onChange={handleChange}
-                required
               />
+              {error.material && <span className="glass-error-badge">{error.material}</span>}
             </Form.Group>
 
             <div className="d-flex gap-3 justify-content-end">

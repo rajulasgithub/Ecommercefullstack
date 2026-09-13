@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
+import { isValidEmail, isEmpty, isMinLength } from '../utils/validation';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -30,21 +31,32 @@ const Signup = () => {
 
   const handleChange = (event) => {
     setSignup({ ...signup, [event.target.name]: event.target.value });
+    setError({ ...error, [event.target.name]: "" });
     setServerError("");
   };
 
   const Validate = () => {
     const errormessage = {};
-    if (!signup.firstName) errormessage.firstName = "First name is required";
-    if (!signup.lastName) errormessage.lastName = "Last name is required";
-    if (!signup.number) errormessage.number = "Phone number is required";
-    if (!signup.state) errormessage.state = "State is required";
-    if (!signup.district) errormessage.district = "District is required";
-    if (!signup.place) errormessage.place = "Place is required";
-    if (!signup.pincode) errormessage.pincode = "Pincode is required";
-    if (!signup.gender) errormessage.gender = "Gender is required";
-    if (!signup.email) errormessage.email = "Email is required";
-    if (!signup.password) errormessage.password = "Password is required";
+    if (isEmpty(signup.firstName)) errormessage.firstName = "First name is required";
+    if (isEmpty(signup.lastName)) errormessage.lastName = "Last name is required";
+    if (isEmpty(signup.number)) errormessage.number = "Phone number is required";
+    if (isEmpty(signup.gender)) errormessage.gender = "Gender is required";
+    if (isEmpty(signup.state)) errormessage.state = "State is required";
+    if (isEmpty(signup.district)) errormessage.district = "District is required";
+    if (isEmpty(signup.place)) errormessage.place = "Place is required";
+    if (isEmpty(signup.pincode)) errormessage.pincode = "Pincode is required";
+
+    if (isEmpty(signup.email)) {
+      errormessage.email = "Please provide a valid email address";
+    } else if (!isValidEmail(signup.email)) {
+      errormessage.email = "Please provide a valid email address";
+    }
+
+    if (isEmpty(signup.password)) {
+      errormessage.password = "Password must be at least 6 characters long";
+    } else if (!isMinLength(signup.password, 6)) {
+      errormessage.password = "Password must be at least 6 characters long";
+    }
 
     setError(errormessage);
     return Object.keys(errormessage).length === 0;

@@ -9,6 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 import Header from "./Header";
 import api from "../utils/api";
 import ROLES from "../utils/roles";
+import { isEmpty } from "../utils/validation";
 
 const Vieworders = () => {
   const role = localStorage.getItem("role");
@@ -17,6 +18,7 @@ const Vieworders = () => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [show, setShow] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState("");
+  const [dateError, setDateError] = useState("");
   const [getid, setGetId] = useState("");
 
   useEffect(() => {
@@ -78,10 +80,20 @@ const Vieworders = () => {
   const handleShow = (id) => {
     setShow(true);
     setGetId(id);
+    setDeliveryDate("");
+    setDateError("");
   };
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setDateError("");
+  };
 
   const dateChange = () => {
+    if (isEmpty(deliveryDate)) {
+      setDateError("Delivery date is required");
+      return;
+    }
+
     api.put(`/order/updatedeliverydate/${getid}`, { date: deliveryDate })
       .then(() => {
         setFilteredData(filteredData.map(item => item._id === getid ? { ...item, deliveryDate: deliveryDate } : item));
@@ -243,8 +255,13 @@ const Vieworders = () => {
               type="date"
               name="deliveryDate"
               className="glass-input"
-              onChange={(e) => setDeliveryDate(e.target.value)}
+              value={deliveryDate}
+              onChange={(e) => {
+                setDeliveryDate(e.target.value);
+                setDateError("");
+              }}
             />
+            {dateError && <span className="glass-error-badge">{dateError}</span>}
           </Form.Group>
         </Modal.Body>
         <Modal.Footer className="glass-modal-footer">
