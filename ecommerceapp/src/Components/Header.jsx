@@ -50,7 +50,7 @@ const Header = () => {
 
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ms-auto align-items-lg-center gap-lg-2 py-2 py-lg-0">
-            {/* Primary Navigation Links */}
+            {/* Primary Public Navigation Links (Always Visible) */}
             <Nav.Link
               as={Link}
               to="/"
@@ -67,97 +67,118 @@ const Header = () => {
               Shop Catalog
             </Nav.Link>
 
-            {/* Role-Based Links */}
-            {role === ROLES.USER ? (
-              <>
-                <Nav.Link
-                  as={Link}
-                  to="/cart"
-                  className={`header-nav-link ${isActive("/cart") ? "active" : ""}`}
-                >
-                  Shopping Bag
-                  {Number(itemCount) > 0 && (
-                    <span className="cart-badge-dot ms-2">{itemCount}</span>
-                  )}
-                </Nav.Link>
+            {/* Conditional Navigation Links Based on Role */}
+            {(() => {
+              const userRole = role ? String(role).toLowerCase() : null;
 
-                <Nav.Link
-                  as={Link}
-                  to="/vieworders"
-                  className={`header-nav-link ${isActive("/vieworders") ? "active" : ""}`}
-                >
-                  My Orders
-                </Nav.Link>
+              if (userRole === "user") {
+                return (
+                  <>
+                    <Nav.Link
+                      as={Link}
+                      to="/cart"
+                      className={`header-nav-link ${isActive("/cart") ? "active" : ""}`}
+                    >
+                      Shopping Bag
+                      {Number(itemCount) > 0 && (
+                        <span className="cart-badge-dot ms-2">{itemCount}</span>
+                      )}
+                    </Nav.Link>
 
-                <div className="header-divider d-none d-lg-block mx-1"></div>
+                    <Nav.Link
+                      as={Link}
+                      to="/vieworders"
+                      className={`header-nav-link ${isActive("/vieworders") ? "active" : ""}`}
+                    >
+                      My Orders
+                    </Nav.Link>
 
-                <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
-                  <span className="role-user-badge">
-                    <span className="user-dot"></span> Account
-                  </span>
-                  <button className="btn-header-logout" onClick={logout}>
-                    Logout
-                  </button>
-                </div>
-              </>
-            ) : role === ROLES.COMPANY || role === ROLES.ADMIN ? (
-              <>
-                <Nav.Link
-                  as={Link}
-                  to="/addproduct"
-                  className={`header-nav-link ${isActive("/addproduct") ? "active" : ""}`}
-                >
-                  + Add Product
-                </Nav.Link>
+                    <div className="header-divider d-none d-lg-block mx-1"></div>
 
-                <Nav.Link
-                  as={Link}
-                  to="/vieworders"
-                  className={`header-nav-link ${isActive("/vieworders") ? "active" : ""}`}
-                >
-                  Manage Orders
-                </Nav.Link>
+                    <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
+                      <span className="role-user-badge">
+                        <span className="user-dot"></span> Customer Account
+                      </span>
+                      <button className="btn-header-logout" onClick={logout}>
+                        Logout
+                      </button>
+                    </div>
+                  </>
+                );
+              }
 
-                <div className="header-divider d-none d-lg-block mx-1"></div>
+              if (userRole === "seller" || userRole === "company" || userRole === "admin") {
+                return (
+                  <>
+                    <Nav.Link
+                      as={Link}
+                      to="/sellerdashboard"
+                      className={`header-nav-link ${isActive("/sellerdashboard") ? "active" : ""}`}
+                    >
+                      📊 Seller Dashboard
+                    </Nav.Link>
 
-                <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
-                  <span className="role-seller-badge">
-                    <span className="seller-dot"></span> Seller Portal
-                  </span>
-                  <button className="btn-header-logout" onClick={logout}>
-                    Logout
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <Nav.Link
-                  as={Link}
-                  to="/companysignup"
-                  className={`header-nav-link header-seller-link ${isActive("/companysignup") ? "active" : ""}`}
-                >
-                  Become a Seller
-                </Nav.Link>
+                    <Nav.Link
+                      as={Link}
+                      to="/addproduct"
+                      className={`header-nav-link ${isActive("/addproduct") ? "active" : ""}`}
+                    >
+                      + Add Product
+                    </Nav.Link>
 
-                <div className="header-divider d-none d-lg-block mx-1"></div>
+                    <Nav.Link
+                      as={Link}
+                      to="/vieworders"
+                      className={`header-nav-link ${isActive("/vieworders") ? "active" : ""}`}
+                    >
+                      Manage Orders
+                    </Nav.Link>
 
-                <Nav.Link
-                  as={Link}
-                  to="/login"
-                  className={`header-login-btn me-lg-1 ${isActive("/login") ? "active" : ""}`}
-                >
-                  Sign In
-                </Nav.Link>
+                    <div className="header-divider d-none d-lg-block mx-1"></div>
 
-                <Nav.Link
-                  as={Link}
-                  to="/signup"
-                  className="header-cta-link text-center mt-2 mt-lg-0"
-                >
-                  Create Account
-                </Nav.Link>
-              </>
-            )}
+                    <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
+                      <span className="role-seller-badge" onClick={() => navigate("/sellerdashboard")} style={{ cursor: "pointer" }}>
+                        <span className="seller-dot"></span> Seller Portal
+                      </span>
+                      <button className="btn-header-logout" onClick={logout}>
+                        Logout
+                      </button>
+                    </div>
+                  </>
+                );
+              }
+
+              // Public / Unauthenticated Guest Links
+              return (
+                <>
+                  <Nav.Link
+                    as={Link}
+                    to="/companysignup"
+                    className={`header-nav-link header-seller-link ${isActive("/companysignup") ? "active" : ""}`}
+                  >
+                    Become a Seller
+                  </Nav.Link>
+
+                  <div className="header-divider d-none d-lg-block mx-1"></div>
+
+                  <Nav.Link
+                    as={Link}
+                    to="/login"
+                    className={`header-login-btn me-lg-1 ${isActive("/login") ? "active" : ""}`}
+                  >
+                    Sign In
+                  </Nav.Link>
+
+                  <Nav.Link
+                    as={Link}
+                    to="/signup"
+                    className="header-cta-link text-center mt-2 mt-lg-0"
+                  >
+                    Create Account
+                  </Nav.Link>
+                </>
+              );
+            })()}
 
             {/* Theme Toggle Button */}
             <button

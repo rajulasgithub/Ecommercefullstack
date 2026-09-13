@@ -120,6 +120,92 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
+// View Seller Products (Seller / Company / Admin)
+export const getSellerProducts = async (req, res) => {
+  try {
+    const userLoginId = req.userData?.loginId;
+    if (!userLoginId) {
+      return res.status(401).json({
+        success: false,
+        error: true,
+        message: "Unauthorized: Seller login required",
+      });
+    }
+
+    const { search, category, style, minPrice, maxPrice, page, limit } = req.query;
+
+    const query = {
+      loginId: userLoginId,
+      status: { $nin: ["deleted", "Deleted", "DELETED"], $not: /^deleted$/i }
+    };
+
+    if (search && search.trim() !== '') {
+      const searchRegex = new RegExp(search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      query.$or = [
+        { prdName: searchRegex },
+        { description: searchRegex },
+        { material: searchRegex },
+        { category: searchRegex },
+        { style: searchRegex }
+      ];
+    }
+
+    if (category && category.trim() !== '') {
+      query.category = category.trim();
+    }
+
+    if (style && style.trim() !== '') {
+      query.style = style.trim();
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const priceQuery = {};
+      if (minPrice !== undefined && minPrice !== '' && !isNaN(minPrice)) {
+        priceQuery.$gte = Number(minPrice);
+      }
+      if (maxPrice !== undefined && maxPrice !== '' && !isNaN(maxPrice)) {
+        priceQuery.$lte = Number(maxPrice);
+      }
+      if (Object.keys(priceQuery).length > 0) {
+        query.prize = priceQuery;
+      }
+    }
+
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.max(1, parseInt(limit, 10) || 8);
+    const skip = (pageNum - 1) * limitNum;
+
+    const total = await productDB.countDocuments(query);
+    const totalPages = Math.max(1, Math.ceil(total / limitNum));
+
+    const result = await productDB
+      .find(query)
+      .sort({ createdAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limitNum);
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: result,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages,
+      },
+      message: "Seller products fetched successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while fetching seller products",
+    });
+  }
+};
+
 // View Single Product (Public)
 export const getProductById = async (req, res) => {
   try {

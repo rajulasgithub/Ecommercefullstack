@@ -8,7 +8,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from "./Header";
 import api from "../utils/api";
-import ROLES from "../utils/roles";
 import { isValidEmail, isEmpty } from "../utils/validation";
 
 const Login = () => {
@@ -62,7 +61,7 @@ const Login = () => {
         toast.success("Welcome back! Signed in successfully.");
         const userRole = String(response.data.role || '').toLowerCase();
         if (userRole === "seller" || userRole === "company" || userRole === "admin" || userRole.includes("seller")) {
-          navigate('/vieworders');
+          navigate('/sellerdashboard');
         } else {
           navigate('/viewproduct');
         }

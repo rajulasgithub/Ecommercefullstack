@@ -15,6 +15,7 @@ import Order from './Components/Order';
 import Cart from './Components/Cart';
 import OrderSummary from './Components/OrderSummary';
 import Vieworders from './Components/Vieworders';
+import SellerDashboard from './Components/SellerDashboard';
 import Payment from './Components/Payment';
 import ProtectedRoute from './Components/ProtectedRoute';
 import ROLES from './utils/roles';
@@ -82,9 +83,17 @@ function App() {
 
           {/* Vendor / Company Protected Routes */}
           <Route
+            path='/sellerdashboard'
+            element={
+              <ProtectedRoute allowedRoles={[ROLES.COMPANY, ROLES.ADMIN, 'seller']}>
+                <SellerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path='/addproduct'
             element={
-              <ProtectedRoute allowedRoles={[ROLES.COMPANY, ROLES.ADMIN]}>
+              <ProtectedRoute allowedRoles={[ROLES.COMPANY, ROLES.ADMIN, 'seller']}>
                 <Addproduct />
               </ProtectedRoute>
             }

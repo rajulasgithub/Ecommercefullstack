@@ -8,6 +8,7 @@ import { handleValidationErrors } from "../middleware/validateResult.js";
 import {
   addProduct,
   getAllProducts,
+  getSellerProducts,
   getProductById,
   deleteProduct,
   updateProduct,
@@ -111,6 +112,9 @@ productRoute.post(
 
 // View Products (Public)
 productRoute.get("/viewproduct", getAllProducts);
+
+// View Seller Products (Seller / Admin)
+productRoute.get("/sellerproducts", checkauth, checkRole("seller", "company", "admin"), getSellerProducts);
 
 // View Single Product (Public)
 productRoute.get("/viewone/:id", getProductById);
