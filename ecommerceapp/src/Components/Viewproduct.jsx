@@ -268,14 +268,16 @@ const Viewproduct = () => {
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    api.get('/product/viewproduct')
+    const isVendorOrAdmin = role === ROLES.COMPANY || role === ROLES.ADMIN;
+    const url = isVendorOrAdmin ? '/product/viewproduct?includeDeleted=true' : '/product/viewproduct';
+    api.get(url)
       .then((response) => {
         setProduct(response.data.data || []);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [role]);
 
   const handleSubmit = (id) => {
     if (!token) {
@@ -427,7 +429,9 @@ const Viewproduct = () => {
       .then((response) => {
         handleClose();
         // Refresh product list
-        api.get('/product/viewproduct').then((res) => setProduct(res.data.data || []));
+        const isVendorOrAdmin = role === ROLES.COMPANY || role === ROLES.ADMIN;
+        const url = isVendorOrAdmin ? '/product/viewproduct?includeDeleted=true' : '/product/viewproduct';
+        api.get(url).then((res) => setProduct(res.data.data || []));
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to update product.";
@@ -466,7 +470,9 @@ const Viewproduct = () => {
   const setStatus = (id, value) => {
     api.put(`/product/updateproductstatus/${id}/${value}`)
       .then((response) => {
-        api.get('/product/viewproduct').then((res) => setProduct(res.data.data || []));
+        const isVendorOrAdmin = role === ROLES.COMPANY || role === ROLES.ADMIN;
+        const url = isVendorOrAdmin ? '/product/viewproduct?includeDeleted=true' : '/product/viewproduct';
+        api.get(url).then((res) => setProduct(res.data.data || []));
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to update status.";
@@ -474,13 +480,19 @@ const Viewproduct = () => {
       });
   };
 
-  const filteredProducts = product.filter((item) =>
-    item.prdName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.style?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.material?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProducts = product.filter((item) => {
+    // Customers/Buyers must never see soft-deleted products
+    if (role !== ROLES.COMPANY && role !== ROLES.ADMIN && item.status === 'deleted') {
+      return false;
+    }
+    return (
+      item.prdName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.style?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.material?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   return (
     <div className="page-container">

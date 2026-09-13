@@ -44,10 +44,12 @@ export const addProduct = async (req, res) => {
   }
 };
 
-// View Products (Public)
+// View Products (Public / Seller / Admin)
 export const getAllProducts = async (req, res) => {
   try {
-    const result = await productDB.find();
+    const includeDeleted = req.query.includeDeleted === "true";
+    const filter = includeDeleted ? {} : { status: { $ne: "deleted" } };
+    const result = await productDB.find(filter);
     return res.status(200).json({
       success: true,
       error: false,

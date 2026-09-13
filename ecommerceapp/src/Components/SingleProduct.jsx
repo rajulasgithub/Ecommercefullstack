@@ -43,7 +43,13 @@ const SingleProduct = () => {
     try {
       const response = await api.get(`/product/viewone/${id}`);
       if (response.data && response.data.data) {
-        setProduct(response.data.data);
+        const prod = response.data.data;
+        if (prod.status === 'deleted' && role !== ROLES.COMPANY && role !== ROLES.ADMIN) {
+          setError('This product has been removed and is no longer available.');
+          setProduct(null);
+        } else {
+          setProduct(prod);
+        }
       } else {
         setError('Product not found.');
       }
