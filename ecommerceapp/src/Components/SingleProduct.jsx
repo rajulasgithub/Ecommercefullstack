@@ -286,7 +286,8 @@ const SingleProduct = () => {
                   style={{
                     width: '100%',
                     height: '100%',
-                    objectFit: 'cover',
+                    objectFit: 'contain',
+                    objectPosition: 'center',
                     transition: 'transform 0.4s ease'
                   }}
                   onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}

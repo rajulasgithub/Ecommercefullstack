@@ -26,7 +26,12 @@ const Addproduct = () => {
 
   const fileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    setAddproduct({ ...addproduct, imageFiles: selectedFiles, image: selectedFiles[0] });
+    if (selectedFiles.length > 0) {
+      setAddproduct({ ...addproduct, imageFiles: selectedFiles, image: selectedFiles[0] });
+      setError({ ...error, image: '' });
+    } else {
+      setAddproduct({ ...addproduct, imageFiles: [], image: null });
+    }
     setServerError('');
   };
 
@@ -44,6 +49,9 @@ const Addproduct = () => {
 
   const Validate = () => {
     const errormessage = {};
+    if ((!addproduct.imageFiles || addproduct.imageFiles.length === 0) && !addproduct.image) {
+      errormessage.image = "Image is required";
+    }
     if (isEmpty(addproduct.prdName)) {
       errormessage.prdName = "Product name is required";
     }
@@ -142,6 +150,7 @@ const Addproduct = () => {
                 className="glass-input"
                 onChange={fileChange}
               />
+              {error.image && <span className="glass-error-badge">{error.image}</span>}
               {addproduct.imageFiles && addproduct.imageFiles.length > 0 && (
                 <div className="d-flex gap-2 mt-2 flex-wrap">
                   {addproduct.imageFiles.map((file, idx) => (

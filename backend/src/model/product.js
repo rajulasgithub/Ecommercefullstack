@@ -28,26 +28,24 @@ export const STYLES = [
 const productSchema = new mongoose.Schema({
   prdName: { type: String, required: true, trim: true },
   description: { type: String, required: true, trim: true, default: "", minlength: 10, maxlength: 1000 },
-  category: { type: String, required: true, trim: true, enum: ["Men", "Women", "Kids", "Unisex"], default: "Women" },
+  category: { type: String, required: true, trim: true, enum: ["Men", "Women", "Kids", "Unisex"] },
   style: {
     type: String,
     required: true,
     trim: true,
     enum: STYLES,
-    default: "Casual Wear"
   },
   image: { type: [String], required: true },
   prize: { type: Number, required: true, min: [0.01, "Price must be greater than 0"] },
-  size: { type: String, required: true, trim: true, default: "M" },
-  stock: { type: String, required: true, trim: true, default: "In Stock" },
+  size: { type: String, required: true, trim: true },
+  stock: { type: String, required: true, trim: true },
   material: {
     type: String,
     required: true,
     trim: true,
-    enum: MATERIALS,
-    default: "Cotton",
+    enum: MATERIALS
   },
-  status: { type: String, required: true, trim: true, default: "active" },
+  status: { type: String, required: true, trim: true },
 });
 
 const productDB = mongoose.model("Product", productSchema);

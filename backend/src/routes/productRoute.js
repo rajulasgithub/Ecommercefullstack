@@ -19,6 +19,12 @@ const productRoute = express.Router();
 
 // Add Product Validation Rules
 const addProductValidation = [
+  body("image").custom((value, { req }) => {
+    if ((!req.files || req.files.length === 0) && !req.file) {
+      throw new Error("Image is required");
+    }
+    return true;
+  }),
   body("prdName").trim().notEmpty().withMessage("Product name is required"),
   body("category")
     .trim()
