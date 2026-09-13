@@ -11,9 +11,9 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   if (allowedRoles && !allowedRoles.includes(role)) {
-    // If company tries to access customer page or vice versa, redirect appropriately
-    if (role === ROLES.COMPANY) {
-      return <Navigate to="/viewproduct" replace />;
+    // If seller/company tries to access an unauthorized route, redirect to seller dashboard
+    if (role === ROLES.COMPANY || role === ROLES.SELLER || role === 'seller' || role === 'company') {
+      return <Navigate to="/sellerdashboard" replace />;
     } else {
       return <Navigate to="/viewproduct" replace />;
     }

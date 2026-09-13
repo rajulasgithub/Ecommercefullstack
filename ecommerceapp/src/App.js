@@ -47,11 +47,11 @@ function App() {
           <Route path='/product/:id' element={<SingleProduct />} />
           <Route path='/viewone/:id' element={<SingleProduct />} />
 
-          {/* Customer (User) Protected Routes */}
+          {/* Shopping & Order Protected Routes (Accessible by both Users and Sellers) */}
           <Route
             path='/cart'
             element={
-              <ProtectedRoute allowedRoles={[ROLES.USER]}>
+              <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
                 <Cart />
               </ProtectedRoute>
             }
@@ -59,7 +59,7 @@ function App() {
           <Route
             path='/order'
             element={
-              <ProtectedRoute allowedRoles={[ROLES.USER]}>
+              <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
                 <Order />
               </ProtectedRoute>
             }
@@ -67,7 +67,7 @@ function App() {
           <Route
             path='/ordersummary'
             element={
-              <ProtectedRoute allowedRoles={[ROLES.USER]}>
+              <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
                 <OrderSummary />
               </ProtectedRoute>
             }
@@ -75,7 +75,7 @@ function App() {
           <Route
             path='/payment'
             element={
-              <ProtectedRoute allowedRoles={[ROLES.USER]}>
+              <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
                 <Payment />
               </ProtectedRoute>
             }

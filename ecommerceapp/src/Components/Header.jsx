@@ -118,6 +118,17 @@ const Header = () => {
                       📊 Seller Dashboard
                     </Nav.Link>
 
+                    <Nav.Link
+                      as={Link}
+                      to="/cart"
+                      className={`header-nav-link ${isActive("/cart") ? "active" : ""}`}
+                    >
+                      Shopping Bag
+                      {Number(itemCount) > 0 && (
+                        <span className="cart-badge-dot ms-2">{itemCount}</span>
+                      )}
+                    </Nav.Link>
+
                     <div className="header-divider d-none d-lg-block mx-1"></div>
 
                     <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
