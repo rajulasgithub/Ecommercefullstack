@@ -61,6 +61,44 @@ const addProductValidation = [
   handleValidationErrors,
 ];
 
+// Update Product Validation Rules
+const updateProductValidation = [
+  body("prdName").trim().notEmpty().withMessage("Product name is required"),
+  body("category")
+    .trim()
+    .notEmpty()
+    .withMessage("Category is required")
+    .isIn(["Men", "Women", "Kids", "Unisex"])
+    .withMessage("Category must be one of: Men, Women, Kids, Unisex"),
+  body("style")
+    .trim()
+    .notEmpty()
+    .withMessage("Style is required")
+    .isIn(STYLES)
+    .withMessage(`Style must be one of: ${STYLES.join(", ")}`),
+  body("description")
+    .trim()
+    .notEmpty()
+    .withMessage("Description is required")
+    .isLength({ min: 10, max: 1000 })
+    .withMessage("Description must be between 10 and 1000 characters"),
+  body("prize")
+    .trim()
+    .notEmpty()
+    .withMessage("Price is required")
+    .isFloat({ gt: 0 })
+    .withMessage("Price must be a positive number greater than 0"),
+  body("stock").trim().notEmpty().withMessage("Stock status is required"),
+  body("size").trim().notEmpty().withMessage("At least one product size must be selected"),
+  body("material")
+    .trim()
+    .notEmpty()
+    .withMessage("Material is required")
+    .isIn(MATERIALS)
+    .withMessage(`Material must be one of: ${MATERIALS.join(", ")}`),
+  handleValidationErrors,
+];
+
 // Add Product (Seller / Admin)
 productRoute.post(
   "/addproduct",
@@ -86,6 +124,7 @@ productRoute.put(
   checkauth,
   checkRole("seller", "admin"),
   uploadProductImage.array("image", 5),
+  updateProductValidation,
   updateProduct
 );
 

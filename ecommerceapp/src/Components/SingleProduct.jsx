@@ -130,17 +130,21 @@ const SingleProduct = () => {
     if (isEmpty(nameVal)) errs.prdName = "Product name is required";
     if (isEmpty(catVal)) errs.category = "Category is required";
     if (isEmpty(styleVal)) errs.style = "Style is required";
-    if (isEmpty(descVal)) {
-      errs.description = "Description is required";
-    } else if (descVal.trim().length < 10 || descVal.trim().length > 1000) {
-      errs.description = "Description must be between 10 and 1000 characters";
-    }
-    if (isEmpty(priceVal) || !isNumeric(priceVal) || Number(priceVal) <= 0) {
+    if (isEmpty(priceVal)) {
+      errs.prize = "Price is required";
+    } else if (!isNumeric(priceVal) || Number(priceVal) <= 0) {
       errs.prize = "Price must be a positive number greater than 0";
     }
     if (isEmpty(stockVal)) errs.stock = "Stock status is required";
-    if (isEmpty(sizeVal) || (updateData.selectedSizes && updateData.selectedSizes.length === 0)) errs.size = "At least one size must be selected";
+    if (isEmpty(sizeVal) || (updateData.selectedSizes && updateData.selectedSizes.length === 0)) {
+      errs.size = "At least one size must be selected";
+    }
     if (isEmpty(matVal)) errs.material = "Material is required";
+    if (isEmpty(descVal)) {
+      errs.description = "Product description is required";
+    } else if (descVal.trim().length < 10 || descVal.trim().length > 1000) {
+      errs.description = "Description must be between 10 and 1000 characters";
+    }
 
     setEditErrors(errs);
     return Object.keys(errs).length === 0;

@@ -346,31 +346,33 @@ const Viewproduct = () => {
 
   const validateUpdate = () => {
     const errs = {};
-    if (updateprdt.prdName !== undefined && isEmpty(updateprdt.prdName)) {
+    if (isEmpty(updateprdt.prdName)) {
       errs.prdName = "Product name is required";
     }
-    if (updateprdt.category !== undefined && isEmpty(updateprdt.category)) {
+    if (isEmpty(updateprdt.category)) {
       errs.category = "Category is required";
     }
-    if (updateprdt.style !== undefined && isEmpty(updateprdt.style)) {
+    if (isEmpty(updateprdt.style)) {
       errs.style = "Style is required";
     }
-    if (updateprdt.description !== undefined && isEmpty(updateprdt.description)) {
-      errs.description = "Description is required";
-    } else if (updateprdt.description !== undefined && (updateprdt.description.trim().length < 10 || updateprdt.description.trim().length > 1000)) {
-      errs.description = "Description must be between 10 and 1000 characters";
-    }
-    if (updateprdt.prize !== undefined && (isEmpty(updateprdt.prize) || !isNumeric(updateprdt.prize) || Number(updateprdt.prize) <= 0)) {
+    if (isEmpty(updateprdt.prize)) {
+      errs.prize = "Price is required";
+    } else if (!isNumeric(updateprdt.prize) || Number(updateprdt.prize) <= 0) {
       errs.prize = "Price must be a positive number greater than 0";
     }
-    if (updateprdt.stock !== undefined && isEmpty(updateprdt.stock)) {
+    if (isEmpty(updateprdt.stock)) {
       errs.stock = "Stock status is required";
     }
     if (isEmpty(updateprdt.size) || (updateprdt.selectedSizes && updateprdt.selectedSizes.length === 0)) {
       errs.size = "At least one size must be selected";
     }
-    if (updateprdt.material !== undefined && isEmpty(updateprdt.material)) {
+    if (isEmpty(updateprdt.material)) {
       errs.material = "Material is required";
+    }
+    if (isEmpty(updateprdt.description)) {
+      errs.description = "Product description is required";
+    } else if (updateprdt.description.trim().length < 10 || updateprdt.description.trim().length > 1000) {
+      errs.description = "Description must be between 10 and 1000 characters";
     }
 
     setModalError(errs);
