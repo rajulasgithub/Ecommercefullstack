@@ -7,7 +7,8 @@ export const addProduct = async (req, res) => {
     const data = {
       prdName: req.body.prdName,
       description: req.body.description || "",
-      category: req.body.category || "General",
+      category: req.body.category || "Women",
+      style: req.body.style || "Casual Wear",
       image: req.files ? req.files.map((file) => file.path) : [],
       prize: req.body.prize,
       size: req.body.size,
@@ -134,6 +135,7 @@ export const updateProduct = async (req, res) => {
       prdName: req.body.prdName || oldData.prdName,
       description: req.body.description !== undefined ? req.body.description : oldData.description,
       category: req.body.category || oldData.category,
+      style: req.body.style || oldData.style,
       image: req.files && req.files.length > 0 ? req.files.map((file) => file.path) : oldData.image,
       prize: req.body.prize || oldData.prize,
       size: req.body.size || oldData.size,

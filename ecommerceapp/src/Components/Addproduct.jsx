@@ -35,6 +35,9 @@ const Addproduct = () => {
     if (isEmpty(addproduct.category)) {
       errormessage.category = "Category is required";
     }
+    if (isEmpty(addproduct.style)) {
+      errormessage.style = "Style is required";
+    }
     if (isEmpty(addproduct.prize)) {
       errormessage.prize = "Price must be a valid number";
     } else if (!isNumeric(addproduct.prize)) {
@@ -65,7 +68,8 @@ const Addproduct = () => {
 
     const formdata = new FormData();
     formdata.append('prdName', addproduct.prdName || '');
-    formdata.append('category', addproduct.category || 'General');
+    formdata.append('category', addproduct.category || 'Women');
+    formdata.append('style', addproduct.style || 'Casual Wear');
     formdata.append('description', addproduct.description || '');
     formdata.append('image', addproduct.image || '');
     formdata.append('prize', addproduct.prize || '');
@@ -113,7 +117,7 @@ const Addproduct = () => {
             </Form.Group>
 
             <Row className="g-3 mb-3">
-              <Col xs={12} sm={7}>
+              <Col xs={12} sm={6}>
                 <Form.Group>
                   <Form.Label className="glass-label">Product Name</Form.Label>
                   <Form.Control
@@ -127,7 +131,7 @@ const Addproduct = () => {
                 </Form.Group>
               </Col>
 
-              <Col xs={12} sm={5}>
+              <Col xs={12} sm={3}>
                 <Form.Group>
                   <Form.Label className="glass-label">Category</Form.Label>
                   <Form.Select
@@ -137,16 +141,33 @@ const Addproduct = () => {
                     value={addproduct.category || ''}
                   >
                     <option value="" style={{ color: '#000' }}>Select Category</option>
-                    <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
-                    <option value="Western Wear" style={{ color: '#000' }}>Western Wear</option>
-                    <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
-                    <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
-                    <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
-                    <option value="Kids Wear" style={{ color: '#000' }}>Kids Wear</option>
-                    <option value="Accessories" style={{ color: '#000' }}>Accessories</option>
-                    <option value="Footwear" style={{ color: '#000' }}>Footwear</option>
+                    <option value="Women" style={{ color: '#000' }}>Women</option>
+                    <option value="Men" style={{ color: '#000' }}>Men</option>
+                    <option value="Kids" style={{ color: '#000' }}>Kids</option>
+                    <option value="Unisex" style={{ color: '#000' }}>Unisex</option>
                   </Form.Select>
                   {error.category && <span className="glass-error-badge">{error.category}</span>}
+                </Form.Group>
+              </Col>
+
+              <Col xs={12} sm={3}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Style</Form.Label>
+                  <Form.Select
+                    name="style"
+                    className="glass-input"
+                    onChange={handleChange}
+                    value={addproduct.style || ''}
+                  >
+                    <option value="" style={{ color: '#000' }}>Select Style</option>
+                    <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
+                    <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
+                    <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
+                    <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
+                    <option value="Wedding Wear" style={{ color: '#000' }}>Wedding Wear</option>
+                    <option value="Sportswear" style={{ color: '#000' }}>Sportswear</option>
+                  </Form.Select>
+                  {error.style && <span className="glass-error-badge">{error.style}</span>}
                 </Form.Group>
               </Col>
             </Row>

@@ -20,6 +20,7 @@ const productRoute = express.Router();
 const addProductValidation = [
   body("prdName").trim().notEmpty().withMessage("Product name is required"),
   body("category").trim().notEmpty().withMessage("Category is required"),
+  body("style").trim().notEmpty().withMessage("Style is required"),
   body("description").trim().notEmpty().withMessage("Description is required"),
   body("prize").trim().notEmpty().isNumeric().withMessage("Price must be a valid number"),
   body("stock").trim().notEmpty().isNumeric().withMessage("Stock quantity must be a valid number"),

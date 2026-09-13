@@ -97,6 +97,7 @@ const SingleProduct = () => {
   const validateEditForm = () => {
     const nameVal = updateData.prdName !== undefined ? updateData.prdName : product.prdName;
     const catVal = updateData.category !== undefined ? updateData.category : product.category;
+    const styleVal = updateData.style !== undefined ? updateData.style : product.style;
     const descVal = updateData.description !== undefined ? updateData.description : product.description;
     const priceVal = updateData.prize !== undefined ? updateData.prize : product.prize;
     const stockVal = updateData.stock !== undefined ? updateData.stock : product.stock;
@@ -106,6 +107,7 @@ const SingleProduct = () => {
     const errs = {};
     if (isEmpty(nameVal)) errs.prdName = "Product name is required";
     if (isEmpty(catVal)) errs.category = "Category is required";
+    if (isEmpty(styleVal)) errs.style = "Style is required";
     if (isEmpty(descVal)) errs.description = "Description is required";
     if (isEmpty(priceVal) || !isNumeric(priceVal)) errs.prize = "Price must be a valid number";
     if (isEmpty(stockVal) || !isNumeric(stockVal)) errs.stock = "Stock must be a valid number";
@@ -121,7 +123,8 @@ const SingleProduct = () => {
 
     const formdata = new FormData();
     formdata.append('prdName', updateData.prdName !== undefined ? updateData.prdName : product.prdName);
-    formdata.append('category', updateData.category !== undefined ? updateData.category : (product.category || 'General'));
+    formdata.append('category', updateData.category !== undefined ? updateData.category : (product.category || 'Women'));
+    formdata.append('style', updateData.style !== undefined ? updateData.style : (product.style || 'Casual Wear'));
     formdata.append('description', updateData.description !== undefined ? updateData.description : (product.description || ''));
     if (updateData.image) formdata.append('image', updateData.image);
     formdata.append('prize', updateData.prize !== undefined ? updateData.prize : product.prize);
@@ -276,7 +279,10 @@ const SingleProduct = () => {
                 <div>
                   <div className="d-flex align-items-center gap-2 mb-2">
                     <span className="status-pill ordered" style={{ display: 'inline-block' }}>
-                      {product.category || "General"}
+                      {product.category || "Women"}
+                    </span>
+                    <span className="status-pill processing" style={{ display: 'inline-block' }}>
+                      {product.style || "Casual Wear"}
                     </span>
                     {product.stock > 0 ? (
                       <span className="status-pill delivered" style={{ fontSize: '0.75rem' }}>
@@ -313,7 +319,14 @@ const SingleProduct = () => {
                     <div className="d-flex align-items-center">
                       <span style={{ width: '130px', color: '#9ca3af', fontWeight: 500 }}>Category:</span>
                       <span style={{ color: '#ffffff', fontWeight: 600 }}>
-                        {product.category || "General"}
+                        {product.category || "Women"}
+                      </span>
+                    </div>
+
+                    <div className="d-flex align-items-center">
+                      <span style={{ width: '130px', color: '#9ca3af', fontWeight: 500 }}>Dress Style:</span>
+                      <span style={{ color: '#ffffff', fontWeight: 600 }}>
+                        {product.style || "Casual Wear"}
                       </span>
                     </div>
 
@@ -431,25 +444,45 @@ const SingleProduct = () => {
               {editErrors.prdName && <span className="glass-error-badge">{editErrors.prdName}</span>}
             </Form.Group>
             
-            <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Category</Form.Label>
-              <Form.Select
-                name="category"
-                defaultValue={product.category || 'General'}
-                className="glass-input"
-                onChange={handleEditChange}
-              >
-                <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
-                <option value="Western Wear" style={{ color: '#000' }}>Western Wear</option>
-                <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
-                <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
-                <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
-                <option value="Kids Wear" style={{ color: '#000' }}>Kids Wear</option>
-                <option value="Accessories" style={{ color: '#000' }}>Accessories</option>
-                <option value="Footwear" style={{ color: '#000' }}>Footwear</option>
-              </Form.Select>
-              {editErrors.category && <span className="glass-error-badge">{editErrors.category}</span>}
-            </Form.Group>
+            <Row className="g-2 mb-3">
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Category</Form.Label>
+                  <Form.Select
+                    name="category"
+                    defaultValue={product.category || 'Women'}
+                    className="glass-input"
+                    onChange={handleEditChange}
+                  >
+                    <option value="Women" style={{ color: '#000' }}>Women</option>
+                    <option value="Men" style={{ color: '#000' }}>Men</option>
+                    <option value="Kids" style={{ color: '#000' }}>Kids</option>
+                    <option value="Unisex" style={{ color: '#000' }}>Unisex</option>
+                  </Form.Select>
+                  {editErrors.category && <span className="glass-error-badge">{editErrors.category}</span>}
+                </Form.Group>
+              </Col>
+
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Style</Form.Label>
+                  <Form.Select
+                    name="style"
+                    defaultValue={product.style || 'Casual Wear'}
+                    className="glass-input"
+                    onChange={handleEditChange}
+                  >
+                    <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
+                    <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
+                    <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
+                    <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
+                    <option value="Wedding Wear" style={{ color: '#000' }}>Wedding Wear</option>
+                    <option value="Sportswear" style={{ color: '#000' }}>Sportswear</option>
+                  </Form.Select>
+                  {editErrors.style && <span className="glass-error-badge">{editErrors.style}</span>}
+                </Form.Group>
+              </Col>
+            </Row>
 
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Product Image</Form.Label>

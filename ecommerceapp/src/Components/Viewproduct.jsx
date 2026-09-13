@@ -93,6 +93,9 @@ const Viewproduct = () => {
     if (updateprdt.category !== undefined && isEmpty(updateprdt.category)) {
       errs.category = "Category is required";
     }
+    if (updateprdt.style !== undefined && isEmpty(updateprdt.style)) {
+      errs.style = "Style is required";
+    }
     if (updateprdt.description !== undefined && isEmpty(updateprdt.description)) {
       errs.description = "Description is required";
     }
@@ -122,7 +125,8 @@ const Viewproduct = () => {
 
     const formdata = new FormData();
     formdata.append('prdName', updateprdt.prdName || '');
-    formdata.append('category', updateprdt.category || 'General');
+    formdata.append('category', updateprdt.category || 'Women');
+    formdata.append('style', updateprdt.style || 'Casual Wear');
     formdata.append('description', updateprdt.description || '');
     if (updateprdt.image) formdata.append('image', updateprdt.image);
     formdata.append('prize', updateprdt.prize || '');
@@ -153,7 +157,8 @@ const Viewproduct = () => {
     setActiveItemId(id);
     setUpdateprdt({
       prdName: currentItem.prdName || '',
-      category: currentItem.category || 'General',
+      category: currentItem.category || 'Women',
+      style: currentItem.style || 'Casual Wear',
       description: currentItem.description || '',
       prize: currentItem.prize || '',
       stock: currentItem.stock !== undefined ? currentItem.stock : 0,
@@ -178,6 +183,7 @@ const Viewproduct = () => {
   const filteredProducts = product.filter((item) =>
     item.prdName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.style?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.material?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -261,9 +267,12 @@ const Viewproduct = () => {
                   </div>
 
                   {/* Details */}
-                  <div className="mb-1">
+                  <div className="mb-2 d-flex gap-1 flex-wrap">
                     <span className="status-pill ordered" style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}>
-                      {item.category || "General"}
+                      {item.category || "Women"}
+                    </span>
+                    <span className="status-pill processing" style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}>
+                      {item.style || "Casual Wear"}
                     </span>
                   </div>
 
@@ -363,25 +372,45 @@ const Viewproduct = () => {
               {modalError.prdName && <span className="glass-error-badge">{modalError.prdName}</span>}
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Category</Form.Label>
-              <Form.Select
-                name="category"
-                className="glass-input"
-                value={updateprdt.category || ''}
-                onChange={handleChange}
-              >
-                <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
-                <option value="Western Wear" style={{ color: '#000' }}>Western Wear</option>
-                <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
-                <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
-                <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
-                <option value="Kids Wear" style={{ color: '#000' }}>Kids Wear</option>
-                <option value="Accessories" style={{ color: '#000' }}>Accessories</option>
-                <option value="Footwear" style={{ color: '#000' }}>Footwear</option>
-              </Form.Select>
-              {modalError.category && <span className="glass-error-badge">{modalError.category}</span>}
-            </Form.Group>
+            <Row className="g-2 mb-3">
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Category</Form.Label>
+                  <Form.Select
+                    name="category"
+                    className="glass-input"
+                    value={updateprdt.category || ''}
+                    onChange={handleChange}
+                  >
+                    <option value="Women" style={{ color: '#000' }}>Women</option>
+                    <option value="Men" style={{ color: '#000' }}>Men</option>
+                    <option value="Kids" style={{ color: '#000' }}>Kids</option>
+                    <option value="Unisex" style={{ color: '#000' }}>Unisex</option>
+                  </Form.Select>
+                  {modalError.category && <span className="glass-error-badge">{modalError.category}</span>}
+                </Form.Group>
+              </Col>
+
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Style</Form.Label>
+                  <Form.Select
+                    name="style"
+                    className="glass-input"
+                    value={updateprdt.style || ''}
+                    onChange={handleChange}
+                  >
+                    <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
+                    <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
+                    <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
+                    <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
+                    <option value="Wedding Wear" style={{ color: '#000' }}>Wedding Wear</option>
+                    <option value="Sportswear" style={{ color: '#000' }}>Sportswear</option>
+                  </Form.Select>
+                  {modalError.style && <span className="glass-error-badge">{modalError.style}</span>}
+                </Form.Group>
+              </Col>
+            </Row>
 
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Product Image</Form.Label>
