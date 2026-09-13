@@ -8,11 +8,12 @@ import Button from 'react-bootstrap/Button';
 import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
-import { isValidEmail, isEmpty, validatePassword, validateName, validatePhone, GENDERS, validateGender } from '../utils/validation';
+import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validateName, validatePhone, GENDERS, validateGender } from '../utils/validation';
 
 const Signup = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [signup, setSignup] = useState({
     firstName: "",
@@ -25,6 +26,7 @@ const Signup = () => {
     gender: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const [error, setError] = useState({});
@@ -42,7 +44,7 @@ const Signup = () => {
     const fnErr = validateName(signup.firstName, "First name");
     if (fnErr) errormessage.firstName = fnErr;
 
-    const lnErr = validateName(signup.lastName, "Last name");
+    const lnErr = validateName(signup.lastName, "Last name", 1);
     if (lnErr) errormessage.lastName = lnErr;
 
     const phoneErr = validatePhone(signup.number, "Phone number");
@@ -67,6 +69,11 @@ const Signup = () => {
       errormessage.password = passwordErr;
     }
 
+    const confirmPasswordErr = validateConfirmPassword(signup.password, signup.confirmPassword);
+    if (confirmPasswordErr) {
+      errormessage.confirmPassword = confirmPasswordErr;
+    }
+
     setError(errormessage);
     return Object.keys(errormessage).length === 0;
   };
@@ -75,8 +82,10 @@ const Signup = () => {
     if (e) e.preventDefault();
     if (!Validate()) return;
 
+    const { confirmPassword, ...signupPayload } = signup;
+
     try {
-      const response = await api.post('/auth/signup', signup);
+      const response = await api.post('/auth/signup', signupPayload);
       if (response.data && response.data.success) {
         if (response.data.token) {
           localStorage.setItem("loginId", response.data.loginId);
@@ -236,8 +245,8 @@ const Signup = () => {
                 </Col>
               </Row>
 
-              <Row className="g-3 mb-4">
-                <Col xs={12} sm={6}>
+              <Row className="g-3 mb-2">
+                <Col xs={12}>
                   <Form.Group>
                     <Form.Label className="glass-label">Email Address</Form.Label>
                     <Form.Control
@@ -250,7 +259,9 @@ const Signup = () => {
                     {error.email && <span className="glass-error-badge">{error.email}</span>}
                   </Form.Group>
                 </Col>
+              </Row>
 
+              <Row className="g-3 mb-4">
                 <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">Password</Form.Label>
@@ -283,6 +294,41 @@ const Signup = () => {
                       </button>
                     </div>
                     {error.password && <span className="glass-error-badge">{error.password}</span>}
+                  </Form.Group>
+                </Col>
+
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Confirm Password</Form.Label>
+                    <div className="password-input-wrapper">
+                      <Form.Control
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        name="confirmPassword"
+                        className="glass-input"
+                        onChange={handleChange}
+                      />
+                      <button
+                        type="button"
+                        className="password-toggle-btn"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                        title={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                      >
+                        {showConfirmPassword ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    {error.confirmPassword && <span className="glass-error-badge">{error.confirmPassword}</span>}
                   </Form.Group>
                 </Col>
               </Row>

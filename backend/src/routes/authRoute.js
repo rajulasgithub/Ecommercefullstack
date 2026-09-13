@@ -42,7 +42,6 @@ const signupValidation = [
   body("lastName")
     .trim()
     .notEmpty().withMessage("Last name is required")
-    .isLength({ min: 2 }).withMessage("Last name must be at least 2 characters long")
     .matches(/^[A-Za-z\s]+$/).withMessage("Last name should only contain letters"),
   body("number")
     .trim()

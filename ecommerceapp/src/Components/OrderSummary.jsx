@@ -93,7 +93,7 @@ const OrderSummary = () => {
     const fnErr = validateName(fn, "First name");
     if (fnErr) errs.firstName = fnErr;
 
-    const lnErr = validateName(ln, "Last name");
+    const lnErr = validateName(ln, "Last name", 1);
     if (lnErr) errs.lastName = lnErr;
 
     if (isEmpty(addr)) errs.address = "Address field is required";

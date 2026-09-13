@@ -45,12 +45,22 @@ export const validatePassword = (password) => {
   return null;
 };
 
-export const validateName = (name, label) => {
+export const validateConfirmPassword = (password, confirmPassword) => {
+  if (!confirmPassword || typeof confirmPassword !== 'string' || confirmPassword.trim() === '') {
+    return "Confirm password is required";
+  }
+  if (password !== confirmPassword) {
+    return "Passwords do not match";
+  }
+  return null;
+};
+
+export const validateName = (name, label, minLength = 2) => {
   if (!name || typeof name !== 'string' || name.trim() === '') {
     return `${label} is required`;
   }
-  if (name.trim().length < 2) {
-    return `${label} must be at least 2 characters long`;
+  if (minLength > 1 && name.trim().length < minLength) {
+    return `${label} must be at least ${minLength} characters long`;
   }
   if (!/^[A-Za-z\s]+$/.test(name.trim())) {
     return `${label} should only contain letters`;
