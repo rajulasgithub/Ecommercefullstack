@@ -24,7 +24,7 @@ const SingleProduct = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
-  
+
   // Edit modal states for company
   const [showEdit, setShowEdit] = useState(false);
   const [updateData, setUpdateData] = useState({});
@@ -111,7 +111,7 @@ const SingleProduct = () => {
     if (isEmpty(styleVal)) errs.style = "Style is required";
     if (isEmpty(descVal)) errs.description = "Description is required";
     if (isEmpty(priceVal) || !isNumeric(priceVal)) errs.prize = "Price must be a valid number";
-    if (isEmpty(stockVal) || !isNumeric(stockVal)) errs.stock = "Stock must be a valid number";
+    if (isEmpty(stockVal)) errs.stock = "Stock status is required";
     if (isEmpty(sizeVal)) errs.size = "Product size is required";
     if (isEmpty(matVal)) errs.material = "Material is required";
 
@@ -135,7 +135,7 @@ const SingleProduct = () => {
     }
 
     formdata.append('prize', updateData.prize !== undefined ? updateData.prize : product.prize);
-    formdata.append('stock', updateData.stock !== undefined ? updateData.stock : (product.stock || 0));
+    formdata.append('stock', updateData.stock !== undefined ? updateData.stock : (product.stock || 'In Stock'));
     formdata.append('size', updateData.size !== undefined ? updateData.size : product.size);
     formdata.append('material', updateData.material !== undefined ? updateData.material : product.material);
 
@@ -268,7 +268,7 @@ const SingleProduct = () => {
                   onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                   onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 />
-                
+
                 {/* Top Status & Photo Counter */}
                 <div style={{ position: 'absolute', top: '15px', right: '15px', display: 'flex', gap: '8px', alignItems: 'center' }}>
                   {images.length > 1 && (
@@ -276,7 +276,7 @@ const SingleProduct = () => {
                       📷 {selectedImage + 1} / {images.length}
                     </span>
                   )}
-                  {product.status !== 6 ? (
+                  {product.status !== 'deleted' && product.stock !== 'Out of Stock' ? (
                     <span className="status-pill delivered" style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}>In Stock</span>
                   ) : (
                     <span className="status-pill out-of-stock" style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}>Out of Stock</span>
@@ -379,9 +379,9 @@ const SingleProduct = () => {
                     <span className="status-pill processing" style={{ display: 'inline-block' }}>
                       {product.style || "Casual Wear"}
                     </span>
-                    {product.stock > 0 ? (
+                    {product.stock !== 'Out of Stock' ? (
                       <span className="status-pill delivered" style={{ fontSize: '0.75rem' }}>
-                        In Stock ({product.stock} left)
+                        {product.stock || 'In Stock'}
                       </span>
                     ) : (
                       <span className="status-pill out-of-stock" style={{ fontSize: '0.75rem' }}>
@@ -389,7 +389,7 @@ const SingleProduct = () => {
                       </span>
                     )}
                   </div>
-                  
+
                   <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.75rem', lineHeight: 1.2 }}>
                     {product.prdName}
                   </h1>
@@ -442,8 +442,8 @@ const SingleProduct = () => {
 
                     <div className="d-flex align-items-center">
                       <span style={{ width: '130px', color: '#9ca3af', fontWeight: 500 }}>Stock Level:</span>
-                      <span style={{ color: product.stock > 0 ? '#34d399' : '#f87171', fontWeight: 600 }}>
-                        {product.stock > 0 ? `${product.stock} items available` : 'Out of stock'}
+                      <span style={{ color: product.stock !== 'Out of Stock' ? '#34d399' : '#f87171', fontWeight: 600 }}>
+                        {product.stock || 'In Stock'}
                       </span>
                     </div>
 
@@ -497,7 +497,7 @@ const SingleProduct = () => {
                     </div>
                   ) : (
                     <div className="d-grid gap-2">
-                      {product.status !== 6 && product.stock > 0 ? (
+                      {product.status !== 'deleted' && product.stock !== 'Out of Stock' ? (
                         <Button
                           className="btn-glass-primary py-3"
                           style={{ fontSize: '1.1rem', fontWeight: 700 }}
@@ -538,7 +538,7 @@ const SingleProduct = () => {
               />
               {editErrors.prdName && <span className="glass-error-badge">{editErrors.prdName}</span>}
             </Form.Group>
-            
+
             <Row className="g-2 mb-3">
               <Col xs={6}>
                 <Form.Group>
@@ -623,14 +623,17 @@ const SingleProduct = () => {
               </Col>
               <Col xs={6}>
                 <Form.Group>
-                  <Form.Label className="glass-label">Stock Quantity</Form.Label>
-                  <Form.Control
-                    type="number"
+                  <Form.Label className="glass-label">Stock Status</Form.Label>
+                  <Form.Select
                     name="stock"
-                    defaultValue={product.stock !== undefined ? product.stock : 0}
+                    defaultValue={product.stock || 'In Stock'}
                     className="glass-input"
                     onChange={handleEditChange}
-                  />
+                  >
+                    <option value="In Stock" style={{ color: '#000' }}>In Stock</option>
+                    <option value="Low Stock" style={{ color: '#000' }}>Low Stock</option>
+                    <option value="Out of Stock" style={{ color: '#000' }}>Out of Stock</option>
+                  </Form.Select>
                   {editErrors.stock && <span className="glass-error-badge">{editErrors.stock}</span>}
                 </Form.Group>
               </Col>

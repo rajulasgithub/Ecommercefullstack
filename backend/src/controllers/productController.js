@@ -12,9 +12,9 @@ export const addProduct = async (req, res) => {
       image: req.files ? req.files.map((file) => file.path) : [],
       prize: req.body.prize,
       size: req.body.size,
-      stock: req.body.stock !== undefined ? Number(req.body.stock) : 0,
+      stock: req.body.stock || "In Stock",
       material: req.body.material,
-      status: 0,
+      status: "active",
     };
 
     const result = await productDB(data).save();
@@ -93,7 +93,7 @@ export const getProductById = async (req, res) => {
 // Soft Delete Product (Vendor / Admin)
 export const deleteProduct = async (req, res) => {
   try {
-    const data = { status: 6 };
+    const data = { status: "deleted" };
     await cartDB.updateMany({ prdId: req.params.id }, { $set: data });
     const prdresult = await productDB.updateOne(
       { _id: req.params.id },
@@ -139,7 +139,7 @@ export const updateProduct = async (req, res) => {
       image: req.files && req.files.length > 0 ? req.files.map((file) => file.path) : oldData.image,
       prize: req.body.prize || oldData.prize,
       size: req.body.size || oldData.size,
-      stock: req.body.stock !== undefined ? Number(req.body.stock) : oldData.stock,
+      stock: req.body.stock !== undefined ? String(req.body.stock) : oldData.stock,
       material: req.body.material || oldData.material,
     };
 
@@ -190,7 +190,7 @@ export const updateProductStatus = async (req, res) => {
 // Delete All Products (Vendor / Admin)
 export const deleteAllProducts = async (req, res) => {
   try {
-    const data = { status: 6 };
+    const data = { status: "deleted" };
     await cartDB.updateMany({}, { $set: data });
     const result = await productDB.updateMany({}, { $set: data });
     return res.status(200).json({

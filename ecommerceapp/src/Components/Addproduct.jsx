@@ -45,9 +45,7 @@ const Addproduct = () => {
       errormessage.prize = "Price must be a valid number";
     }
     if (isEmpty(addproduct.stock)) {
-      errormessage.stock = "Stock quantity must be a valid number";
-    } else if (!isNumeric(addproduct.stock)) {
-      errormessage.stock = "Stock quantity must be a valid number";
+      errormessage.stock = "Stock status is required";
     }
     if (isEmpty(addproduct.size)) {
       errormessage.size = "Product size is required";
@@ -82,7 +80,7 @@ const Addproduct = () => {
     }
 
     formdata.append('prize', addproduct.prize || '');
-    formdata.append('stock', addproduct.stock !== undefined ? addproduct.stock : 0);
+    formdata.append('stock', addproduct.stock || 'In Stock');
     formdata.append('size', addproduct.size || '');
     formdata.append('material', addproduct.material || '');
 
@@ -216,14 +214,18 @@ const Addproduct = () => {
 
               <Col xs={12} sm={6}>
                 <Form.Group>
-                  <Form.Label className="glass-label">Stock Quantity</Form.Label>
-                  <Form.Control
-                    type="number"
-                    placeholder="e.g. 25"
+                  <Form.Label className="glass-label">Stock Status</Form.Label>
+                  <Form.Select
                     name="stock"
                     className="glass-input"
                     onChange={handleChange}
-                  />
+                    value={addproduct.stock || ''}
+                  >
+                    <option value="" style={{ color: '#000' }}>Select Stock Status</option>
+                    <option value="In Stock" style={{ color: '#000' }}>In Stock</option>
+                    <option value="Low Stock" style={{ color: '#000' }}>Low Stock</option>
+                    <option value="Out of Stock" style={{ color: '#000' }}>Out of Stock</option>
+                  </Form.Select>
                   {error.stock && <span className="glass-error-badge">{error.stock}</span>}
                 </Form.Group>
               </Col>

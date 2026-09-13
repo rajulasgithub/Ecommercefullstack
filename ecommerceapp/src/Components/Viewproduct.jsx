@@ -23,7 +23,7 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
         try {
           const parsed = JSON.parse(imgData);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-        } catch (e) {}
+        } catch (e) { }
       }
       return [imgData];
     }
@@ -79,8 +79,8 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
                   📷 {activeImgIndex + 1}/{images.length}
                 </span>
               )}
-              {item.status !== 6 ? (
-                <span className="status-pill delivered" style={{ fontSize: "0.75rem" }}>In Stock</span>
+              {item.status !== 'deleted' && item.stock !== 'Out of Stock' ? (
+                <span className="status-pill delivered" style={{ fontSize: "0.75rem" }}>{item.stock || 'In Stock'}</span>
               ) : (
                 <span className="status-pill out-of-stock" style={{ fontSize: "0.75rem" }}>Out of Stock</span>
               )}
@@ -199,8 +199,8 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
           <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "0.4rem" }}>
             Material: {item.material}
           </p>
-          <p style={{ fontSize: "0.8rem", color: item.stock > 0 ? "#34d399" : "#f87171", marginBottom: "1rem" }}>
-            Stock: {item.stock !== undefined ? (item.stock > 0 ? `${item.stock} left` : 'Out of stock') : 'Available'}
+          <p style={{ fontSize: "0.8rem", color: item.stock !== 'Out of Stock' ? "#34d399" : "#f87171", marginBottom: "1rem" }}>
+            Stock: {item.stock || 'In Stock'}
           </p>
         </div>
 
@@ -208,7 +208,7 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
         <div>
           {role === ROLES.COMPANY || role === ROLES.ADMIN ? (
             <div className="d-flex flex-column gap-2">
-              {item.status !== 6 ? (
+              {item.status !== 'deleted' ? (
                 <div className="d-flex gap-2">
                   <Button className="btn-glass-secondary w-50 py-1" size="sm" onClick={() => handleShow(item._id)}>
                     Edit
@@ -225,7 +225,7 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
                   onChange={(e) => setStatus(item._id, e.target.value)}
                 >
                   <option value="" style={{ color: "#000" }}>-- Select Action --</option>
-                  <option value="0" style={{ color: "#000" }}>Restock Product</option>
+                  <option value="active" style={{ color: "#000" }}>Restock Product</option>
                 </Form.Select>
               )}
             </div>
@@ -234,7 +234,7 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
               <Button className="btn-glass-secondary w-50" size="sm" onClick={() => navigate(`/product/${item._id}`)}>
                 Details
               </Button>
-              {item.status !== 6 && item.stock > 0 ? (
+              {item.status !== 'deleted' && item.stock !== 'Out of Stock' ? (
                 <Button className="btn-glass-primary w-50" size="sm" onClick={() => handleSubmit(item._id)}>
                   Add to Cart
                 </Button>
@@ -345,9 +345,7 @@ const Viewproduct = () => {
       errs.prize = "Price must be a valid number";
     }
     if (updateprdt.stock !== undefined && isEmpty(updateprdt.stock)) {
-      errs.stock = "Stock must be a valid number";
-    } else if (updateprdt.stock !== undefined && !isNumeric(updateprdt.stock)) {
-      errs.stock = "Stock must be a valid number";
+      errs.stock = "Stock status is required";
     }
     if (updateprdt.size !== undefined && isEmpty(updateprdt.size)) {
       errs.size = "Product size is required";
@@ -376,7 +374,7 @@ const Viewproduct = () => {
     }
 
     formdata.append('prize', updateprdt.prize || '');
-    formdata.append('stock', updateprdt.stock !== undefined ? updateprdt.stock : 0);
+    formdata.append('stock', updateprdt.stock !== undefined ? updateprdt.stock : 'In Stock');
     formdata.append('size', updateprdt.size || '');
     formdata.append('material', updateprdt.material || '');
 
@@ -407,7 +405,7 @@ const Viewproduct = () => {
       style: currentItem.style || 'Casual Wear',
       description: currentItem.description || '',
       prize: currentItem.prize || '',
-      stock: currentItem.stock !== undefined ? currentItem.stock : 0,
+      stock: currentItem.stock !== undefined ? currentItem.stock : 'In Stock',
       size: currentItem.size || '',
       material: currentItem.material || ''
     });
@@ -576,7 +574,7 @@ const Viewproduct = () => {
                 </div>
               )}
             </Form.Group>
-            
+
             <Row className="g-2 mb-3">
               <Col xs={6}>
                 <Form.Group>
@@ -594,15 +592,17 @@ const Viewproduct = () => {
               </Col>
               <Col xs={6}>
                 <Form.Group>
-                  <Form.Label className="glass-label">Stock Quantity</Form.Label>
-                  <Form.Control
-                    type="number"
-                    placeholder="Stock"
+                  <Form.Label className="glass-label">Stock Status</Form.Label>
+                  <Form.Select
                     name="stock"
                     className="glass-input"
-                    value={updateprdt.stock !== undefined ? updateprdt.stock : ''}
+                    value={updateprdt.stock || 'In Stock'}
                     onChange={handleChange}
-                  />
+                  >
+                    <option value="In Stock" style={{ color: '#000' }}>In Stock</option>
+                    <option value="Low Stock" style={{ color: '#000' }}>Low Stock</option>
+                    <option value="Out of Stock" style={{ color: '#000' }}>Out of Stock</option>
+                  </Form.Select>
                   {modalError.stock && <span className="glass-error-badge">{modalError.stock}</span>}
                 </Form.Group>
               </Col>
