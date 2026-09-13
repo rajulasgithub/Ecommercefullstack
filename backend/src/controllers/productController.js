@@ -44,12 +44,10 @@ export const addProduct = async (req, res) => {
   }
 };
 
-// View Products (Public / Seller / Admin)
+// View Products (Public)
 export const getAllProducts = async (req, res) => {
   try {
-    const includeDeleted = req.query.includeDeleted === "true";
-    const filter = includeDeleted ? {} : { status: { $ne: "deleted" } };
-    const result = await productDB.find(filter);
+    const result = await productDB.find({ status: { $ne: "deleted" } });
     return res.status(200).json({
       success: true,
       error: false,
@@ -78,7 +76,7 @@ export const getProductById = async (req, res) => {
       });
     }
 
-    const result = await productDB.findOne({ _id: id });
+    const result = await productDB.findOne({ _id: id, status: { $ne: "deleted" } });
     if (result) {
       return res.status(200).json({
         success: true,
@@ -90,7 +88,7 @@ export const getProductById = async (req, res) => {
       return res.status(404).json({
         success: false,
         error: true,
-        message: "Product not found",
+        message: "Product not found or has been removed",
       });
     }
   } catch (error) {
