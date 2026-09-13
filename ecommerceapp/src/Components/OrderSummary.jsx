@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 import Header from './Header';
 import api from '../utils/api';
 import { isEmpty, validateName, validatePhone } from '../utils/validation';
@@ -50,9 +51,13 @@ const OrderSummary = () => {
 
     api.put('/order/updatecart', {})
       .then((response) => {
+        toast.success("🎉 Order placed successfully!");
         navigate('/vieworders');
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        toast.error("Failed to place order. Please try again.");
+        console.log(error);
+      });
   };
 
   const handleClose = () => {

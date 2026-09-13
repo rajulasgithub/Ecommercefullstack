@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Header from './Header';
 import { isEmpty, isNumeric, MATERIALS, STYLES } from '../utils/validation';
 import './Style.css';
@@ -92,8 +93,10 @@ const Addproduct = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!Validate()) return;
-
+    if (!Validate()) {
+      toast.error("Please resolve the validation errors before submitting.");
+      return;
+    }
     setSubmitting(true);
     const formdata = new FormData();
     formdata.append('prdName', addproduct.prdName || '');
@@ -117,10 +120,12 @@ const Addproduct = () => {
     try {
       const response = await api.post('/product/addproduct', formdata);
       if (response.data && response.data.success) {
+        toast.success("✨ Product added successfully!");
         navigate('/viewproduct');
       }
     } catch (error) {
       const msg = error.response?.data?.message || 'Failed to upload product. Check your vendor permissions.';
+      toast.error(msg);
       setServerError(msg);
     } finally {
       setSubmitting(false);

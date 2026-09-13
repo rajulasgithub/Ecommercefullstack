@@ -8,6 +8,7 @@ import Row from 'react-bootstrap/Row';
 import Spinner from 'react-bootstrap/Spinner';
 import api from './../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Header from './Header';
 import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validatePhone } from '../utils/validation';
 
@@ -78,6 +79,7 @@ const Companysignup = () => {
     try {
       const response = await api.post('/auth/companysignup', formdata);
       if (response.data && response.data.success) {
+        toast.success("🎉 Seller account created successfully!");
         if (response.data.token) {
           localStorage.setItem("loginId", response.data.loginId);
           localStorage.setItem("role", response.data.role);
@@ -87,6 +89,7 @@ const Companysignup = () => {
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Company registration failed. Please try again.";
+      toast.error(msg);
       setServerError(msg);
     } finally {
       setLoading(false);

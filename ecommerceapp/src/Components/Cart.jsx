@@ -6,6 +6,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 import Header from "./Header";
 import api from "../utils/api";
 
@@ -80,9 +81,13 @@ const Cart = () => {
     if (event) event.preventDefault();
     api.post("/address/addAddress", newaddress)
       .then((response) => {
+        toast.success("Shipping address saved!");
         setAddress(response.data.data || {});
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        toast.error("Failed to save address.");
+        console.log(error);
+      });
   };
 
   useEffect(() => {
@@ -97,23 +102,31 @@ const Cart = () => {
     if (event) event.preventDefault();
     api.put("/address/updateaddress", address)
       .then((response) => {
-        console.log(response);
+        toast.success("Shipping address updated!");
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        toast.error("Failed to update address.");
+        console.log(error);
+      });
   };
 
   const removeItem = (id) => {
     api.delete(`/cart/delcartitem/${id}`)
       .then(() => {
+        toast.success("Item removed from shopping bag");
         setCartitem(cartitem.filter((data) => data._id !== id));
       })
       .catch((error) => {
         // Fallback for GET method
         api.get(`/cart/delcartitem/${id}`)
           .then(() => {
+            toast.success("Item removed from shopping bag");
             setCartitem(cartitem.filter((data) => data._id !== id));
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            toast.error("Failed to remove item.");
+            console.log(err);
+          });
       });
   };
 

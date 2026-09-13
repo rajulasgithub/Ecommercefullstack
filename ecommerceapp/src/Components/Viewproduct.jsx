@@ -9,6 +9,7 @@ import Header from './Header';
 import Modal from 'react-bootstrap/Modal';
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
+import { toast } from 'react-toastify';
 import api from '../utils/api';
 import ROLES from '../utils/roles';
 import { isNumeric, isEmpty, MATERIALS, STYLES } from '../utils/validation';
@@ -335,10 +336,12 @@ const Viewproduct = () => {
     const prdId = { productId: id };
     api.post('/cart/addtocart', prdId)
       .then((response) => {
+        toast.success("🛍️ Added to shopping bag!");
         navigate('/cart');
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to add to cart.";
+        toast.error(msg);
         setErrorMsg(msg);
       });
   };
@@ -356,11 +359,13 @@ const Viewproduct = () => {
     setDeleting(true);
     api.put(`/product/deleteproduct/${deleteTarget.id}`)
       .then(() => {
+        toast.success("🗑️ Product deleted successfully!");
         setProduct(product.filter(p => p._id !== deleteTarget.id));
         setDeleteTarget(null);
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to delete product.";
+        toast.error(msg);
         setErrorMsg(msg);
         setDeleteTarget(null);
       })
@@ -377,11 +382,13 @@ const Viewproduct = () => {
     setDeleting(true);
     api.put('/product/deleteallproduct')
       .then(() => {
+        toast.success("🗑️ All products deleted successfully!");
         setProduct([]);
         setShowDeleteAllModal(false);
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to delete all products.";
+        toast.error(msg);
         setErrorMsg(msg);
         setShowDeleteAllModal(false);
       })
@@ -474,11 +481,13 @@ const Viewproduct = () => {
 
     api.put(`/product/updateproduct/${id}`, formdata)
       .then((response) => {
+        toast.success("✨ Product updated successfully!");
         handleClose();
         fetchProducts();
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to update product.";
+        toast.error(msg);
         setErrorMsg(msg);
       })
       .finally(() => {
@@ -514,10 +523,12 @@ const Viewproduct = () => {
   const setStatus = (id, value) => {
     api.put(`/product/updateproductstatus/${id}/${value}`)
       .then((response) => {
+        toast.success("Product status updated successfully!");
         fetchProducts();
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to update status.";
+        toast.error(msg);
         setErrorMsg(msg);
       });
   };

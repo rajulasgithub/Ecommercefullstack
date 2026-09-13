@@ -6,6 +6,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from 'react-bootstrap/Modal';
+import { toast } from 'react-toastify';
 import Header from "./Header";
 import api from "../utils/api";
 import ROLES from "../utils/roles";
@@ -64,17 +65,25 @@ const Vieworders = () => {
   const cancelOrder = (id) => {
     api.put(`/order/cancelorder/${id}`)
       .then(() => {
+        toast.success("Order cancelled successfully");
         setFilteredData(filteredData.map(item => item._id === id ? { ...item, status: 3 } : item));
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        toast.error("Failed to cancel order.");
+        console.log(error);
+      });
   };
 
   const statusChange = (id, value) => {
     api.put(`/order/updatecartstatus/${id}/${value}`)
       .then(() => {
+        toast.success("Order status updated successfully!");
         setFilteredData(filteredData.map(item => item._id === id ? { ...item, status: parseInt(value) } : item));
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        toast.error("Failed to update order status.");
+        console.log(error);
+      });
   };
 
   const handleShow = (id) => {
@@ -96,10 +105,14 @@ const Vieworders = () => {
 
     api.put(`/order/updatedeliverydate/${getid}`, { date: deliveryDate })
       .then(() => {
+        toast.success("Delivery date updated successfully!");
         setFilteredData(filteredData.map(item => item._id === getid ? { ...item, deliveryDate: deliveryDate } : item));
         handleClose();
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        toast.error("Failed to update delivery date.");
+        console.log(error);
+      });
   };
 
   const renderStatusBadge = (statusNum) => {

@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Header from "./Header";
 import api from "../utils/api";
 import ROLES from "../utils/roles";
@@ -58,6 +59,7 @@ const Login = () => {
         localStorage.setItem("role", response.data.role);
         localStorage.setItem("token", response.data.token);
 
+        toast.success("Welcome back! Signed in successfully.");
         const userRole = String(response.data.role || '').toLowerCase();
         if (userRole === "seller" || userRole === "company" || userRole === "admin" || userRole.includes("seller")) {
           navigate('/vieworders');
@@ -67,6 +69,7 @@ const Login = () => {
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Login failed. Please check your credentials.";
+      toast.error(msg);
       setServerError(msg);
     } finally {
       setLoading(false);

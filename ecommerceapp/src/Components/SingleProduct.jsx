@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
+import { toast } from 'react-toastify';
 import Header from './Header';
 import api from '../utils/api';
 import ROLES from '../utils/roles';
@@ -73,11 +74,14 @@ const SingleProduct = () => {
     try {
       const response = await api.post('/cart/addtocart', { productId: id });
       if (response.data && response.data.success) {
+        toast.success('✨ Item added to your shopping bag!');
         setSuccessMsg('✨ Item added to your shopping bag!');
         setTimeout(() => setSuccessMsg(''), 4000);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to add item to cart.');
+      const msg = err.response?.data?.message || 'Failed to add item to cart.';
+      toast.error(msg);
+      setError(msg);
     } finally {
       setAddingToCart(false);
     }
@@ -94,10 +98,13 @@ const SingleProduct = () => {
     setDeletingProduct(true);
     try {
       await api.put(`/product/deleteproduct/${id}`);
+      toast.success('🗑️ Product deleted successfully!');
       setShowDeleteModal(false);
       navigate('/viewproduct');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to delete product.');
+      const msg = err.response?.data?.message || 'Failed to delete product.';
+      toast.error(msg);
+      setError(msg);
       setShowDeleteModal(false);
     } finally {
       setDeletingProduct(false);
@@ -189,11 +196,14 @@ const SingleProduct = () => {
 
     try {
       await api.put(`/product/updateproduct/${id}`, formdata);
+      toast.success('✨ Product updated successfully!');
       setShowEdit(false);
       setEditErrors({});
       fetchProductDetails();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update product details.');
+      const msg = err.response?.data?.message || 'Failed to update product details.';
+      toast.error(msg);
+      setError(msg);
     } finally {
       setSavingEdit(false);
     }

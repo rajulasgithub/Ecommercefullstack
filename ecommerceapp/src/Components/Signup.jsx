@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Header from './Header';
 import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validateName, validatePhone, GENDERS, validateGender } from '../utils/validation';
 
@@ -90,6 +91,7 @@ const Signup = () => {
     try {
       const response = await api.post('/auth/signup', signupPayload);
       if (response.data && response.data.success) {
+        toast.success("🎉 Account created successfully!");
         if (response.data.token) {
           localStorage.setItem("loginId", response.data.loginId);
           localStorage.setItem("role", response.data.role);
@@ -99,6 +101,7 @@ const Signup = () => {
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Registration failed. Please try again.";
+      toast.error(msg);
       setServerError(msg);
     } finally {
       setLoading(false);
