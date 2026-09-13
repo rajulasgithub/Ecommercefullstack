@@ -44,3 +44,16 @@ export const validatePassword = (password) => {
   }
   return null;
 };
+
+export const validateName = (name, label) => {
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return `${label} is required`;
+  }
+  if (name.trim().length < 2) {
+    return `${label} must be at least 2 characters long`;
+  }
+  if (!/^[A-Za-z\s]+$/.test(name.trim())) {
+    return `${label} should only contain letters`;
+  }
+  return null;
+};

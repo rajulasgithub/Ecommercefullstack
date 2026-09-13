@@ -9,7 +9,7 @@ import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 import Header from './Header';
 import api from '../utils/api';
-import { isEmpty } from '../utils/validation';
+import { isEmpty, validateName } from '../utils/validation';
 
 const OrderSummary = () => {
   const navigate = useNavigate();
@@ -90,8 +90,12 @@ const OrderSummary = () => {
     const num = address.number !== undefined ? address.number : shippinginfo.number;
 
     const errs = {};
-    if (isEmpty(fn)) errs.firstName = "First name is required";
-    if (isEmpty(ln)) errs.lastName = "Last name is required";
+    const fnErr = validateName(fn, "First name");
+    if (fnErr) errs.firstName = fnErr;
+
+    const lnErr = validateName(ln, "Last name");
+    if (lnErr) errs.lastName = lnErr;
+
     if (isEmpty(addr)) errs.address = "Address field is required";
     if (isEmpty(bldg)) errs.BuildingNumber = "Building number is required";
     if (isEmpty(dist)) errs.district = "District field is required";

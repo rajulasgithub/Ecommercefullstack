@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
-import { isValidEmail, isEmpty, validatePassword } from '../utils/validation';
+import { isValidEmail, isEmpty, validatePassword, validateName } from '../utils/validation';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -37,8 +37,13 @@ const Signup = () => {
 
   const Validate = () => {
     const errormessage = {};
-    if (isEmpty(signup.firstName)) errormessage.firstName = "First name is required";
-    if (isEmpty(signup.lastName)) errormessage.lastName = "Last name is required";
+    
+    const fnErr = validateName(signup.firstName, "First name");
+    if (fnErr) errormessage.firstName = fnErr;
+
+    const lnErr = validateName(signup.lastName, "Last name");
+    if (lnErr) errormessage.lastName = lnErr;
+
     if (isEmpty(signup.number)) errormessage.number = "Phone number is required";
     if (isEmpty(signup.gender)) errormessage.gender = "Gender is required";
     if (isEmpty(signup.state)) errormessage.state = "State is required";

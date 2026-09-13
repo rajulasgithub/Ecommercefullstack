@@ -33,8 +33,16 @@ const passwordValidationRules = body("password")
 const signupValidation = [
   body("email").trim().isEmail().withMessage("Please provide a valid email address"),
   passwordValidationRules,
-  body("firstName").trim().notEmpty().withMessage("First name is required"),
-  body("lastName").trim().notEmpty().withMessage("Last name is required"),
+  body("firstName")
+    .trim()
+    .notEmpty().withMessage("First name is required")
+    .isLength({ min: 2 }).withMessage("First name must be at least 2 characters long")
+    .matches(/^[A-Za-z\s]+$/).withMessage("First name should only contain letters"),
+  body("lastName")
+    .trim()
+    .notEmpty().withMessage("Last name is required")
+    .isLength({ min: 2 }).withMessage("Last name must be at least 2 characters long")
+    .matches(/^[A-Za-z\s]+$/).withMessage("Last name should only contain letters"),
   body("number").trim().notEmpty().withMessage("Phone number is required"),
   body("gender").trim().notEmpty().withMessage("Gender is required"),
   body("state").trim().notEmpty().withMessage("State is required"),
