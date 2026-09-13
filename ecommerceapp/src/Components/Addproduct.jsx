@@ -42,9 +42,9 @@ const Addproduct = () => {
       errormessage.style = "Style is required";
     }
     if (isEmpty(addproduct.prize)) {
-      errormessage.prize = "Price must be a valid number";
-    } else if (!isNumeric(addproduct.prize)) {
-      errormessage.prize = "Price must be a valid number";
+      errormessage.prize = "Price is required";
+    } else if (!isNumeric(addproduct.prize) || Number(addproduct.prize) <= 0) {
+      errormessage.prize = "Price must be a positive number greater than 0";
     }
     if (isEmpty(addproduct.stock)) {
       errormessage.stock = "Stock status is required";
@@ -57,6 +57,8 @@ const Addproduct = () => {
     }
     if (isEmpty(addproduct.description)) {
       errormessage.description = "Product description is required";
+    } else if (addproduct.description.trim().length < 10 || addproduct.description.trim().length > 1000) {
+      errormessage.description = "Description must be between 10 and 1000 characters";
     }
 
     setError(errormessage);

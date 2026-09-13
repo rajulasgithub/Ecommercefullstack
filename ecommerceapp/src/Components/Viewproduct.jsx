@@ -340,11 +340,11 @@ const Viewproduct = () => {
     }
     if (updateprdt.description !== undefined && isEmpty(updateprdt.description)) {
       errs.description = "Description is required";
+    } else if (updateprdt.description !== undefined && (updateprdt.description.trim().length < 10 || updateprdt.description.trim().length > 1000)) {
+      errs.description = "Description must be between 10 and 1000 characters";
     }
-    if (updateprdt.prize !== undefined && isEmpty(updateprdt.prize)) {
-      errs.prize = "Price must be a valid number";
-    } else if (updateprdt.prize !== undefined && !isNumeric(updateprdt.prize)) {
-      errs.prize = "Price must be a valid number";
+    if (updateprdt.prize !== undefined && (isEmpty(updateprdt.prize) || !isNumeric(updateprdt.prize) || Number(updateprdt.prize) <= 0)) {
+      errs.prize = "Price must be a positive number greater than 0";
     }
     if (updateprdt.stock !== undefined && isEmpty(updateprdt.stock)) {
       errs.stock = "Stock status is required";

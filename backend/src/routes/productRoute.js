@@ -19,10 +19,25 @@ const productRoute = express.Router();
 // Add Product Validation Rules
 const addProductValidation = [
   body("prdName").trim().notEmpty().withMessage("Product name is required"),
-  body("category").trim().notEmpty().withMessage("Category is required"),
+  body("category")
+    .trim()
+    .notEmpty()
+    .withMessage("Category is required")
+    .isIn(["Men", "Women", "Kids", "Unisex"])
+    .withMessage("Category must be one of: Men, Women, Kids, Unisex"),
   body("style").trim().notEmpty().withMessage("Style is required"),
-  body("description").trim().notEmpty().withMessage("Description is required"),
-  body("prize").trim().notEmpty().isNumeric().withMessage("Price must be a valid number"),
+  body("description")
+    .trim()
+    .notEmpty()
+    .withMessage("Description is required")
+    .isLength({ min: 10, max: 1000 })
+    .withMessage("Description must be between 10 and 1000 characters"),
+  body("prize")
+    .trim()
+    .notEmpty()
+    .withMessage("Price is required")
+    .isFloat({ gt: 0 })
+    .withMessage("Price must be a positive number greater than 0"),
   body("stock").trim().notEmpty().withMessage("Stock status is required"),
   body("size").trim().notEmpty().withMessage("Product size is required"),
   body("material").trim().notEmpty().withMessage("Material is required"),
