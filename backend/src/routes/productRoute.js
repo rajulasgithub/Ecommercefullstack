@@ -19,7 +19,7 @@ const productRoute = express.Router();
 // Add Product Validation Rules
 const addProductValidation = [
   body("prdName").trim().notEmpty().withMessage("Product name is required"),
-  body("prize").notEmpty().isNumeric().withMessage("Price must be a valid number"),
+  body("prize").trim().notEmpty().isNumeric().withMessage("Price must be a valid number"),
   body("size").trim().notEmpty().withMessage("Product size is required"),
   body("material").trim().notEmpty().withMessage("Material is required"),
   handleValidationErrors,

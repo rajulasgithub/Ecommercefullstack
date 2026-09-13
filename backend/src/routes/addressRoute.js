@@ -17,8 +17,8 @@ const addressValidation = [
   body("address").trim().notEmpty().withMessage("Address field is required"),
   body("state").trim().notEmpty().withMessage("State field is required"),
   body("district").trim().notEmpty().withMessage("District field is required"),
-  body("pincode").notEmpty().withMessage("Pincode field is required"),
-  body("BuildingNumber").notEmpty().withMessage("Building number is required"),
+  body("pincode").trim().notEmpty().withMessage("Pincode field is required"),
+  body("BuildingNumber").trim().notEmpty().withMessage("Building number is required"),
   handleValidationErrors,
 ];
 
