@@ -67,3 +67,15 @@ export const validatePhone = (phone, label = "Phone number") => {
   }
   return null;
 };
+
+export const GENDERS = ["Male", "Female", "Other"];
+
+export const validateGender = (gender) => {
+  if (!gender || typeof gender !== 'string' || gender.trim() === '') {
+    return "Gender is required";
+  }
+  if (!GENDERS.includes(gender.trim())) {
+    return "Please select a valid gender option";
+  }
+  return null;
+};

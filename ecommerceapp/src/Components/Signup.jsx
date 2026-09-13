@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
-import { isValidEmail, isEmpty, validatePassword, validateName, validatePhone } from '../utils/validation';
+import { isValidEmail, isEmpty, validatePassword, validateName, validatePhone, GENDERS, validateGender } from '../utils/validation';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -47,7 +47,9 @@ const Signup = () => {
     const phoneErr = validatePhone(signup.number, "Phone number");
     if (phoneErr) errormessage.number = phoneErr;
 
-    if (isEmpty(signup.gender)) errormessage.gender = "Gender is required";
+    const genderErr = validateGender(signup.gender);
+    if (genderErr) errormessage.gender = genderErr;
+
     if (isEmpty(signup.state)) errormessage.state = "State is required";
     if (isEmpty(signup.district)) errormessage.district = "District is required";
     if (isEmpty(signup.place)) errormessage.place = "Place is required";
@@ -159,11 +161,14 @@ const Signup = () => {
                       name="gender"
                       className="glass-input"
                       onChange={handleChange}
+                      value={signup.gender}
                     >
                       <option value="" style={{ color: '#000' }}>Select Gender</option>
-                      <option value="Male" style={{ color: '#000' }}>Male</option>
-                      <option value="Female" style={{ color: '#000' }}>Female</option>
-                      <option value="Other" style={{ color: '#000' }}>Other</option>
+                      {GENDERS.map((item) => (
+                        <option key={item} value={item} style={{ color: '#000' }}>
+                          {item}
+                        </option>
+                      ))}
                     </Form.Select>
                     {error.gender && <span className="glass-error-badge">{error.gender}</span>}
                   </Form.Group>

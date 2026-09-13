@@ -4,6 +4,7 @@ import checkauth from "../middleware/checkauth.js";
 import { checkRole } from "../middleware/authorize.js";
 import { uploadCompanyLogo } from "../middleware/upload.js";
 import { handleValidationErrors } from "../middleware/validateResult.js";
+import { GENDERS } from "../model/user.js";
 import {
   signup,
   login,
@@ -47,7 +48,10 @@ const signupValidation = [
     .trim()
     .notEmpty().withMessage("Phone number is required")
     .matches(/^[0-9]+$/).withMessage("Phone number must contain only digits"),
-  body("gender").trim().notEmpty().withMessage("Gender is required"),
+  body("gender")
+    .trim()
+    .notEmpty().withMessage("Gender is required")
+    .isIn(GENDERS).withMessage("Please select a valid gender option"),
   body("state").trim().notEmpty().withMessage("State is required"),
   body("district").trim().notEmpty().withMessage("District is required"),
   body("place").trim().notEmpty().withMessage("Place is required"),
