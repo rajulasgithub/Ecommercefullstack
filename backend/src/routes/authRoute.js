@@ -20,10 +20,19 @@ import {
 
 const authroutes = express.Router();
 
+// Shared Password Validation Rules for Signup
+const passwordValidationRules = body("password")
+  .notEmpty().withMessage("Password is required")
+  .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long")
+  .matches(/[A-Z]/).withMessage("Password must contain at least one uppercase letter")
+  .matches(/[a-z]/).withMessage("Password must contain at least one lowercase letter")
+  .matches(/[0-9]/).withMessage("Password must contain at least one number")
+  .matches(/[^A-Za-z0-9]/).withMessage("Password must contain at least one special character");
+
 // User Signup Validation Rules
 const signupValidation = [
   body("email").trim().isEmail().withMessage("Please provide a valid email address"),
-  body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+  passwordValidationRules,
   body("firstName").trim().notEmpty().withMessage("First name is required"),
   body("lastName").trim().notEmpty().withMessage("Last name is required"),
   body("number").trim().notEmpty().withMessage("Phone number is required"),
@@ -45,7 +54,7 @@ const loginValidation = [
 // Company Signup Validation Rules
 const companySignupValidation = [
   body("email").trim().isEmail().withMessage("Please provide a valid email address"),
-  body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+  passwordValidationRules,
   body("companyName").trim().notEmpty().withMessage("Company name is required"),
   body("contactNumber").trim().notEmpty().withMessage("Contact number is required"),
   handleValidationErrors,

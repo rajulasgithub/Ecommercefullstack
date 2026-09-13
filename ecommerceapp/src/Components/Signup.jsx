@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
-import { isValidEmail, isEmpty, isMinLength } from '../utils/validation';
+import { isValidEmail, isEmpty, validatePassword } from '../utils/validation';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -52,10 +52,9 @@ const Signup = () => {
       errormessage.email = "Please provide a valid email address";
     }
 
-    if (isEmpty(signup.password)) {
-      errormessage.password = "Password must be at least 6 characters long";
-    } else if (!isMinLength(signup.password, 6)) {
-      errormessage.password = "Password must be at least 6 characters long";
+    const passwordErr = validatePassword(signup.password);
+    if (passwordErr) {
+      errormessage.password = passwordErr;
     }
 
     setError(errormessage);
