@@ -508,7 +508,7 @@ const SellerDashboard = () => {
                   ← Back to My Products
                 </button>
               </div>
-              <Addproduct />
+              <Addproduct hideHeader={true} onSuccess={() => setActiveTab('my-products')} />
             </div>
           )}
         </main>
