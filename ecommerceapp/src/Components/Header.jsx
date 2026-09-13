@@ -118,22 +118,6 @@ const Header = () => {
                       📊 Seller Dashboard
                     </Nav.Link>
 
-                    <Nav.Link
-                      as={Link}
-                      to="/addproduct"
-                      className={`header-nav-link ${isActive("/addproduct") ? "active" : ""}`}
-                    >
-                      + Add Product
-                    </Nav.Link>
-
-                    <Nav.Link
-                      as={Link}
-                      to="/vieworders"
-                      className={`header-nav-link ${isActive("/vieworders") ? "active" : ""}`}
-                    >
-                      Manage Orders
-                    </Nav.Link>
-
                     <div className="header-divider d-none d-lg-block mx-1"></div>
 
                     <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
