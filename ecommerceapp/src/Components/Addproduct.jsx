@@ -38,12 +38,17 @@ const Addproduct = () => {
   const handleSizeToggle = (sz) => {
     const current = addproduct.selectedSizes || [];
     const updated = current.includes(sz) ? current.filter(s => s !== sz) : [...current, sz];
+    const sizeStr = updated.join(', ');
     setAddproduct({
       ...addproduct,
       selectedSizes: updated,
-      size: updated.join(', ')
+      size: sizeStr
     });
-    setError({ ...error, size: '' });
+    if (sizeStr.trim()) {
+      setError({ ...error, size: '' });
+    } else {
+      setError({ ...error, size: 'At least one size must be selected' });
+    }
     setServerError('');
   };
 
@@ -69,7 +74,7 @@ const Addproduct = () => {
     if (isEmpty(addproduct.stock)) {
       errormessage.stock = "Stock status is required";
     }
-    if (isEmpty(addproduct.size)) {
+    if (isEmpty(addproduct.size) || (addproduct.selectedSizes && addproduct.selectedSizes.length === 0)) {
       errormessage.size = "At least one size must be selected";
     }
     if (isEmpty(addproduct.material)) {

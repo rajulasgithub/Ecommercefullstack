@@ -34,6 +34,7 @@ const SingleProduct = () => {
 
   useEffect(() => {
     fetchProductDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchProductDetails = async () => {
@@ -97,12 +98,17 @@ const SingleProduct = () => {
       ? updateData.selectedSizes
       : (product?.size ? product.size.split(',').map(s => s.trim()).filter(Boolean) : []);
     const updated = current.includes(sz) ? current.filter(s => s !== sz) : [...current, sz];
+    const sizeStr = updated.join(', ');
     setUpdateData({
       ...updateData,
       selectedSizes: updated,
-      size: updated.join(', ')
+      size: sizeStr
     });
-    setEditErrors({ ...editErrors, size: '' });
+    if (sizeStr.trim()) {
+      setEditErrors({ ...editErrors, size: '' });
+    } else {
+      setEditErrors({ ...editErrors, size: 'At least one size must be selected' });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -133,7 +139,7 @@ const SingleProduct = () => {
       errs.prize = "Price must be a positive number greater than 0";
     }
     if (isEmpty(stockVal)) errs.stock = "Stock status is required";
-    if (isEmpty(sizeVal)) errs.size = "At least one size must be selected";
+    if (isEmpty(sizeVal) || (updateData.selectedSizes && updateData.selectedSizes.length === 0)) errs.size = "At least one size must be selected";
     if (isEmpty(matVal)) errs.material = "Material is required";
 
     setEditErrors(errs);

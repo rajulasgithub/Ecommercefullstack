@@ -326,12 +326,17 @@ const Viewproduct = () => {
   const handleModalSizeToggle = (sz) => {
     const current = updateprdt.selectedSizes || [];
     const updated = current.includes(sz) ? current.filter(s => s !== sz) : [...current, sz];
+    const sizeStr = updated.join(', ');
     setUpdateprdt({
       ...updateprdt,
       selectedSizes: updated,
-      size: updated.join(', ')
+      size: sizeStr
     });
-    setModalError({ ...modalError, size: '' });
+    if (sizeStr.trim()) {
+      setModalError({ ...modalError, size: '' });
+    } else {
+      setModalError({ ...modalError, size: 'At least one size must be selected' });
+    }
   };
 
   const fileChange = (event) => {
@@ -361,7 +366,7 @@ const Viewproduct = () => {
     if (updateprdt.stock !== undefined && isEmpty(updateprdt.stock)) {
       errs.stock = "Stock status is required";
     }
-    if (updateprdt.size !== undefined && isEmpty(updateprdt.size)) {
+    if (isEmpty(updateprdt.size) || (updateprdt.selectedSizes && updateprdt.selectedSizes.length === 0)) {
       errs.size = "At least one size must be selected";
     }
     if (updateprdt.material !== undefined && isEmpty(updateprdt.material)) {
