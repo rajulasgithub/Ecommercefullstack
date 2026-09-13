@@ -8,7 +8,7 @@ import Row from 'react-bootstrap/Row';
 import api from './../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
-import { isValidEmail, isEmpty, validatePassword } from '../utils/validation';
+import { isValidEmail, isEmpty, validatePassword, validatePhone } from '../utils/validation';
 
 const Companysignup = () => {
   const navigate = useNavigate();
@@ -30,7 +30,9 @@ const Companysignup = () => {
   const Validate = () => {
     const errormessage = {};
     if (isEmpty(companysignup.companyName)) errormessage.companyName = "Company name is required";
-    if (isEmpty(companysignup.contactNumber)) errormessage.contactNumber = "Contact number is required";
+    
+    const contactErr = validatePhone(companysignup.contactNumber, "Contact number");
+    if (contactErr) errormessage.contactNumber = contactErr;
 
     if (isEmpty(companysignup.email)) {
       errormessage.email = "Please provide a valid email address";

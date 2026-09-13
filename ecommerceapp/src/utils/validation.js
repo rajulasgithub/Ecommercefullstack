@@ -57,3 +57,13 @@ export const validateName = (name, label) => {
   }
   return null;
 };
+
+export const validatePhone = (phone, label = "Phone number") => {
+  if (!phone || typeof phone !== 'string' || phone.trim() === '') {
+    return `${label} is required`;
+  }
+  if (!/^[0-9]+$/.test(phone.trim())) {
+    return `${label} must contain only digits`;
+  }
+  return null;
+};

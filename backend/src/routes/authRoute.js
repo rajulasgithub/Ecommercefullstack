@@ -43,7 +43,10 @@ const signupValidation = [
     .notEmpty().withMessage("Last name is required")
     .isLength({ min: 2 }).withMessage("Last name must be at least 2 characters long")
     .matches(/^[A-Za-z\s]+$/).withMessage("Last name should only contain letters"),
-  body("number").trim().notEmpty().withMessage("Phone number is required"),
+  body("number")
+    .trim()
+    .notEmpty().withMessage("Phone number is required")
+    .matches(/^[0-9]+$/).withMessage("Phone number must contain only digits"),
   body("gender").trim().notEmpty().withMessage("Gender is required"),
   body("state").trim().notEmpty().withMessage("State is required"),
   body("district").trim().notEmpty().withMessage("District is required"),
@@ -64,7 +67,10 @@ const companySignupValidation = [
   body("email").trim().isEmail().withMessage("Please provide a valid email address"),
   passwordValidationRules,
   body("companyName").trim().notEmpty().withMessage("Company name is required"),
-  body("contactNumber").trim().notEmpty().withMessage("Contact number is required"),
+  body("contactNumber")
+    .trim()
+    .notEmpty().withMessage("Contact number is required")
+    .matches(/^[0-9]+$/).withMessage("Contact number must contain only digits"),
   handleValidationErrors,
 ];
 

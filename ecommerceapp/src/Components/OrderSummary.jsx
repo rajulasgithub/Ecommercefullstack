@@ -9,7 +9,7 @@ import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 import Header from './Header';
 import api from '../utils/api';
-import { isEmpty, validateName } from '../utils/validation';
+import { isEmpty, validateName, validatePhone } from '../utils/validation';
 
 const OrderSummary = () => {
   const navigate = useNavigate();
@@ -101,7 +101,9 @@ const OrderSummary = () => {
     if (isEmpty(dist)) errs.district = "District field is required";
     if (isEmpty(st)) errs.state = "State field is required";
     if (isEmpty(pin)) errs.pincode = "Pincode field is required";
-    if (isEmpty(num)) errs.number = "Phone number is required";
+    
+    const phoneErr = validatePhone(num, "Phone number");
+    if (phoneErr) errs.number = phoneErr;
 
     setAddrErrors(errs);
     return Object.keys(errs).length === 0;
