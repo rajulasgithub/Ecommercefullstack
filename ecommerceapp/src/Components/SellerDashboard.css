@@ -1,4 +1,24 @@
 /* Seller Dashboard Styles */
+:root, [data-theme="dark"] {
+  --bg-dark: var(--app-bg, #0b0f19);
+  --surface-bg: var(--app-card-bg, rgba(255, 255, 255, 0.05));
+  --border-color: var(--app-card-border, rgba(255, 255, 255, 0.1));
+  --text-main: var(--app-text-main, #f9fafb);
+  --text-muted: var(--app-text-muted, #9ca3af);
+  --primary-accent: var(--app-primary, #6366f1);
+  --secondary-accent: var(--app-secondary, #ec4899);
+}
+
+[data-theme="light"] {
+  --bg-dark: var(--app-bg, #f8fafc);
+  --surface-bg: var(--app-modal-bg, #ffffff);
+  --border-color: var(--app-input-border, #cbd5e1);
+  --text-main: var(--app-text-main, #0f172a);
+  --text-muted: var(--app-text-muted, #64748b);
+  --primary-accent: var(--app-primary, #4f46e5);
+  --secondary-accent: var(--app-secondary, #db2777);
+}
+
 .seller-dashboard-container {
   min-height: calc(100vh - 70px);
   display: flex;
@@ -305,6 +325,26 @@
 .btn-seller-primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+/* Size toggle buttons */
+.size-toggle-btn {
+  padding: 0.35rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-bg);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.size-toggle-btn.selected {
+  background: var(--primary-accent);
+  color: #ffffff;
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
 }
 
 /* Pagination Bar */

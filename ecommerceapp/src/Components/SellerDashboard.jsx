@@ -513,14 +513,14 @@ const SellerDashboard = () => {
       </div>
 
       {/* EDIT PRODUCT MODAL */}
-      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered size="lg">
-        <Modal.Header closeButton style={{ background: 'var(--surface-bg)', color: 'var(--text-main)', borderColor: 'var(--border-color)' }}>
-          <Modal.Title style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered size="lg" contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--app-text-main)' }}>
             ✏️ Edit Product Details
           </Modal.Title>
         </Modal.Header>
         <Form onSubmit={submitEditProduct}>
-          <Modal.Body style={{ background: 'var(--surface-bg)', color: 'var(--text-main)' }}>
+          <Modal.Body className="p-4">
             <Row className="g-3">
               <Col xs={12} md={6}>
                 <Form.Group>
@@ -559,10 +559,10 @@ const SellerDashboard = () => {
                     value={editFormData.category || 'Women'}
                     onChange={handleEditChange}
                   >
-                    <option value="Men">Men</option>
-                    <option value="Women">Women</option>
-                    <option value="Kids">Kids</option>
-                    <option value="Unisex">Unisex</option>
+                    <option value="Men" style={{ color: '#000' }}>Men</option>
+                    <option value="Women" style={{ color: '#000' }}>Women</option>
+                    <option value="Kids" style={{ color: '#000' }}>Kids</option>
+                    <option value="Unisex" style={{ color: '#000' }}>Unisex</option>
                   </Form.Select>
                   {editError.category && <span className="glass-error-badge">{editError.category}</span>}
                 </Form.Group>
@@ -578,7 +578,7 @@ const SellerDashboard = () => {
                     onChange={handleEditChange}
                   >
                     {STYLES.map((st) => (
-                      <option key={st} value={st}>
+                      <option key={st} value={st} style={{ color: '#000' }}>
                         {st}
                       </option>
                     ))}
@@ -597,7 +597,7 @@ const SellerDashboard = () => {
                     onChange={handleEditChange}
                   >
                     {MATERIALS.map((mat) => (
-                      <option key={mat} value={mat}>
+                      <option key={mat} value={mat} style={{ color: '#000' }}>
                         {mat}
                       </option>
                     ))}
@@ -615,9 +615,9 @@ const SellerDashboard = () => {
                     value={editFormData.stock || 'In Stock'}
                     onChange={handleEditChange}
                   >
-                    <option value="In Stock">In Stock</option>
-                    <option value="Limited Stock">Limited Stock</option>
-                    <option value="Out of Stock">Out of Stock</option>
+                    <option value="In Stock" style={{ color: '#000' }}>In Stock</option>
+                    <option value="Limited Stock" style={{ color: '#000' }}>Limited Stock</option>
+                    <option value="Out of Stock" style={{ color: '#000' }}>Out of Stock</option>
                   </Form.Select>
                   {editError.stock && <span className="glass-error-badge">{editError.stock}</span>}
                 </Form.Group>
@@ -648,7 +648,7 @@ const SellerDashboard = () => {
                         className={`size-toggle-btn ${isSel ? 'selected' : ''}`}
                         onClick={() => handleEditSizeToggle(sz)}
                       >
-                        {sz}
+                        {isSel ? `✓ ${sz}` : sz}
                       </button>
                     );
                   })}
@@ -672,11 +672,11 @@ const SellerDashboard = () => {
               </Col>
             </Row>
           </Modal.Body>
-          <Modal.Footer style={{ background: 'var(--surface-bg)', borderColor: 'var(--border-color)' }}>
-            <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+          <Modal.Footer className="glass-modal-footer">
+            <Button className="btn-glass-secondary" onClick={() => setShowEditModal(false)}>
               Cancel
             </Button>
-            <Button type="submit" className="btn-seller-primary" disabled={editSubmitting}>
+            <Button type="submit" className="btn-glass-primary" disabled={editSubmitting}>
               {editSubmitting ? <Spinner animation="border" size="sm" /> : 'Save Changes'}
             </Button>
           </Modal.Footer>
@@ -684,11 +684,11 @@ const SellerDashboard = () => {
       </Modal>
 
       {/* DELETE CONFIRMATION MODAL */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-        <Modal.Header closeButton style={{ background: 'var(--surface-bg)', color: 'var(--text-main)', borderColor: 'var(--border-color)' }}>
-          <Modal.Title>Confirm Delete</Modal.Title>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ fontSize: '1.25rem', fontWeight: 700 }}>Confirm Delete</Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ background: 'var(--surface-bg)', color: 'var(--text-main)' }}>
+        <Modal.Body className="p-4">
           <p>
             Are you sure you want to delete product <strong>"{deletingProduct?.prdName}"</strong>?
           </p>
@@ -696,22 +696,24 @@ const SellerDashboard = () => {
             This will remove the product from listings and mark it as deleted.
           </p>
         </Modal.Body>
-        <Modal.Footer style={{ background: 'var(--surface-bg)', borderColor: 'var(--border-color)' }}>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+        <Modal.Footer className="glass-modal-footer">
+          <Button className="btn-glass-secondary" onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>
-          <Button className="btn-seller-danger" onClick={confirmDeleteProduct} disabled={deleteSubmitting}>
+          <Button className="btn-glass-danger" onClick={confirmDeleteProduct} disabled={deleteSubmitting}>
             {deleteSubmitting ? <Spinner animation="border" size="sm" /> : 'Delete Product'}
           </Button>
         </Modal.Footer>
       </Modal>
 
       {/* CLEAR ALL MY PRODUCTS MODAL */}
-      <Modal show={showClearAllModal} onHide={() => setShowClearAllModal(false)} centered>
-        <Modal.Header closeButton style={{ background: 'var(--surface-bg)', color: 'var(--text-main)', borderColor: 'var(--border-color)' }}>
-          <Modal.Title style={{ color: '#ef4444' }}>🗑️ Clear All My Products</Modal.Title>
+      <Modal show={showClearAllModal} onHide={() => setShowClearAllModal(false)} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ef4444' }}>
+            🗑️ Clear All My Products
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ background: 'var(--surface-bg)', color: 'var(--text-main)' }}>
+        <Modal.Body className="p-4">
           <p>
             <strong>Warning:</strong> Are you sure you want to delete ALL products created by your account?
           </p>
@@ -719,11 +721,11 @@ const SellerDashboard = () => {
             This operation will soft-delete all your product listings ({pagination.total} products) and clear them from active shopping carts.
           </p>
         </Modal.Body>
-        <Modal.Footer style={{ background: 'var(--surface-bg)', borderColor: 'var(--border-color)' }}>
-          <Button variant="secondary" onClick={() => setShowClearAllModal(false)}>
+        <Modal.Footer className="glass-modal-footer">
+          <Button className="btn-glass-secondary" onClick={() => setShowClearAllModal(false)}>
             Cancel
           </Button>
-          <Button className="btn-seller-danger" onClick={confirmClearAll} disabled={clearAllSubmitting}>
+          <Button className="btn-glass-danger" onClick={confirmClearAll} disabled={clearAllSubmitting}>
             {clearAllSubmitting ? <Spinner animation="border" size="sm" /> : 'Yes, Delete All My Products'}
           </Button>
         </Modal.Footer>
