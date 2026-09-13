@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { MATERIALS } from "../model/product.js";
+import { MATERIALS, STYLES } from "../model/product.js";
 import checkauth from "../middleware/checkauth.js";
 import { checkRole } from "../middleware/authorize.js";
 import { uploadProductImage } from "../middleware/upload.js";
@@ -26,7 +26,12 @@ const addProductValidation = [
     .withMessage("Category is required")
     .isIn(["Men", "Women", "Kids", "Unisex"])
     .withMessage("Category must be one of: Men, Women, Kids, Unisex"),
-  body("style").trim().notEmpty().withMessage("Style is required"),
+  body("style")
+    .trim()
+    .notEmpty()
+    .withMessage("Style is required")
+    .isIn(STYLES)
+    .withMessage(`Style must be one of: ${STYLES.join(", ")}`),
   body("description")
     .trim()
     .notEmpty()

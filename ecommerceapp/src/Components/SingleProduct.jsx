@@ -10,7 +10,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Header from './Header';
 import api from '../utils/api';
 import ROLES from '../utils/roles';
-import { isEmpty, isNumeric, MATERIALS } from '../utils/validation';
+import { isEmpty, isNumeric, MATERIALS, STYLES } from '../utils/validation';
 import './Style.css';
 
 const SingleProduct = () => {
@@ -591,12 +591,12 @@ const SingleProduct = () => {
                     className="glass-input"
                     onChange={handleEditChange}
                   >
-                    <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
-                    <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
-                    <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
-                    <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
-                    <option value="Wedding Wear" style={{ color: '#000' }}>Wedding Wear</option>
-                    <option value="Sportswear" style={{ color: '#000' }}>Sportswear</option>
+                    <option value="" style={{ color: '#000' }}>Select Style</option>
+                    {STYLES.map((st) => (
+                      <option key={st} value={st} style={{ color: '#000' }}>
+                        {st}
+                      </option>
+                    ))}
                   </Form.Select>
                   {editErrors.style && <span className="glass-error-badge">{editErrors.style}</span>}
                 </Form.Group>

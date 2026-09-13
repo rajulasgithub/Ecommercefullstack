@@ -96,6 +96,15 @@ export const MATERIALS = [
   "Other"
 ];
 
+export const STYLES = [
+  "Casual Wear",
+  "Party Wear",
+  "Ethnic Wear",
+  "Formal Wear",
+  "Wedding Wear",
+  "Sportswear"
+];
+
 export const validateGender = (gender) => {
   if (!gender || typeof gender !== 'string' || gender.trim() === '') {
     return "Gender is required";

@@ -11,7 +11,7 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import api from '../utils/api';
 import ROLES from '../utils/roles';
-import { isNumeric, isEmpty, MATERIALS } from '../utils/validation';
+import { isNumeric, isEmpty, MATERIALS, STYLES } from '../utils/validation';
 
 const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStatus, handleSubmit }) => {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
@@ -554,12 +554,12 @@ const Viewproduct = () => {
                     value={updateprdt.style || ''}
                     onChange={handleChange}
                   >
-                    <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
-                    <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
-                    <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
-                    <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
-                    <option value="Wedding Wear" style={{ color: '#000' }}>Wedding Wear</option>
-                    <option value="Sportswear" style={{ color: '#000' }}>Sportswear</option>
+                    <option value="" style={{ color: '#000' }}>Select Style</option>
+                    {STYLES.map((st) => (
+                      <option key={st} value={st} style={{ color: '#000' }}>
+                        {st}
+                      </option>
+                    ))}
                   </Form.Select>
                   {modalError.style && <span className="glass-error-badge">{modalError.style}</span>}
                 </Form.Group>

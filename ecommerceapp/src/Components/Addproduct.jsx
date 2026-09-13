@@ -8,7 +8,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
-import { isEmpty, isNumeric, MATERIALS } from '../utils/validation';
+import { isEmpty, isNumeric, MATERIALS, STYLES } from '../utils/validation';
 import './Style.css';
 
 const Addproduct = () => {
@@ -204,12 +204,11 @@ const Addproduct = () => {
                     value={addproduct.style || ''}
                   >
                     <option value="" style={{ color: '#000' }}>Select Style</option>
-                    <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
-                    <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
-                    <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
-                    <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
-                    <option value="Wedding Wear" style={{ color: '#000' }}>Wedding Wear</option>
-                    <option value="Sportswear" style={{ color: '#000' }}>Sportswear</option>
+                    {STYLES.map((st) => (
+                      <option key={st} value={st} style={{ color: '#000' }}>
+                        {st}
+                      </option>
+                    ))}
                   </Form.Select>
                   {error.style && <span className="glass-error-badge">{error.style}</span>}
                 </Form.Group>

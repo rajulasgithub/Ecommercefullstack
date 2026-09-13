@@ -16,11 +16,26 @@ export const MATERIALS = [
   "Other"
 ];
 
+export const STYLES = [
+  "Casual Wear",
+  "Party Wear",
+  "Ethnic Wear",
+  "Formal Wear",
+  "Wedding Wear",
+  "Sportswear"
+];
+
 const productSchema = new mongoose.Schema({
   prdName: { type: String, required: true, trim: true },
   description: { type: String, required: true, trim: true, default: "", minlength: 10, maxlength: 1000 },
   category: { type: String, required: true, trim: true, enum: ["Men", "Women", "Kids", "Unisex"], default: "Women" },
-  style: { type: String, required: true, trim: true, default: "Casual Wear" },
+  style: {
+    type: String,
+    required: true,
+    trim: true,
+    enum: STYLES,
+    default: "Casual Wear"
+  },
   image: { type: [String], required: true },
   prize: { type: Number, required: true, min: [0.01, "Price must be greater than 0"] },
   size: { type: String, required: true, trim: true, default: "M" },
