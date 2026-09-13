@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import Spinner from 'react-bootstrap/Spinner';
 import Header from './Header';
 import api from '../utils/api';
 import ROLES from '../utils/roles';
@@ -29,6 +30,7 @@ const SingleProduct = () => {
   const [showEdit, setShowEdit] = useState(false);
   const [updateData, setUpdateData] = useState({});
   const [editErrors, setEditErrors] = useState({});
+  const [savingEdit, setSavingEdit] = useState(false);
 
   useEffect(() => {
     fetchProductDetails();
@@ -122,6 +124,7 @@ const SingleProduct = () => {
   const handleSaveUpdate = async () => {
     if (!validateEditForm()) return;
 
+    setSavingEdit(true);
     const formdata = new FormData();
     formdata.append('prdName', updateData.prdName !== undefined ? updateData.prdName : product.prdName);
     formdata.append('category', updateData.category !== undefined ? updateData.category : (product.category || 'Women'));
@@ -146,6 +149,8 @@ const SingleProduct = () => {
       fetchProductDetails();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update product details.');
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -683,11 +688,25 @@ const SingleProduct = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer className="glass-modal-footer">
-          <Button className="btn-glass-secondary" onClick={() => setShowEdit(false)}>
+          <Button className="btn-glass-secondary" onClick={() => setShowEdit(false)} disabled={savingEdit}>
             Cancel
           </Button>
-          <Button className="btn-glass-primary" onClick={handleSaveUpdate}>
-            Save Changes
+          <Button className="btn-glass-primary" onClick={handleSaveUpdate} disabled={savingEdit}>
+            {savingEdit ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                Saving Changes...
+              </>
+            ) : (
+              'Save Changes'
+            )}
           </Button>
         </Modal.Footer>
       </Modal>

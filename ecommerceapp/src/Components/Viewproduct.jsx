@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Modal from 'react-bootstrap/Modal';
 import Form from "react-bootstrap/Form";
+import Spinner from "react-bootstrap/Spinner";
 import api from '../utils/api';
 import ROLES from '../utils/roles';
 import { isNumeric, isEmpty } from '../utils/validation';
@@ -263,6 +264,7 @@ const Viewproduct = () => {
   const [activeItemId, setActiveItemId] = useState(null);
   const [show, setShow] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     api.get('/product/viewproduct')
@@ -361,6 +363,7 @@ const Viewproduct = () => {
   const handleUpdate = (id) => {
     if (!validateUpdate()) return;
 
+    setUpdating(true);
     const formdata = new FormData();
     formdata.append('prdName', updateprdt.prdName || '');
     formdata.append('category', updateprdt.category || 'Women');
@@ -387,6 +390,9 @@ const Viewproduct = () => {
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to update product.";
         setErrorMsg(msg);
+      })
+      .finally(() => {
+        setUpdating(false);
       });
   };
 
@@ -655,11 +661,25 @@ const Viewproduct = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer className="glass-modal-footer">
-          <Button className="btn-glass-secondary" onClick={handleClose}>
+          <Button className="btn-glass-secondary" onClick={handleClose} disabled={updating}>
             Cancel
           </Button>
-          <Button className="btn-glass-primary" onClick={() => handleUpdate(activeItemId)}>
-            Save Changes
+          <Button className="btn-glass-primary" onClick={() => handleUpdate(activeItemId)} disabled={updating}>
+            {updating ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                Saving Changes...
+              </>
+            ) : (
+              'Save Changes'
+            )}
           </Button>
         </Modal.Footer>
       </Modal>

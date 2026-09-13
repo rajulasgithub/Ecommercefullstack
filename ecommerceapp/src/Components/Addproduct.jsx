@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
 import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
@@ -15,6 +16,7 @@ const Addproduct = () => {
   const [addproduct, setAddproduct] = useState({});
   const [error, setError] = useState({});
   const [serverError, setServerError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (event) => {
     setAddproduct({ ...addproduct, [event.target.name]: event.target.value });
@@ -65,6 +67,7 @@ const Addproduct = () => {
     event.preventDefault();
     if (!Validate()) return;
 
+    setSubmitting(true);
     const formdata = new FormData();
     formdata.append('prdName', addproduct.prdName || '');
     formdata.append('category', addproduct.category || 'Women');
@@ -92,6 +95,8 @@ const Addproduct = () => {
     } catch (error) {
       const msg = error.response?.data?.message || 'Failed to upload product. Check your vendor permissions.';
       setServerError(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -275,11 +280,25 @@ const Addproduct = () => {
             </Form.Group>
 
             <div className="d-flex gap-3 justify-content-end">
-              <Button type="button" className="btn-glass-secondary" onClick={() => navigate('/viewproduct')}>
+              <Button type="button" className="btn-glass-secondary" onClick={() => navigate('/viewproduct')} disabled={submitting}>
                 Cancel
               </Button>
-              <Button type="submit" className="btn-glass-primary">
-                Upload Product
+              <Button type="submit" className="btn-glass-primary" disabled={submitting}>
+                {submitting ? (
+                  <>
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                      className="me-2"
+                    />
+                    Uploading Product...
+                  </>
+                ) : (
+                  'Upload Product'
+                )}
               </Button>
             </div>
           </Form>
