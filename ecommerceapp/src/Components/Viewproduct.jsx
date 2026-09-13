@@ -207,47 +207,22 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
           </p>
         </div>
 
-        {/* Actions depending on Role */}
+        {/* Catalog Actions */}
         <div>
-          {role === ROLES.COMPANY || role === ROLES.ADMIN ? (
-            <div className="d-flex flex-column gap-2">
-              {item.status !== 'deleted' ? (
-                <div className="d-flex gap-2">
-                  <Button className="btn-glass-secondary w-50 py-1" size="sm" onClick={() => handleShow(item._id)}>
-                    Edit
-                  </Button>
-                  <Button className="btn-glass-danger w-50 py-1" size="sm" onClick={() => dltproduct(item)}>
-                    Delete
-                  </Button>
-                </div>
-              ) : (
-                <Form.Select
-                  className="glass-input text-sm py-1"
-                  style={{ fontSize: "0.85rem" }}
-                  name="status"
-                  onChange={(e) => setStatus(item._id, e.target.value)}
-                >
-                  <option value="" style={{ color: "#000" }}>-- Select Action --</option>
-                  <option value="active" style={{ color: "#000" }}>Restock Product</option>
-                </Form.Select>
-              )}
-            </div>
-          ) : (
-            <div className="d-flex gap-2">
-              <Button className="btn-glass-secondary w-50" size="sm" onClick={() => navigate(`/product/${item._id}`)}>
-                Details
+          <div className="d-flex gap-2">
+            <Button className="btn-glass-secondary w-50" size="sm" onClick={() => navigate(`/product/${item._id}`)}>
+              Details
+            </Button>
+            {item.status !== 'deleted' && item.stock !== 'Out of Stock' ? (
+              <Button className="btn-glass-primary w-50" size="sm" onClick={() => handleSubmit(item._id)}>
+                Add to Cart
               </Button>
-              {item.status !== 'deleted' && item.stock !== 'Out of Stock' ? (
-                <Button className="btn-glass-primary w-50" size="sm" onClick={() => handleSubmit(item._id)}>
-                  Add to Cart
-                </Button>
-              ) : (
-                <Button className="btn-glass-secondary w-50" disabled style={{ opacity: 0.6 }} size="sm">
-                  Unavailable
-                </Button>
-              )}
-            </div>
-          )}
+            ) : (
+              <Button className="btn-glass-secondary w-50" disabled style={{ opacity: 0.6 }} size="sm">
+                Unavailable
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </Col>
@@ -640,14 +615,6 @@ const Viewproduct = () => {
               </Button>
             </Col>
           </Row>
-
-          {(role === ROLES.COMPANY || role === ROLES.ADMIN) && product.length > 0 && (
-            <div className="mt-3 pt-2 border-top border-secondary text-end">
-              <Button className="btn-glass-danger py-1 px-3" size="sm" onClick={deleteAllProductsHandler}>
-                🗑️ Delete All Products
-              </Button>
-            </div>
-          )}
         </div>
 
         {/* Products Grid */}
@@ -969,37 +936,6 @@ const Viewproduct = () => {
               </>
             ) : (
               '🗑️ Delete Product'
-            )}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Confirmation Modal for Deleting All Products */}
-      <Modal show={showDeleteAllModal} onHide={() => setShowDeleteAllModal(false)} centered contentClassName="glass-modal">
-        <Modal.Header closeButton className="glass-modal-header">
-          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>Clear All Products</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="p-4 text-center">
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🚨</div>
-          <h5 style={{ color: '#ffffff', fontWeight: 600, marginBottom: '0.5rem' }}>
-            Are you sure you want to delete ALL product listings?
-          </h5>
-          <p style={{ color: '#f87171', fontSize: '0.875rem', margin: 0 }}>
-            This action will soft-delete all product listings and clear corresponding active cart items.
-          </p>
-        </Modal.Body>
-        <Modal.Footer className="glass-modal-footer">
-          <Button className="btn-glass-secondary" onClick={() => setShowDeleteAllModal(false)} disabled={deleting}>
-            Cancel
-          </Button>
-          <Button className="btn-glass-danger" onClick={confirmDeleteAllProducts} disabled={deleting}>
-            {deleting ? (
-              <>
-                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
-                Deleting All...
-              </>
-            ) : (
-              '🗑️ Delete All Products'
             )}
           </Button>
         </Modal.Footer>
