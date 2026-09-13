@@ -184,9 +184,9 @@ export const deleteProduct = async (req, res) => {
     const userRole = req.userData?.role;
     const userLoginId = req.userData?.loginId;
 
-    // Authorization check: Admin can delete any product; Seller can only delete their own product.
+    // Authorization check: Admin can delete any product; Seller can ONLY delete products created by them.
     if (userRole !== "admin") {
-      if (product.loginId && userLoginId && product.loginId.toString() !== userLoginId.toString()) {
+      if (!userLoginId || !product.loginId || product.loginId.toString() !== userLoginId.toString()) {
         return res.status(403).json({
           success: false,
           error: true,
@@ -239,9 +239,9 @@ export const updateProduct = async (req, res) => {
     const userRole = req.userData?.role;
     const userLoginId = req.userData?.loginId;
 
-    // Authorization check: Admin can update any product; Seller can only update their own product.
+    // Authorization check: Admin can update any product; Seller can ONLY update products created by them.
     if (userRole !== "admin") {
-      if (oldData.loginId && userLoginId && oldData.loginId.toString() !== userLoginId.toString()) {
+      if (!userLoginId || !oldData.loginId || oldData.loginId.toString() !== userLoginId.toString()) {
         return res.status(403).json({
           success: false,
           error: true,
@@ -294,6 +294,29 @@ export const updateProductStatus = async (req, res) => {
       });
     }
 
+    const product = await productDB.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: true,
+        message: "Product not found",
+      });
+    }
+
+    const userRole = req.userData?.role;
+    const userLoginId = req.userData?.loginId;
+
+    // Authorization check: Admin can update any product status; Seller can ONLY update status of products created by them.
+    if (userRole !== "admin") {
+      if (!userLoginId || !product.loginId || product.loginId.toString() !== userLoginId.toString()) {
+        return res.status(403).json({
+          success: false,
+          error: true,
+          message: "Unauthorized: You can only update status of products created by you",
+        });
+      }
+    }
+
     const data = { status: req.params.value };
     const result = await productDB.updateOne(
       { _id: id },
@@ -340,17 +363,10 @@ export const deleteAllProducts = async (req, res) => {
           message: "Unauthorized",
         });
       }
-      const filter = {
-        $or: [
-          { loginId: userLoginId },
-          { loginId: { $exists: false } },
-          { loginId: null }
-        ]
-      };
-      const sellerProducts = await productDB.find(filter);
+      const sellerProducts = await productDB.find({ loginId: userLoginId });
       const productIds = sellerProducts.map((p) => p._id);
       await cartDB.updateMany({ prdId: { $in: productIds } }, { $set: cartData });
-      const result = await productDB.updateMany(filter, { $set: productData });
+      const result = await productDB.updateMany({ loginId: userLoginId }, { $set: productData });
       return res.status(200).json({
         success: true,
         error: false,
