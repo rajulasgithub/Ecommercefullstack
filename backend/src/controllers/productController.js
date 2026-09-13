@@ -47,7 +47,7 @@ export const addProduct = async (req, res) => {
 // View Products (Public)
 export const getAllProducts = async (req, res) => {
   try {
-    const { search, category, style, minPrice, maxPrice } = req.query;
+    const { search, category, style, minPrice, maxPrice, page, limit } = req.query;
 
     const query = {
       status: { $nin: ["deleted", "Deleted", "DELETED"], $not: /^deleted$/i }
@@ -85,11 +85,29 @@ export const getAllProducts = async (req, res) => {
       }
     }
 
-    const result = await productDB.find(query).sort({ createdAt: -1, _id: -1 });
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.max(1, parseInt(limit, 10) || 8);
+    const skip = (pageNum - 1) * limitNum;
+
+    const total = await productDB.countDocuments(query);
+    const totalPages = Math.max(1, Math.ceil(total / limitNum));
+
+    const result = await productDB
+      .find(query)
+      .sort({ createdAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limitNum);
+
     return res.status(200).json({
       success: true,
       error: false,
       data: result,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages,
+      },
       message: "Products fetched successfully",
     });
   } catch (error) {

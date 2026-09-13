@@ -266,6 +266,10 @@ const Viewproduct = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [limit] = useState(8);
+  const [paginationInfo, setPaginationInfo] = useState({ total: 0, page: 1, limit: 8, totalPages: 1 });
+
   const [updateprdt, setUpdateprdt] = useState({});
   const [modalError, setModalError] = useState({});
   const [activeItemId, setActiveItemId] = useState(null);
@@ -273,9 +277,12 @@ const Viewproduct = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [updating, setUpdating] = useState(false);
 
-  const fetchProducts = () => {
+  const fetchProducts = (targetPage = page) => {
     setLoadingProducts(true);
-    const params = {};
+    const params = {
+      page: targetPage,
+      limit: limit
+    };
     if (searchQuery.trim()) params.search = searchQuery.trim();
     if (selectedCategory) params.category = selectedCategory;
     if (selectedStyle) params.style = selectedStyle;
@@ -285,6 +292,9 @@ const Viewproduct = () => {
     api.get('/product/viewproduct', { params })
       .then((response) => {
         setProduct(response.data.data || []);
+        if (response.data.pagination) {
+          setPaginationInfo(response.data.pagination);
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -296,11 +306,16 @@ const Viewproduct = () => {
   };
 
   useEffect(() => {
+    setPage(1);
+  }, [searchQuery, selectedCategory, selectedStyle, minPrice, maxPrice]);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
-      fetchProducts();
+      fetchProducts(page);
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchQuery, selectedCategory, selectedStyle, minPrice, maxPrice]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, searchQuery, selectedCategory, selectedStyle, minPrice, maxPrice]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -308,6 +323,7 @@ const Viewproduct = () => {
     setSelectedStyle("");
     setMinPrice("");
     setMaxPrice("");
+    setPage(1);
   };
 
   const handleSubmit = (id) => {
@@ -506,15 +522,7 @@ const Viewproduct = () => {
       });
   };
 
-  const filteredProducts = product.filter((item) =>
-    String(item.status || '').toLowerCase() !== 'deleted' && (
-      item.prdName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.style?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.material?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+
 
   return (
     <div className="page-container">
@@ -662,6 +670,49 @@ const Viewproduct = () => {
             ))
           )}
         </Row>
+
+        {/* Pagination Bar */}
+        {!loadingProducts && product.length > 0 && (
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 p-3 glass-card gap-3">
+            <div style={{ color: '#9ca3af', fontSize: '0.875rem' }}>
+              Showing <span style={{ color: '#ffffff', fontWeight: 600 }}>{((paginationInfo.page - 1) * paginationInfo.limit) + 1}</span> to{' '}
+              <span style={{ color: '#ffffff', fontWeight: 600 }}>{Math.min(paginationInfo.page * paginationInfo.limit, paginationInfo.total)}</span> of{' '}
+              <span style={{ color: '#a5b4fc', fontWeight: 700 }}>{paginationInfo.total}</span> products
+            </div>
+
+            <div className="d-flex align-items-center gap-2">
+              <Button
+                className="btn-glass-secondary py-1 px-3"
+                size="sm"
+                disabled={paginationInfo.page <= 1}
+                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+              >
+                ‹ Previous
+              </Button>
+
+              {Array.from({ length: paginationInfo.totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <Button
+                  key={pageNum}
+                  className={pageNum === paginationInfo.page ? "btn-glass-primary py-1 px-3" : "btn-glass-secondary py-1 px-3"}
+                  size="sm"
+                  style={{ minWidth: '36px' }}
+                  onClick={() => setPage(pageNum)}
+                >
+                  {pageNum}
+                </Button>
+              ))}
+
+              <Button
+                className="btn-glass-secondary py-1 px-3"
+                size="sm"
+                disabled={paginationInfo.page >= paginationInfo.totalPages}
+                onClick={() => setPage((prev) => Math.min(paginationInfo.totalPages, prev + 1))}
+              >
+                Next ›
+              </Button>
+            </div>
+          </div>
+        )}
       </Container>
 
       {/* Edit Product Modal */}
