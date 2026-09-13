@@ -47,7 +47,7 @@ const productSchema = new mongoose.Schema({
     enum: MATERIALS
   },
   status: { type: String, required: true, trim: true, default: "active" },
-});
+}, { timestamps: true });
 
 const productDB = mongoose.model("Product", productSchema);
 export default productDB;

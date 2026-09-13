@@ -49,7 +49,7 @@ export const getAllProducts = async (req, res) => {
   try {
     const result = await productDB.find({
       status: { $nin: ["deleted", "Deleted", "DELETED"], $not: /^deleted$/i }
-    });
+    }).sort({ createdAt: -1, _id: -1 });
     return res.status(200).json({
       success: true,
       error: false,
