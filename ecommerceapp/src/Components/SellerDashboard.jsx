@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../utils/api';
 import Header from './Header';
@@ -17,7 +15,6 @@ import './SellerDashboard.css';
 import './Style.css';
 
 const SellerDashboard = () => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('my-products');
 
   // Products state for My Products tab

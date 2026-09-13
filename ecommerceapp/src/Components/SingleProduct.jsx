@@ -539,41 +539,56 @@ const SingleProduct = () => {
                   </div>
                 </div>
 
-                {/* Role Specific Action Buttons */}
+                {/* Role & Ownership Specific Action Buttons */}
                 <div>
-                  {role === ROLES.COMPANY || role === ROLES.ADMIN ? (
-                    <div className="d-flex gap-3">
-                      <Button
-                        className="btn-glass-secondary w-50 py-3"
-                        onClick={() => setShowEdit(true)}
-                      >
-                        ✏️ Edit Product
-                      </Button>
-                      <Button
-                        className="btn-glass-danger w-50 py-3"
-                        onClick={handleDeleteProduct}
-                      >
-                        🗑️ Delete Product
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="d-grid gap-2">
-                      {product.status !== 'deleted' && product.stock !== 'Out of Stock' ? (
-                        <Button
-                          className="btn-glass-primary py-3"
-                          style={{ fontSize: '1.1rem', fontWeight: 700 }}
-                          disabled={addingToCart}
-                          onClick={handleAddToCart}
-                        >
-                          {addingToCart ? 'Adding to Bag...' : '🛍️ Add to Shopping Bag'}
-                        </Button>
-                      ) : (
-                        <Button className="btn-glass-secondary py-3" disabled style={{ opacity: 0.6 }}>
-                          Currently Out of Stock
-                        </Button>
-                      )}
-                    </div>
-                  )}
+                  {(() => {
+                    const userLoginId = localStorage.getItem("loginId");
+                    const prodOwnerId = product?.loginId?._id || product?.loginId;
+                    const isOwner = Boolean(
+                      userLoginId &&
+                      prodOwnerId &&
+                      String(prodOwnerId) === String(userLoginId)
+                    );
+                    const canManage = isOwner || role === ROLES.ADMIN;
+
+                    if (canManage) {
+                      return (
+                        <div className="d-flex gap-3">
+                          <Button
+                            className="btn-glass-secondary w-50 py-3"
+                            onClick={() => setShowEdit(true)}
+                          >
+                            ✏️ Edit Product
+                          </Button>
+                          <Button
+                            className="btn-glass-danger w-50 py-3"
+                            onClick={handleDeleteProduct}
+                          >
+                            🗑️ Delete Product
+                          </Button>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="d-grid gap-2">
+                        {product.status !== 'deleted' && product.stock !== 'Out of Stock' ? (
+                          <Button
+                            className="btn-glass-primary py-3"
+                            style={{ fontSize: '1.1rem', fontWeight: 700 }}
+                            disabled={addingToCart}
+                            onClick={handleAddToCart}
+                          >
+                            {addingToCart ? 'Adding to Bag...' : '🛍️ Add to Shopping Bag'}
+                          </Button>
+                        ) : (
+                          <Button className="btn-glass-secondary py-3" disabled style={{ opacity: 0.6 }}>
+                            Currently Out of Stock
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </Col>
