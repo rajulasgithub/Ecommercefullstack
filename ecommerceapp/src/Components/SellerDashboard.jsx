@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import api from '../utils/api';
 import Header from './Header';
 import Addproduct from './Addproduct';
+import Vieworders from './Vieworders';
 import { isNumeric, isEmpty, MATERIALS, STYLES } from '../utils/validation';
 import './SellerDashboard.css';
 import './Style.css';
@@ -287,8 +288,8 @@ const SellerDashboard = () => {
               </button>
 
               <button
-                className="seller-nav-item"
-                onClick={() => navigate('/vieworders')}
+                className={`seller-nav-item ${activeTab === 'manage-orders' ? 'active' : ''}`}
+                onClick={() => setActiveTab('manage-orders')}
               >
                 <span>🛒</span> Manage Orders
               </button>
@@ -509,6 +510,22 @@ const SellerDashboard = () => {
                 </button>
               </div>
               <Addproduct hideHeader={true} onSuccess={() => setActiveTab('my-products')} />
+            </div>
+          )}
+
+          {/* TAB 4: MANAGE ORDERS */}
+          {activeTab === 'manage-orders' && (
+            <div>
+              <div className="seller-page-header">
+                <div className="seller-header-title">
+                  <h2>Manage Orders</h2>
+                  <p>Track customer purchases and update order statuses</p>
+                </div>
+                <button className="btn-seller-edit" onClick={() => setActiveTab('my-products')}>
+                  ← Back to My Products
+                </button>
+              </div>
+              <Vieworders hideHeader={true} />
             </div>
           )}
         </main>
