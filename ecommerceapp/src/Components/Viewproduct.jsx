@@ -475,7 +475,7 @@ const Viewproduct = () => {
   };
 
   const filteredProducts = product.filter((item) =>
-    item.status !== 'deleted' && (
+    String(item.status || '').toLowerCase() !== 'deleted' && (
       item.prdName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.style?.toLowerCase().includes(searchQuery.toLowerCase()) ||

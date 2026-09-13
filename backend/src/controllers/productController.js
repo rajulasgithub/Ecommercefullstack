@@ -47,7 +47,9 @@ export const addProduct = async (req, res) => {
 // View Products (Public)
 export const getAllProducts = async (req, res) => {
   try {
-    const result = await productDB.find({ status: { $ne: "deleted" } });
+    const result = await productDB.find({
+      status: { $nin: ["deleted", "Deleted", "DELETED"], $not: /^deleted$/i }
+    });
     return res.status(200).json({
       success: true,
       error: false,
@@ -76,7 +78,10 @@ export const getProductById = async (req, res) => {
       });
     }
 
-    const result = await productDB.findOne({ _id: id, status: { $ne: "deleted" } });
+    const result = await productDB.findOne({
+      _id: id,
+      status: { $nin: ["deleted", "Deleted", "DELETED"], $not: /^deleted$/i }
+    });
     if (result) {
       return res.status(200).json({
         success: true,
@@ -281,10 +286,17 @@ export const deleteAllProducts = async (req, res) => {
           message: "Unauthorized",
         });
       }
-      const sellerProducts = await productDB.find({ loginId: userLoginId });
+      const filter = {
+        $or: [
+          { loginId: userLoginId },
+          { loginId: { $exists: false } },
+          { loginId: null }
+        ]
+      };
+      const sellerProducts = await productDB.find(filter);
       const productIds = sellerProducts.map((p) => p._id);
       await cartDB.updateMany({ prdId: { $in: productIds } }, { $set: cartData });
-      const result = await productDB.updateMany({ loginId: userLoginId }, { $set: productData });
+      const result = await productDB.updateMany(filter, { $set: productData });
       return res.status(200).json({
         success: true,
         error: false,

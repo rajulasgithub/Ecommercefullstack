@@ -26,6 +26,7 @@ export const STYLES = [
 ];
 
 const productSchema = new mongoose.Schema({
+  loginId: { type: mongoose.Schema.Types.ObjectId, ref: "login" },
   prdName: { type: String, required: true, trim: true },
   description: { type: String, required: true, trim: true, default: "", minlength: 10, maxlength: 1000 },
   category: { type: String, required: true, trim: true, enum: ["Men", "Women", "Kids", "Unisex"] },
@@ -45,7 +46,7 @@ const productSchema = new mongoose.Schema({
     trim: true,
     enum: MATERIALS
   },
-  status: { type: String, required: true, trim: true },
+  status: { type: String, required: true, trim: true, default: "active" },
 });
 
 const productDB = mongoose.model("Product", productSchema);

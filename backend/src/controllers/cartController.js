@@ -30,9 +30,16 @@ export const addToCart = async (req, res) => {
 // View Cart (User)
 export const getCart = async (req, res) => {
   try {
-    const result = await cartDB
+    const rawResult = await cartDB
       .find({ loginId: req.userData.loginId, status: 1 })
       .populate("prdId");
+
+    const result = rawResult.filter((item) => {
+      if (!item.prdId) return false;
+      const prodStatus = String(item.prdId.status || '').toLowerCase();
+      return prodStatus !== 'deleted';
+    });
+
     return res.status(200).json({
       success: true,
       error: false,
