@@ -96,13 +96,19 @@ const SingleProduct = () => {
 
   const validateEditForm = () => {
     const nameVal = updateData.prdName !== undefined ? updateData.prdName : product.prdName;
+    const catVal = updateData.category !== undefined ? updateData.category : product.category;
+    const descVal = updateData.description !== undefined ? updateData.description : product.description;
     const priceVal = updateData.prize !== undefined ? updateData.prize : product.prize;
+    const stockVal = updateData.stock !== undefined ? updateData.stock : product.stock;
     const sizeVal = updateData.size !== undefined ? updateData.size : product.size;
     const matVal = updateData.material !== undefined ? updateData.material : product.material;
 
     const errs = {};
     if (isEmpty(nameVal)) errs.prdName = "Product name is required";
+    if (isEmpty(catVal)) errs.category = "Category is required";
+    if (isEmpty(descVal)) errs.description = "Description is required";
     if (isEmpty(priceVal) || !isNumeric(priceVal)) errs.prize = "Price must be a valid number";
+    if (isEmpty(stockVal) || !isNumeric(stockVal)) errs.stock = "Stock must be a valid number";
     if (isEmpty(sizeVal)) errs.size = "Product size is required";
     if (isEmpty(matVal)) errs.material = "Material is required";
 
@@ -114,11 +120,14 @@ const SingleProduct = () => {
     if (!validateEditForm()) return;
 
     const formdata = new FormData();
-    formdata.append('prdName', updateData.prdName || product.prdName);
+    formdata.append('prdName', updateData.prdName !== undefined ? updateData.prdName : product.prdName);
+    formdata.append('category', updateData.category !== undefined ? updateData.category : (product.category || 'General'));
+    formdata.append('description', updateData.description !== undefined ? updateData.description : (product.description || ''));
     if (updateData.image) formdata.append('image', updateData.image);
-    formdata.append('prize', updateData.prize || product.prize);
-    formdata.append('size', updateData.size || product.size);
-    formdata.append('material', updateData.material || product.material);
+    formdata.append('prize', updateData.prize !== undefined ? updateData.prize : product.prize);
+    formdata.append('stock', updateData.stock !== undefined ? updateData.stock : (product.stock || 0));
+    formdata.append('size', updateData.size !== undefined ? updateData.size : product.size);
+    formdata.append('material', updateData.material !== undefined ? updateData.material : product.material);
 
     try {
       await api.put(`/product/updateproduct/${id}`, formdata);
@@ -265,7 +274,20 @@ const SingleProduct = () => {
             <Col xs={12} lg={6}>
               <div className="d-flex flex-column justify-content-between h-100">
                 <div>
-                  <span className="status-pill ordered mb-2" style={{ display: 'inline-block' }}>Premium Fashion</span>
+                  <div className="d-flex align-items-center gap-2 mb-2">
+                    <span className="status-pill ordered" style={{ display: 'inline-block' }}>
+                      {product.category || "General"}
+                    </span>
+                    {product.stock > 0 ? (
+                      <span className="status-pill delivered" style={{ fontSize: '0.75rem' }}>
+                        In Stock ({product.stock} left)
+                      </span>
+                    ) : (
+                      <span className="status-pill out-of-stock" style={{ fontSize: '0.75rem' }}>
+                        Out of Stock
+                      </span>
+                    )}
+                  </div>
                   
                   <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.75rem', lineHeight: 1.2 }}>
                     {product.prdName}
@@ -289,6 +311,13 @@ const SingleProduct = () => {
                   {/* Attributes Grid */}
                   <div className="d-flex flex-column gap-3 mb-4">
                     <div className="d-flex align-items-center">
+                      <span style={{ width: '130px', color: '#9ca3af', fontWeight: 500 }}>Category:</span>
+                      <span style={{ color: '#ffffff', fontWeight: 600 }}>
+                        {product.category || "General"}
+                      </span>
+                    </div>
+
+                    <div className="d-flex align-items-center">
                       <span style={{ width: '130px', color: '#9ca3af', fontWeight: 500 }}>Available Size:</span>
                       <span style={{
                         background: 'rgba(99, 102, 241, 0.2)',
@@ -300,6 +329,13 @@ const SingleProduct = () => {
                         fontSize: '0.95rem'
                       }}>
                         {product.size}
+                      </span>
+                    </div>
+
+                    <div className="d-flex align-items-center">
+                      <span style={{ width: '130px', color: '#9ca3af', fontWeight: 500 }}>Stock Level:</span>
+                      <span style={{ color: product.stock > 0 ? '#34d399' : '#f87171', fontWeight: 600 }}>
+                        {product.stock > 0 ? `${product.stock} items available` : 'Out of stock'}
                       </span>
                     </div>
 
@@ -326,10 +362,10 @@ const SingleProduct = () => {
                     marginBottom: '2rem'
                   }}>
                     <h5 style={{ color: '#ffffff', fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.4rem' }}>
-                      Product Highlights & Care Instructions
+                      Product Description
                     </h5>
                     <p style={{ color: '#cbd5e1', fontSize: '0.875rem', margin: 0, lineHeight: 1.6 }}>
-                      Handcrafted with premium {product.material} fabric tailored for elegant fit and lasting durability. Dry clean or gentle hand wash recommended for fabric longevity.
+                      {product.description || `Handcrafted with premium ${product.material} fabric tailored for elegant fit and lasting durability.`}
                     </p>
                   </div>
                 </div>
@@ -353,7 +389,7 @@ const SingleProduct = () => {
                     </div>
                   ) : (
                     <div className="d-grid gap-2">
-                      {product.status !== 6 ? (
+                      {product.status !== 6 && product.stock > 0 ? (
                         <Button
                           className="btn-glass-primary py-3"
                           style={{ fontSize: '1.1rem', fontWeight: 700 }}
@@ -394,6 +430,27 @@ const SingleProduct = () => {
               />
               {editErrors.prdName && <span className="glass-error-badge">{editErrors.prdName}</span>}
             </Form.Group>
+            
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Category</Form.Label>
+              <Form.Select
+                name="category"
+                defaultValue={product.category || 'General'}
+                className="glass-input"
+                onChange={handleEditChange}
+              >
+                <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
+                <option value="Western Wear" style={{ color: '#000' }}>Western Wear</option>
+                <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
+                <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
+                <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
+                <option value="Kids Wear" style={{ color: '#000' }}>Kids Wear</option>
+                <option value="Accessories" style={{ color: '#000' }}>Accessories</option>
+                <option value="Footwear" style={{ color: '#000' }}>Footwear</option>
+              </Form.Select>
+              {editErrors.category && <span className="glass-error-badge">{editErrors.category}</span>}
+            </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Product Image</Form.Label>
               <Form.Control
@@ -403,38 +460,76 @@ const SingleProduct = () => {
                 onChange={handleFileChange}
               />
             </Form.Group>
+
+            <Row className="g-2 mb-3">
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Price (₹)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="prize"
+                    defaultValue={product.prize}
+                    className="glass-input"
+                    onChange={handleEditChange}
+                  />
+                  {editErrors.prize && <span className="glass-error-badge">{editErrors.prize}</span>}
+                </Form.Group>
+              </Col>
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Stock Quantity</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="stock"
+                    defaultValue={product.stock !== undefined ? product.stock : 0}
+                    className="glass-input"
+                    onChange={handleEditChange}
+                  />
+                  {editErrors.stock && <span className="glass-error-badge">{editErrors.stock}</span>}
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Row className="g-2 mb-3">
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Size</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="size"
+                    defaultValue={product.size}
+                    className="glass-input"
+                    onChange={handleEditChange}
+                  />
+                  {editErrors.size && <span className="glass-error-badge">{editErrors.size}</span>}
+                </Form.Group>
+              </Col>
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Material</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="material"
+                    defaultValue={product.material}
+                    className="glass-input"
+                    onChange={handleEditChange}
+                  />
+                  {editErrors.material && <span className="glass-error-badge">{editErrors.material}</span>}
+                </Form.Group>
+              </Col>
+            </Row>
+
             <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Price (₹)</Form.Label>
+              <Form.Label className="glass-label">Description</Form.Label>
               <Form.Control
-                type="number"
-                name="prize"
-                defaultValue={product.prize}
+                as="textarea"
+                rows={3}
+                name="description"
+                defaultValue={product.description || ''}
                 className="glass-input"
                 onChange={handleEditChange}
               />
-              {editErrors.prize && <span className="glass-error-badge">{editErrors.prize}</span>}
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Size</Form.Label>
-              <Form.Control
-                type="text"
-                name="size"
-                defaultValue={product.size}
-                className="glass-input"
-                onChange={handleEditChange}
-              />
-              {editErrors.size && <span className="glass-error-badge">{editErrors.size}</span>}
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Material</Form.Label>
-              <Form.Control
-                type="text"
-                name="material"
-                defaultValue={product.material}
-                className="glass-input"
-                onChange={handleEditChange}
-              />
-              {editErrors.material && <span className="glass-error-badge">{editErrors.material}</span>}
+              {editErrors.description && <span className="glass-error-badge">{editErrors.description}</span>}
             </Form.Group>
           </Form>
         </Modal.Body>

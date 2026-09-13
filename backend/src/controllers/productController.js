@@ -6,9 +6,12 @@ export const addProduct = async (req, res) => {
   try {
     const data = {
       prdName: req.body.prdName,
+      description: req.body.description || "",
+      category: req.body.category || "General",
       image: req.files ? req.files.map((file) => file.path) : [],
       prize: req.body.prize,
       size: req.body.size,
+      stock: req.body.stock !== undefined ? Number(req.body.stock) : 0,
       material: req.body.material,
       status: 0,
     };
@@ -129,9 +132,12 @@ export const updateProduct = async (req, res) => {
 
     const data = {
       prdName: req.body.prdName || oldData.prdName,
+      description: req.body.description !== undefined ? req.body.description : oldData.description,
+      category: req.body.category || oldData.category,
       image: req.files && req.files.length > 0 ? req.files.map((file) => file.path) : oldData.image,
       prize: req.body.prize || oldData.prize,
       size: req.body.size || oldData.size,
+      stock: req.body.stock !== undefined ? Number(req.body.stock) : oldData.stock,
       material: req.body.material || oldData.material,
     };
 

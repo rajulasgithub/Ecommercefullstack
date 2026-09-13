@@ -32,16 +32,27 @@ const Addproduct = () => {
     if (isEmpty(addproduct.prdName)) {
       errormessage.prdName = "Product name is required";
     }
+    if (isEmpty(addproduct.category)) {
+      errormessage.category = "Category is required";
+    }
     if (isEmpty(addproduct.prize)) {
       errormessage.prize = "Price must be a valid number";
     } else if (!isNumeric(addproduct.prize)) {
       errormessage.prize = "Price must be a valid number";
+    }
+    if (isEmpty(addproduct.stock)) {
+      errormessage.stock = "Stock quantity must be a valid number";
+    } else if (!isNumeric(addproduct.stock)) {
+      errormessage.stock = "Stock quantity must be a valid number";
     }
     if (isEmpty(addproduct.size)) {
       errormessage.size = "Product size is required";
     }
     if (isEmpty(addproduct.material)) {
       errormessage.material = "Material is required";
+    }
+    if (isEmpty(addproduct.description)) {
+      errormessage.description = "Product description is required";
     }
 
     setError(errormessage);
@@ -54,8 +65,11 @@ const Addproduct = () => {
 
     const formdata = new FormData();
     formdata.append('prdName', addproduct.prdName || '');
+    formdata.append('category', addproduct.category || 'General');
+    formdata.append('description', addproduct.description || '');
     formdata.append('image', addproduct.image || '');
     formdata.append('prize', addproduct.prize || '');
+    formdata.append('stock', addproduct.stock !== undefined ? addproduct.stock : 0);
     formdata.append('size', addproduct.size || '');
     formdata.append('material', addproduct.material || '');
 
@@ -73,12 +87,12 @@ const Addproduct = () => {
   return (
     <div className="page-container">
       <Header />
-      <Container className="py-5" style={{ maxWidth: "650px" }}>
+      <Container className="py-5" style={{ maxWidth: "680px" }}>
         <div className="glass-card">
           <div className="text-center mb-4">
             <span className="status-pill processing mb-2">Inventory Management</span>
             <h2 className="page-title" style={{ fontSize: "2rem" }}>Add New Product</h2>
-            <p className="page-subtitle" style={{ fontSize: "0.9rem" }}>Upload apparel listings with details and image</p>
+            <p className="page-subtitle" style={{ fontSize: "0.9rem" }}>Upload apparel listings with complete details and image</p>
           </div>
 
           {serverError && (
@@ -98,17 +112,44 @@ const Addproduct = () => {
               />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Product Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="e.g. Silk Designer Anarkali Suit"
-                name="prdName"
-                className="glass-input"
-                onChange={handleChange}
-              />
-              {error.prdName && <span className="glass-error-badge">{error.prdName}</span>}
-            </Form.Group>
+            <Row className="g-3 mb-3">
+              <Col xs={12} sm={7}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Product Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="e.g. Silk Designer Anarkali Suit"
+                    name="prdName"
+                    className="glass-input"
+                    onChange={handleChange}
+                  />
+                  {error.prdName && <span className="glass-error-badge">{error.prdName}</span>}
+                </Form.Group>
+              </Col>
+
+              <Col xs={12} sm={5}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Category</Form.Label>
+                  <Form.Select
+                    name="category"
+                    className="glass-input"
+                    onChange={handleChange}
+                    value={addproduct.category || ''}
+                  >
+                    <option value="" style={{ color: '#000' }}>Select Category</option>
+                    <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
+                    <option value="Western Wear" style={{ color: '#000' }}>Western Wear</option>
+                    <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
+                    <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
+                    <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
+                    <option value="Kids Wear" style={{ color: '#000' }}>Kids Wear</option>
+                    <option value="Accessories" style={{ color: '#000' }}>Accessories</option>
+                    <option value="Footwear" style={{ color: '#000' }}>Footwear</option>
+                  </Form.Select>
+                  {error.category && <span className="glass-error-badge">{error.category}</span>}
+                </Form.Group>
+              </Col>
+            </Row>
 
             <Row className="g-3 mb-3">
               <Col xs={12} sm={6}>
@@ -127,10 +168,26 @@ const Addproduct = () => {
 
               <Col xs={12} sm={6}>
                 <Form.Group>
-                  <Form.Label className="glass-label">Size</Form.Label>
+                  <Form.Label className="glass-label">Stock Quantity</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="e.g. 25"
+                    name="stock"
+                    className="glass-input"
+                    onChange={handleChange}
+                  />
+                  {error.stock && <span className="glass-error-badge">{error.stock}</span>}
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Row className="g-3 mb-3">
+              <Col xs={12} sm={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Available Sizes</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="e.g. M, L, XL"
+                    placeholder="e.g. S, M, L, XL"
                     name="size"
                     className="glass-input"
                     onChange={handleChange}
@@ -138,18 +195,33 @@ const Addproduct = () => {
                   {error.size && <span className="glass-error-badge">{error.size}</span>}
                 </Form.Group>
               </Col>
+
+              <Col xs={12} sm={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Material & Fabric Info</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="e.g. Pure Georgette with Embroidery"
+                    name="material"
+                    className="glass-input"
+                    onChange={handleChange}
+                  />
+                  {error.material && <span className="glass-error-badge">{error.material}</span>}
+                </Form.Group>
+              </Col>
             </Row>
 
             <Form.Group className="mb-4">
-              <Form.Label className="glass-label">Material & Fabric Info</Form.Label>
+              <Form.Label className="glass-label">Product Description</Form.Label>
               <Form.Control
-                type="text"
-                placeholder="e.g. Pure Georgette with Embroidery"
-                name="material"
+                as="textarea"
+                rows={3}
+                placeholder="Enter detailed product description, styling tips, or garment care details..."
+                name="description"
                 className="glass-input"
                 onChange={handleChange}
               />
-              {error.material && <span className="glass-error-badge">{error.material}</span>}
+              {error.description && <span className="glass-error-badge">{error.description}</span>}
             </Form.Group>
 
             <div className="d-flex gap-3 justify-content-end">

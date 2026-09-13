@@ -90,10 +90,21 @@ const Viewproduct = () => {
     if (updateprdt.prdName !== undefined && isEmpty(updateprdt.prdName)) {
       errs.prdName = "Product name is required";
     }
+    if (updateprdt.category !== undefined && isEmpty(updateprdt.category)) {
+      errs.category = "Category is required";
+    }
+    if (updateprdt.description !== undefined && isEmpty(updateprdt.description)) {
+      errs.description = "Description is required";
+    }
     if (updateprdt.prize !== undefined && isEmpty(updateprdt.prize)) {
       errs.prize = "Price must be a valid number";
     } else if (updateprdt.prize !== undefined && !isNumeric(updateprdt.prize)) {
       errs.prize = "Price must be a valid number";
+    }
+    if (updateprdt.stock !== undefined && isEmpty(updateprdt.stock)) {
+      errs.stock = "Stock must be a valid number";
+    } else if (updateprdt.stock !== undefined && !isNumeric(updateprdt.stock)) {
+      errs.stock = "Stock must be a valid number";
     }
     if (updateprdt.size !== undefined && isEmpty(updateprdt.size)) {
       errs.size = "Product size is required";
@@ -111,8 +122,11 @@ const Viewproduct = () => {
 
     const formdata = new FormData();
     formdata.append('prdName', updateprdt.prdName || '');
+    formdata.append('category', updateprdt.category || 'General');
+    formdata.append('description', updateprdt.description || '');
     if (updateprdt.image) formdata.append('image', updateprdt.image);
     formdata.append('prize', updateprdt.prize || '');
+    formdata.append('stock', updateprdt.stock !== undefined ? updateprdt.stock : 0);
     formdata.append('size', updateprdt.size || '');
     formdata.append('material', updateprdt.material || '');
 
@@ -139,7 +153,10 @@ const Viewproduct = () => {
     setActiveItemId(id);
     setUpdateprdt({
       prdName: currentItem.prdName || '',
+      category: currentItem.category || 'General',
+      description: currentItem.description || '',
       prize: currentItem.prize || '',
+      stock: currentItem.stock !== undefined ? currentItem.stock : 0,
       size: currentItem.size || '',
       material: currentItem.material || ''
     });
@@ -160,7 +177,9 @@ const Viewproduct = () => {
 
   const filteredProducts = product.filter((item) =>
     item.prdName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.material?.toLowerCase().includes(searchQuery.toLowerCase())
+    item.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.material?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -242,6 +261,12 @@ const Viewproduct = () => {
                   </div>
 
                   {/* Details */}
+                  <div className="mb-1">
+                    <span className="status-pill ordered" style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}>
+                      {item.category || "General"}
+                    </span>
+                  </div>
+
                   <h3
                     onClick={() => navigate(`/product/${item._id}`)}
                     style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.4rem", cursor: "pointer" }}
@@ -260,8 +285,11 @@ const Viewproduct = () => {
                     </span>
                   </div>
 
-                  <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "1rem" }}>
+                  <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "0.4rem" }}>
                     Material: {item.material}
+                  </p>
+                  <p style={{ fontSize: "0.8rem", color: item.stock > 0 ? "#34d399" : "#f87171", marginBottom: "1rem" }}>
+                    Stock: {item.stock !== undefined ? (item.stock > 0 ? `${item.stock} left` : 'Out of stock') : 'Available'}
                   </p>
                 </div>
 
@@ -297,7 +325,7 @@ const Viewproduct = () => {
                       <Button className="btn-glass-secondary w-50" size="sm" onClick={() => navigate(`/product/${item._id}`)}>
                         Details
                       </Button>
-                      {item.status !== 6 ? (
+                      {item.status !== 6 && item.stock > 0 ? (
                         <Button className="btn-glass-primary w-50" size="sm" onClick={() => handleSubmit(item._id)}>
                           Add to Cart
                         </Button>
@@ -334,6 +362,27 @@ const Viewproduct = () => {
               />
               {modalError.prdName && <span className="glass-error-badge">{modalError.prdName}</span>}
             </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label className="glass-label">Category</Form.Label>
+              <Form.Select
+                name="category"
+                className="glass-input"
+                value={updateprdt.category || ''}
+                onChange={handleChange}
+              >
+                <option value="Ethnic Wear" style={{ color: '#000' }}>Ethnic Wear</option>
+                <option value="Western Wear" style={{ color: '#000' }}>Western Wear</option>
+                <option value="Casual Wear" style={{ color: '#000' }}>Casual Wear</option>
+                <option value="Formal Wear" style={{ color: '#000' }}>Formal Wear</option>
+                <option value="Party Wear" style={{ color: '#000' }}>Party Wear</option>
+                <option value="Kids Wear" style={{ color: '#000' }}>Kids Wear</option>
+                <option value="Accessories" style={{ color: '#000' }}>Accessories</option>
+                <option value="Footwear" style={{ color: '#000' }}>Footwear</option>
+              </Form.Select>
+              {modalError.category && <span className="glass-error-badge">{modalError.category}</span>}
+            </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label className="glass-label">Product Image</Form.Label>
               <Form.Control
@@ -343,41 +392,81 @@ const Viewproduct = () => {
                 onChange={fileChange}
               />
             </Form.Group>
+            
+            <Row className="g-2 mb-3">
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Price (₹)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="Price"
+                    name="prize"
+                    className="glass-input"
+                    value={updateprdt.prize || ''}
+                    onChange={handleChange}
+                  />
+                  {modalError.prize && <span className="glass-error-badge">{modalError.prize}</span>}
+                </Form.Group>
+              </Col>
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Stock Quantity</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="Stock"
+                    name="stock"
+                    className="glass-input"
+                    value={updateprdt.stock !== undefined ? updateprdt.stock : ''}
+                    onChange={handleChange}
+                  />
+                  {modalError.stock && <span className="glass-error-badge">{modalError.stock}</span>}
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Row className="g-2 mb-3">
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Size</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Size"
+                    name="size"
+                    className="glass-input"
+                    value={updateprdt.size || ''}
+                    onChange={handleChange}
+                  />
+                  {modalError.size && <span className="glass-error-badge">{modalError.size}</span>}
+                </Form.Group>
+              </Col>
+              <Col xs={6}>
+                <Form.Group>
+                  <Form.Label className="glass-label">Material</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Material"
+                    name="material"
+                    className="glass-input"
+                    value={updateprdt.material || ''}
+                    onChange={handleChange}
+                  />
+                  {modalError.material && <span className="glass-error-badge">{modalError.material}</span>}
+                </Form.Group>
+              </Col>
+            </Row>
+
             <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Price (₹)</Form.Label>
+              <Form.Label className="glass-label">Description</Form.Label>
               <Form.Control
-                type="number"
-                placeholder="Price"
-                name="prize"
+                as="textarea"
+                rows={3}
+                placeholder="Product description"
+                name="description"
                 className="glass-input"
-                value={updateprdt.prize || ''}
+                value={updateprdt.description || ''}
                 onChange={handleChange}
               />
-              {modalError.prize && <span className="glass-error-badge">{modalError.prize}</span>}
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Size</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Size"
-                name="size"
-                className="glass-input"
-                value={updateprdt.size || ''}
-                onChange={handleChange}
-              />
-              {modalError.size && <span className="glass-error-badge">{modalError.size}</span>}
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Material</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Material"
-                name="material"
-                className="glass-input"
-                value={updateprdt.material || ''}
-                onChange={handleChange}
-              />
-              {modalError.material && <span className="glass-error-badge">{modalError.material}</span>}
+              {modalError.description && <span className="glass-error-badge">{modalError.description}</span>}
             </Form.Group>
           </Form>
         </Modal.Body>
