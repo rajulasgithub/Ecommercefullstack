@@ -1,21 +1,21 @@
 /* Ultra-modern Frosted Glass Navbar Header */
 .header-navbar {
-  background: rgba(11, 15, 25, 0.88) !important;
+  background: var(--app-navbar-bg) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--app-navbar-border);
   padding: 0.85rem 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Brand Identity */
 .header-brand {
   text-decoration: none;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--app-font);
 }
 
 .header-logo-icon {
@@ -29,7 +29,7 @@
 .header-brand-text {
   font-weight: 800;
   font-size: 1.5rem;
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #a5b4fc 100%);
+  background: linear-gradient(135deg, var(--app-heading-gradient-from) 0%, var(--app-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.03em;
@@ -42,10 +42,10 @@
 
 /* Navigation Links */
 .header-nav-link {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--app-font);
   font-size: 0.925rem;
   font-weight: 500;
-  color: #94a3b8 !important;
+  color: var(--app-text-muted) !important;
   padding: 0.55rem 1rem !important;
   border-radius: 10px;
   position: relative;
@@ -55,15 +55,40 @@
 }
 
 .header-nav-link:hover {
-  color: #ffffff !important;
-  background: rgba(255, 255, 255, 0.06);
+  color: var(--app-text-main) !important;
+  background: var(--app-card-bg);
 }
 
 .header-nav-link.active {
-  color: #ffffff !important;
+  color: var(--app-text-main) !important;
   font-weight: 600;
   background: rgba(99, 102, 241, 0.15);
   border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+/* Theme Toggle Button */
+.btn-theme-toggle {
+  background: var(--app-card-bg);
+  border: 1px solid var(--app-card-border);
+  color: var(--app-text-main);
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-theme-toggle:hover {
+  background: var(--app-primary);
+  color: #ffffff;
+  border-color: var(--app-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .header-seller-link {

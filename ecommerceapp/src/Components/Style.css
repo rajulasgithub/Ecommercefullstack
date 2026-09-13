@@ -1,8 +1,10 @@
 /* Global Design System & Glassmorphism Utilities */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-:root {
+:root, [data-theme="dark"] {
   --app-bg: #0b0f19;
+  --app-gradient-1: rgba(99, 102, 241, 0.15);
+  --app-gradient-2: rgba(236, 72, 153, 0.08);
   --app-card-bg: rgba(255, 255, 255, 0.05);
   --app-card-border: rgba(255, 255, 255, 0.1);
   --app-card-hover-border: rgba(99, 102, 241, 0.5);
@@ -15,6 +17,43 @@
   --app-info: #3b82f6;
   --app-text-main: #f9fafb;
   --app-text-muted: #9ca3af;
+  --app-input-bg: rgba(255, 255, 255, 0.06);
+  --app-input-border: rgba(255, 255, 255, 0.15);
+  --app-input-text: #ffffff;
+  --app-modal-bg: #0f172a;
+  --app-modal-border: rgba(255, 255, 255, 0.15);
+  --app-navbar-bg: rgba(11, 15, 25, 0.88);
+  --app-navbar-border: rgba(255, 255, 255, 0.1);
+  --app-heading-gradient-from: #ffffff;
+  --app-heading-gradient-to: #cbd5e1;
+  --app-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+[data-theme="light"] {
+  --app-bg: #f8fafc;
+  --app-gradient-1: rgba(99, 102, 241, 0.08);
+  --app-gradient-2: rgba(236, 72, 153, 0.05);
+  --app-card-bg: #ffffff;
+  --app-card-border: rgba(0, 0, 0, 0.08);
+  --app-card-hover-border: rgba(99, 102, 241, 0.5);
+  --app-primary: #4f46e5;
+  --app-primary-hover: #4338ca;
+  --app-secondary: #db2777;
+  --app-success: #059669;
+  --app-warning: #d97706;
+  --app-danger: #dc2626;
+  --app-info: #2563eb;
+  --app-text-main: #0f172a;
+  --app-text-muted: #64748b;
+  --app-input-bg: #f1f5f9;
+  --app-input-border: #cbd5e1;
+  --app-input-text: #0f172a;
+  --app-modal-bg: #ffffff;
+  --app-modal-border: #e2e8f0;
+  --app-navbar-bg: rgba(255, 255, 255, 0.92);
+  --app-navbar-border: rgba(0, 0, 0, 0.08);
+  --app-heading-gradient-from: #0f172a;
+  --app-heading-gradient-to: #334155;
   --app-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -25,15 +64,17 @@ body {
   color: var(--app-text-main);
   font-family: var(--app-font);
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* --- Page Wrappers --- */
 .page-container {
   min-height: 100vh;
-  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 60%),
-              radial-gradient(circle at 100% 50%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+  background: radial-gradient(circle at 50% 0%, var(--app-gradient-1) 0%, transparent 60%),
+              radial-gradient(circle at 100% 50%, var(--app-gradient-2) 0%, transparent 50%),
               var(--app-bg);
   padding-bottom: 5rem;
+  transition: background 0.3s ease;
 }
 
 .auth-page-container {
@@ -42,9 +83,10 @@ body {
   align-items: center;
   justify-content: center;
   padding: 3rem 1rem;
-  background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
-              radial-gradient(circle at 20% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
+  background: radial-gradient(circle at 50% 20%, var(--app-gradient-1) 0%, transparent 50%),
+              radial-gradient(circle at 20% 80%, var(--app-gradient-2) 0%, transparent 40%),
               var(--app-bg);
+  transition: background 0.3s ease;
 }
 
 /* --- Glassmorphic Card Container --- */
@@ -55,19 +97,20 @@ body {
   border: 1px solid var(--app-card-border);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--app-text-main);
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--app-card-hover-border);
 }
 
 /* --- Form Controls --- */
 .glass-input, .form-control.glass-input, .form-select.glass-input {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  color: #ffffff !important;
+  background: var(--app-input-bg) !important;
+  border: 1px solid var(--app-input-border) !important;
+  color: var(--app-input-text) !important;
   border-radius: 12px !important;
   padding: 0.75rem 1rem !important;
   font-size: 0.95rem !important;
@@ -76,19 +119,19 @@ body {
 }
 
 .glass-input::placeholder {
-  color: #9ca3af !important;
+  color: var(--app-text-muted) !important;
   opacity: 0.8;
 }
 
 .glass-input:focus {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: var(--app-input-bg) !important;
   border-color: var(--app-primary) !important;
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25) !important;
   outline: none !important;
 }
 
 .glass-label {
-  color: #e2e8f0;
+  color: var(--app-text-main);
   font-weight: 600;
   font-size: 0.875rem;
   margin-bottom: 0.4rem;
@@ -268,7 +311,7 @@ body {
 .page-title {
   font-size: clamp(1.75rem, 3.5vw, 2.75rem);
   font-weight: 800;
-  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  background: linear-gradient(180deg, var(--app-heading-gradient-from) 0%, var(--app-heading-gradient-to) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
@@ -281,19 +324,19 @@ body {
 
 /* --- Modal Overrides --- */
 .modal-content.glass-modal {
-  background: #0f172a !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: var(--app-modal-bg) !important;
+  border: 1px solid var(--app-modal-border) !important;
   border-radius: 20px !important;
-  color: #ffffff !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+  color: var(--app-text-main) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3) !important;
 }
 
 .modal-header.glass-modal-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-bottom: 1px solid var(--app-card-border) !important;
 }
 
 .modal-footer.glass-modal-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-top: 1px solid var(--app-card-border) !important;
 }
 
 .btn-close-white {

@@ -2,18 +2,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --home-bg: #0b0f19;
-  --home-card-bg: rgba(255, 255, 255, 0.06);
-  --home-card-border: rgba(255, 255, 255, 0.12);
-  --home-card-hover-border: rgba(99, 102, 241, 0.5);
-  --home-primary: #6366f1;
-  --home-primary-hover: #4f46e5;
-  --home-accent: #ec4899;
+  --home-bg: var(--app-bg);
+  --home-card-bg: var(--app-card-bg);
+  --home-card-border: var(--app-card-border);
+  --home-card-hover-border: var(--app-card-hover-border);
+  --home-primary: var(--app-primary);
+  --home-primary-hover: var(--app-primary-hover);
+  --home-accent: var(--app-secondary);
   --home-gold: #f59e0b;
-  --home-text-main: #f9fafb;
-  --home-text-muted: #9ca3af;
-  --home-glass: rgba(15, 23, 42, 0.65);
-  --home-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --home-text-main: var(--app-text-main);
+  --home-text-muted: var(--app-text-muted);
+  --home-glass: var(--app-card-bg);
+  --home-font: var(--app-font);
 }
 
 .home-container {
@@ -22,6 +22,7 @@
   color: var(--home-text-main);
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* --- Hero Section --- */
@@ -155,7 +156,7 @@
 .section-title {
   font-size: clamp(1.75rem, 3vw, 2.5rem);
   font-weight: 700;
-  color: #ffffff;
+  color: var(--home-text-main);
   margin-bottom: 0.75rem;
 }
 
@@ -279,7 +280,7 @@
 .feature-title {
   font-size: 1rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--home-text-main);
   margin-bottom: 0.2rem;
 }
 
@@ -339,7 +340,7 @@
 }
 
 .quote-text {
-  color: #e2e8f0;
+  color: var(--home-text-main);
   font-size: 0.95rem;
   line-height: 1.6;
   font-style: italic;
@@ -347,16 +348,17 @@
 
 /* --- Modern Footer --- */
 .footer-section {
-  background: #070913;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--app-navbar-bg);
+  border-top: 1px solid var(--home-card-border);
   padding: 4rem 0 2rem;
   font-size: 0.9rem;
+  transition: background 0.3s ease;
 }
 
 .footer-brand {
   font-size: 1.5rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  background: linear-gradient(135deg, var(--home-text-main) 0%, var(--home-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 1rem;
@@ -371,7 +373,7 @@
 }
 
 .footer-heading {
-  color: #ffffff;
+  color: var(--home-text-main);
   font-weight: 700;
   font-size: 1rem;
   margin-bottom: 1.25rem;

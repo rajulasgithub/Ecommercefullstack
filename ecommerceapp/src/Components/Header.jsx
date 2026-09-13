@@ -12,10 +12,21 @@ const Header = () => {
   const [role, setRole] = useState(localStorage.getItem("role"));
   const itemCount = localStorage.getItem("itemcount") || 0;
 
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   useEffect(() => {
     const data = localStorage.getItem("role");
     setRole(data || null);
   }, [location]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+  };
 
   const logout = () => {
     localStorage.clear();
@@ -147,6 +158,16 @@ const Header = () => {
                 </Nav.Link>
               </>
             )}
+
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              className="btn-theme-toggle ms-lg-2 my-2 my-lg-0"
+              onClick={toggleTheme}
+              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            >
+              {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+            </button>
           </Nav>
         </Navbar.Collapse>
       </Container>
