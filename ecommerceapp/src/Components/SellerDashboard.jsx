@@ -155,10 +155,12 @@ const SellerDashboard = () => {
       errs.prize = 'Price must be a positive number greater than 0';
     }
     if (isEmpty(editFormData.stock)) errs.stock = 'Stock status is required';
-    if (isEmpty(editFormData.size)) errs.size = 'At least one size must be selected';
+    if (isEmpty(editFormData.size) || (editFormData.selectedSizes && editFormData.selectedSizes.length === 0)) {
+      errs.size = 'At least one size must be selected';
+    }
     if (isEmpty(editFormData.material)) errs.material = 'Material is required';
     if (isEmpty(editFormData.description)) {
-      errs.description = 'Description is required';
+      errs.description = 'Product description is required';
     } else if (editFormData.description.trim().length < 10 || editFormData.description.trim().length > 1000) {
       errs.description = 'Description must be between 10 and 1000 characters';
     }
