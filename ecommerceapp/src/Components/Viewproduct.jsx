@@ -322,6 +322,17 @@ const Viewproduct = () => {
     setModalError({ ...modalError, [event.target.name]: '' });
   };
 
+  const handleModalSizeToggle = (sz) => {
+    const current = updateprdt.selectedSizes || [];
+    const updated = current.includes(sz) ? current.filter(s => s !== sz) : [...current, sz];
+    setUpdateprdt({
+      ...updateprdt,
+      selectedSizes: updated,
+      size: updated.join(', ')
+    });
+    setModalError({ ...modalError, size: '' });
+  };
+
   const fileChange = (event) => {
     const files = Array.from(event.target.files);
     setUpdateprdt({ ...updateprdt, imageFiles: files, image: files[0] });
@@ -350,7 +361,7 @@ const Viewproduct = () => {
       errs.stock = "Stock status is required";
     }
     if (updateprdt.size !== undefined && isEmpty(updateprdt.size)) {
-      errs.size = "Product size is required";
+      errs.size = "At least one size must be selected";
     }
     if (updateprdt.material !== undefined && isEmpty(updateprdt.material)) {
       errs.material = "Material is required";
@@ -404,6 +415,7 @@ const Viewproduct = () => {
 
   const handleShow = (id) => {
     const currentItem = product.find(p => p._id === id) || {};
+    const initialSizes = currentItem.size ? currentItem.size.split(',').map(s => s.trim()).filter(Boolean) : [];
     setActiveItemId(id);
     setUpdateprdt({
       prdName: currentItem.prdName || '',
@@ -413,6 +425,7 @@ const Viewproduct = () => {
       prize: currentItem.prize || '',
       stock: currentItem.stock !== undefined ? currentItem.stock : 'In Stock',
       size: currentItem.size || '',
+      selectedSizes: initialSizes,
       material: currentItem.material || ''
     });
     setModalError({});
@@ -615,23 +628,39 @@ const Viewproduct = () => {
             </Row>
 
             <Row className="g-2 mb-3">
-              <Col xs={6}>
+              <Col xs={12}>
                 <Form.Group>
-                  <Form.Label className="glass-label">Size</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Size"
-                    name="size"
-                    className="glass-input"
-                    value={updateprdt.size || ''}
-                    onChange={handleChange}
-                  />
-                  {modalError.size && <span className="glass-error-badge">{modalError.size}</span>}
+                  <Form.Label className="glass-label">Available Sizes (Select multiple)</Form.Label>
+                  <div className="d-flex flex-wrap gap-2 pt-1">
+                    {['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size'].map((sz) => {
+                      const isSelected = (updateprdt.selectedSizes || []).includes(sz);
+                      return (
+                        <Button
+                          key={sz}
+                          type="button"
+                          className={isSelected ? "btn-glass-primary py-1 px-3" : "btn-glass-secondary py-1 px-3"}
+                          style={{
+                            fontSize: '0.85rem',
+                            borderRadius: '8px',
+                            border: isSelected ? '1px solid #a5b4fc' : '1px solid rgba(255,255,255,0.15)',
+                            boxShadow: isSelected ? '0 0 10px rgba(165,180,252,0.3)' : 'none'
+                          }}
+                          onClick={() => handleModalSizeToggle(sz)}
+                        >
+                          {isSelected ? `✓ ${sz}` : sz}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                  {modalError.size && <span className="glass-error-badge mt-2 d-block">{modalError.size}</span>}
                 </Form.Group>
               </Col>
-              <Col xs={6}>
+            </Row>
+
+            <Row className="g-2 mb-3">
+              <Col xs={12}>
                 <Form.Group>
-                  <Form.Label className="glass-label">Material</Form.Label>
+                  <Form.Label className="glass-label">Material & Fabric Info</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Material"

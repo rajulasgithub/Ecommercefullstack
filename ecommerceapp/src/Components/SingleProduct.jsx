@@ -92,6 +92,19 @@ const SingleProduct = () => {
     setEditErrors({ ...editErrors, [e.target.name]: '' });
   };
 
+  const handleEditSizeToggle = (sz) => {
+    const current = updateData.selectedSizes !== undefined
+      ? updateData.selectedSizes
+      : (product?.size ? product.size.split(',').map(s => s.trim()).filter(Boolean) : []);
+    const updated = current.includes(sz) ? current.filter(s => s !== sz) : [...current, sz];
+    setUpdateData({
+      ...updateData,
+      selectedSizes: updated,
+      size: updated.join(', ')
+    });
+    setEditErrors({ ...editErrors, size: '' });
+  };
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setUpdateData({ ...updateData, imageFiles: files, image: files[0] });
@@ -120,7 +133,7 @@ const SingleProduct = () => {
       errs.prize = "Price must be a positive number greater than 0";
     }
     if (isEmpty(stockVal)) errs.stock = "Stock status is required";
-    if (isEmpty(sizeVal)) errs.size = "Product size is required";
+    if (isEmpty(sizeVal)) errs.size = "At least one size must be selected";
     if (isEmpty(matVal)) errs.material = "Material is required";
 
     setEditErrors(errs);
@@ -651,22 +664,42 @@ const SingleProduct = () => {
             </Row>
 
             <Row className="g-2 mb-3">
-              <Col xs={6}>
+              <Col xs={12}>
                 <Form.Group>
-                  <Form.Label className="glass-label">Size</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="size"
-                    defaultValue={product.size}
-                    className="glass-input"
-                    onChange={handleEditChange}
-                  />
-                  {editErrors.size && <span className="glass-error-badge">{editErrors.size}</span>}
+                  <Form.Label className="glass-label">Available Sizes (Select multiple)</Form.Label>
+                  <div className="d-flex flex-wrap gap-2 pt-1">
+                    {['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size'].map((sz) => {
+                      const currentSelected = updateData.selectedSizes !== undefined
+                        ? updateData.selectedSizes
+                        : (product?.size ? product.size.split(',').map(s => s.trim()).filter(Boolean) : []);
+                      const isSelected = currentSelected.includes(sz);
+                      return (
+                        <Button
+                          key={sz}
+                          type="button"
+                          className={isSelected ? "btn-glass-primary py-1 px-3" : "btn-glass-secondary py-1 px-3"}
+                          style={{
+                            fontSize: '0.85rem',
+                            borderRadius: '8px',
+                            border: isSelected ? '1px solid #a5b4fc' : '1px solid rgba(255,255,255,0.15)',
+                            boxShadow: isSelected ? '0 0 10px rgba(165,180,252,0.3)' : 'none'
+                          }}
+                          onClick={() => handleEditSizeToggle(sz)}
+                        >
+                          {isSelected ? `✓ ${sz}` : sz}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                  {editErrors.size && <span className="glass-error-badge mt-2 d-block">{editErrors.size}</span>}
                 </Form.Group>
               </Col>
-              <Col xs={6}>
+            </Row>
+
+            <Row className="g-2 mb-3">
+              <Col xs={12}>
                 <Form.Group>
-                  <Form.Label className="glass-label">Material</Form.Label>
+                  <Form.Label className="glass-label">Material & Fabric Info</Form.Label>
                   <Form.Control
                     type="text"
                     name="material"

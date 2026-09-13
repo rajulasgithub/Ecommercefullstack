@@ -39,7 +39,7 @@ const addProductValidation = [
     .isFloat({ gt: 0 })
     .withMessage("Price must be a positive number greater than 0"),
   body("stock").trim().notEmpty().withMessage("Stock status is required"),
-  body("size").trim().notEmpty().withMessage("Product size is required"),
+  body("size").trim().notEmpty().withMessage("At least one product size must be selected"),
   body("material").trim().notEmpty().withMessage("Material is required"),
   handleValidationErrors,
 ];

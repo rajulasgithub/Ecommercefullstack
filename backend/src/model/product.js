@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
   style: { type: String, required: true, trim: true, default: "Casual Wear" },
   image: { type: [String], required: true },
   prize: { type: Number, required: true, min: [0.01, "Price must be greater than 0"] },
-  size: { type: String, required: true, trim: true },
+  size: { type: String, required: true, trim: true, default: "M" },
   stock: { type: String, required: true, trim: true, default: "In Stock" },
   material: { type: String, required: true, trim: true },
   status: { type: String, required: true, trim: true, default: "active" },

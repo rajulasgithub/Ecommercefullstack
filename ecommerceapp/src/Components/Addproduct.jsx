@@ -30,6 +30,18 @@ const Addproduct = () => {
     setServerError('');
   };
 
+  const handleSizeToggle = (sz) => {
+    const current = addproduct.selectedSizes || [];
+    const updated = current.includes(sz) ? current.filter(s => s !== sz) : [...current, sz];
+    setAddproduct({
+      ...addproduct,
+      selectedSizes: updated,
+      size: updated.join(', ')
+    });
+    setError({ ...error, size: '' });
+    setServerError('');
+  };
+
   const Validate = () => {
     const errormessage = {};
     if (isEmpty(addproduct.prdName)) {
@@ -50,7 +62,7 @@ const Addproduct = () => {
       errormessage.stock = "Stock status is required";
     }
     if (isEmpty(addproduct.size)) {
-      errormessage.size = "Product size is required";
+      errormessage.size = "At least one size must be selected";
     }
     if (isEmpty(addproduct.material)) {
       errormessage.material = "Material is required";
@@ -241,15 +253,29 @@ const Addproduct = () => {
             <Row className="g-3 mb-3">
               <Col xs={12} sm={6}>
                 <Form.Group>
-                  <Form.Label className="glass-label">Available Sizes</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="e.g. S, M, L, XL"
-                    name="size"
-                    className="glass-input"
-                    onChange={handleChange}
-                  />
-                  {error.size && <span className="glass-error-badge">{error.size}</span>}
+                  <Form.Label className="glass-label">Available Sizes (Select multiple)</Form.Label>
+                  <div className="d-flex flex-wrap gap-2 pt-1">
+                    {['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size'].map((sz) => {
+                      const isSelected = (addproduct.selectedSizes || []).includes(sz);
+                      return (
+                        <Button
+                          key={sz}
+                          type="button"
+                          className={isSelected ? "btn-glass-primary py-1 px-3" : "btn-glass-secondary py-1 px-3"}
+                          style={{
+                            fontSize: '0.85rem',
+                            borderRadius: '8px',
+                            border: isSelected ? '1px solid #a5b4fc' : '1px solid rgba(255,255,255,0.15)',
+                            boxShadow: isSelected ? '0 0 10px rgba(165,180,252,0.3)' : 'none'
+                          }}
+                          onClick={() => handleSizeToggle(sz)}
+                        >
+                          {isSelected ? `✓ ${sz}` : sz}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                  {error.size && <span className="glass-error-badge mt-2 d-block">{error.size}</span>}
                 </Form.Group>
               </Col>
 
