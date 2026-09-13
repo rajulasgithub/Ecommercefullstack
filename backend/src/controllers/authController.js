@@ -21,12 +21,12 @@ export const signup = async (req, res) => {
       });
     }
 
-    const existingUser = await loginDB.findOne({ email });
+    const existingUser = await loginDB.findOne({ email, role: "user" });
     if (existingUser) {
       return res.status(400).json({
         success: false,
         error: true,
-        message: "Email address is already registered"
+        message: "A user account with this email address already exists"
       });
     }
 
@@ -98,7 +98,7 @@ export const signup = async (req, res) => {
 // User/Company Login
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -107,12 +107,32 @@ export const login = async (req, res) => {
       });
     }
 
-    const user = await loginDB.findOne({ email });
+    let user = null;
+    if (role) {
+      user = await loginDB.findOne({ email, role });
+    } else {
+      const candidates = await loginDB.find({ email });
+      if (candidates.length === 1) {
+        user = candidates[0];
+      } else if (candidates.length > 1) {
+        for (const candidate of candidates) {
+          let isMatch = await bcrypt.compare(password, candidate.password).catch(() => false);
+          if (!isMatch && candidate.password === password) {
+            isMatch = true;
+          }
+          if (isMatch) {
+            user = candidate;
+            break;
+          }
+        }
+      }
+    }
+
     if (!user) {
       return res.status(400).json({
         success: false,
         error: true,
-        message: "Email does not exist",
+        message: "Invalid email or password",
       });
     }
 
@@ -294,12 +314,12 @@ export const companySignup = async (req, res) => {
       });
     }
 
-    const existing = await loginDB.findOne({ email });
+    const existing = await loginDB.findOne({ email, role: "seller" });
     if (existing) {
       return res.status(400).json({
         success: false,
         error: true,
-        message: "Email is already registered",
+        message: "A seller account with this email address already exists",
       });
     }
 
