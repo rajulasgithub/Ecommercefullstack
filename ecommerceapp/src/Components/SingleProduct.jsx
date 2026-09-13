@@ -91,7 +91,8 @@ const SingleProduct = () => {
   };
 
   const handleFileChange = (e) => {
-    setUpdateData({ ...updateData, image: e.target.files[0] });
+    const files = Array.from(e.target.files);
+    setUpdateData({ ...updateData, imageFiles: files, image: files[0] });
   };
 
   const validateEditForm = () => {
@@ -126,7 +127,13 @@ const SingleProduct = () => {
     formdata.append('category', updateData.category !== undefined ? updateData.category : (product.category || 'Women'));
     formdata.append('style', updateData.style !== undefined ? updateData.style : (product.style || 'Casual Wear'));
     formdata.append('description', updateData.description !== undefined ? updateData.description : (product.description || ''));
-    if (updateData.image) formdata.append('image', updateData.image);
+
+    if (updateData.imageFiles && updateData.imageFiles.length > 0) {
+      updateData.imageFiles.forEach((file) => formdata.append('image', file));
+    } else if (updateData.image) {
+      formdata.append('image', updateData.image);
+    }
+
     formdata.append('prize', updateData.prize !== undefined ? updateData.prize : product.prize);
     formdata.append('stock', updateData.stock !== undefined ? updateData.stock : (product.stock || 0));
     formdata.append('size', updateData.size !== undefined ? updateData.size : product.size);
@@ -176,9 +183,32 @@ const SingleProduct = () => {
     );
   }
 
-  const images = Array.isArray(product.image) && product.image.length > 0
-    ? product.image
-    : ['/images/ethnic.jpg'];
+  const parseImages = (imgData) => {
+    if (!imgData) return ['/images/ethnic.jpg'];
+    if (Array.isArray(imgData)) return imgData.length > 0 ? imgData : ['/images/ethnic.jpg'];
+    if (typeof imgData === 'string') {
+      if (imgData.startsWith('[')) {
+        try {
+          const parsed = JSON.parse(imgData);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {
+          // fallback
+        }
+      }
+      return [imgData];
+    }
+    return ['/images/ethnic.jpg'];
+  };
+
+  const images = parseImages(product.image);
+
+  const prevImage = () => {
+    setSelectedImage((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const nextImage = () => {
+    setSelectedImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
 
   return (
     <div className="page-container">
@@ -239,35 +269,100 @@ const SingleProduct = () => {
                   onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 />
                 
-                <div style={{ position: 'absolute', top: '15px', right: '15px' }}>
+                {/* Top Status & Photo Counter */}
+                <div style={{ position: 'absolute', top: '15px', right: '15px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  {images.length > 1 && (
+                    <span style={{ background: 'rgba(0,0,0,0.65)', color: '#a5b4fc', fontSize: '0.8rem', fontWeight: 600, padding: '0.35rem 0.75rem', borderRadius: '20px', backdropFilter: 'blur(4px)', border: '1px solid rgba(165,180,252,0.3)' }}>
+                      📷 {selectedImage + 1} / {images.length}
+                    </span>
+                  )}
                   {product.status !== 6 ? (
                     <span className="status-pill delivered" style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}>In Stock</span>
                   ) : (
                     <span className="status-pill out-of-stock" style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}>Out of Stock</span>
                   )}
                 </div>
+
+                {/* Left & Right Prev/Next Overlay Buttons */}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      style={{
+                        position: 'absolute',
+                        left: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'rgba(0,0,0,0.5)',
+                        color: '#ffffff',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '50%',
+                        width: '40px',
+                        height: '40px',
+                        fontSize: '1.4rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backdropFilter: 'blur(4px)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.background = 'rgba(99, 102, 241, 0.8)'}
+                      onMouseOut={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}
+                    >
+                      ‹
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'rgba(0,0,0,0.5)',
+                        color: '#ffffff',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '50%',
+                        width: '40px',
+                        height: '40px',
+                        fontSize: '1.4rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backdropFilter: 'blur(4px)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.background = 'rgba(99, 102, 241, 0.8)'}
+                      onMouseOut={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}
+                    >
+                      ›
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Thumbnails list if multiple images */}
               {images.length > 1 && (
-                <div className="d-flex gap-2 mt-3 overflow-auto">
+                <div className="d-flex gap-2 mt-3 overflow-auto pb-1">
                   {images.map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img}
-                      alt={`Thumbnail ${idx + 1}`}
-                      onClick={() => setSelectedImage(idx)}
-                      style={{
-                        width: '70px',
-                        height: '70px',
-                        objectFit: 'cover',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        border: selectedImage === idx ? '2px solid #a5b4fc' : '1px solid rgba(255,255,255,0.1)',
-                        opacity: selectedImage === idx ? 1 : 0.6,
-                        transition: 'all 0.2s ease'
-                      }}
-                    />
+                    <div key={idx} style={{ position: 'relative' }}>
+                      <img
+                        src={img}
+                        alt={`Thumbnail ${idx + 1}`}
+                        onClick={() => setSelectedImage(idx)}
+                        style={{
+                          width: '75px',
+                          height: '75px',
+                          objectFit: 'cover',
+                          borderRadius: '10px',
+                          cursor: 'pointer',
+                          border: selectedImage === idx ? '2px solid #a5b4fc' : '1px solid rgba(255,255,255,0.15)',
+                          opacity: selectedImage === idx ? 1 : 0.5,
+                          transition: 'all 0.2s ease'
+                        }}
+                      />
+                    </div>
                   ))}
                 </div>
               )}
@@ -485,13 +580,31 @@ const SingleProduct = () => {
             </Row>
 
             <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Product Image</Form.Label>
+              <Form.Label className="glass-label">Product Images (Select multiple to update)</Form.Label>
               <Form.Control
                 type="file"
                 name="image"
+                multiple
+                accept="image/*"
                 className="glass-input"
                 onChange={handleFileChange}
               />
+              {updateData.imageFiles && updateData.imageFiles.length > 0 && (
+                <div className="d-flex gap-2 mt-2 flex-wrap">
+                  {updateData.imageFiles.map((file, idx) => (
+                    <div key={idx} style={{ position: 'relative', width: '50px', height: '50px' }}>
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Preview ${idx + 1}`}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px', border: '1px solid rgba(165,180,252,0.5)' }}
+                      />
+                      <span style={{ position: 'absolute', bottom: '1px', right: '1px', background: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: '0.6rem', padding: '1px 3px', borderRadius: '3px' }}>
+                        #{idx + 1}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Form.Group>
 
             <Row className="g-2 mb-3">

@@ -23,7 +23,8 @@ const Addproduct = () => {
   };
 
   const fileChange = (event) => {
-    setAddproduct({ ...addproduct, image: event.target.files[0] });
+    const selectedFiles = Array.from(event.target.files);
+    setAddproduct({ ...addproduct, imageFiles: selectedFiles, image: selectedFiles[0] });
     setServerError('');
   };
 
@@ -71,7 +72,15 @@ const Addproduct = () => {
     formdata.append('category', addproduct.category || 'Women');
     formdata.append('style', addproduct.style || 'Casual Wear');
     formdata.append('description', addproduct.description || '');
-    formdata.append('image', addproduct.image || '');
+
+    if (addproduct.imageFiles && addproduct.imageFiles.length > 0) {
+      addproduct.imageFiles.forEach((file) => {
+        formdata.append('image', file);
+      });
+    } else if (addproduct.image) {
+      formdata.append('image', addproduct.image);
+    }
+
     formdata.append('prize', addproduct.prize || '');
     formdata.append('stock', addproduct.stock !== undefined ? addproduct.stock : 0);
     formdata.append('size', addproduct.size || '');
@@ -107,13 +116,31 @@ const Addproduct = () => {
 
           <Form onSubmit={handleSubmit} encType="multipart/form-data" noValidate>
             <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Product Image</Form.Label>
+              <Form.Label className="glass-label">Product Images (Select multiple)</Form.Label>
               <Form.Control
                 type="file"
                 name="image"
+                multiple
+                accept="image/*"
                 className="glass-input"
                 onChange={fileChange}
               />
+              {addproduct.imageFiles && addproduct.imageFiles.length > 0 && (
+                <div className="d-flex gap-2 mt-2 flex-wrap">
+                  {addproduct.imageFiles.map((file, idx) => (
+                    <div key={idx} style={{ position: 'relative', width: '60px', height: '60px' }}>
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Preview ${idx + 1}`}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(165,180,252,0.5)' }}
+                      />
+                      <span style={{ position: 'absolute', bottom: '2px', right: '2px', background: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: '0.65rem', padding: '1px 4px', borderRadius: '4px' }}>
+                        #{idx + 1}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Form.Group>
 
             <Row className="g-3 mb-3">

@@ -12,6 +12,245 @@ import api from '../utils/api';
 import ROLES from '../utils/roles';
 import { isNumeric, isEmpty } from '../utils/validation';
 
+const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStatus, handleSubmit }) => {
+  const [activeImgIndex, setActiveImgIndex] = useState(0);
+
+  const parseImages = (imgData) => {
+    if (!imgData) return ['/images/ethnic.jpg'];
+    if (Array.isArray(imgData)) return imgData.length > 0 ? imgData : ['/images/ethnic.jpg'];
+    if (typeof imgData === 'string') {
+      if (imgData.startsWith('[')) {
+        try {
+          const parsed = JSON.parse(imgData);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+      return [imgData];
+    }
+    return ['/images/ethnic.jpg'];
+  };
+
+  const images = parseImages(item.image);
+
+  const nextImg = (e) => {
+    e.stopPropagation();
+    setActiveImgIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevImg = (e) => {
+    e.stopPropagation();
+    setActiveImgIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  return (
+    <Col xs={12} sm={6} md={4} lg={3}>
+      <div className="glass-card h-100 d-flex flex-column justify-content-between p-3">
+        <div>
+          {/* Product Image */}
+          <div
+            onClick={() => navigate(`/product/${item._id}`)}
+            style={{
+              borderRadius: "14px",
+              overflow: "hidden",
+              height: "220px",
+              position: "relative",
+              marginBottom: "0.5rem",
+              backgroundColor: "rgba(0,0,0,0.3)",
+              cursor: "pointer"
+            }}
+          >
+            <img
+              src={images[activeImgIndex] || images[0]}
+              alt={item.prdName}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transition: "transform 0.4s ease"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.08)"}
+              onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
+            />
+
+            {/* Photo Counter Badge & Stock Pill */}
+            <div style={{ position: "absolute", top: "10px", right: "10px", display: "flex", gap: "6px", alignItems: "center" }}>
+              {images.length > 1 && (
+                <span style={{ background: "rgba(0,0,0,0.7)", color: "#a5b4fc", fontSize: "0.7rem", fontWeight: 600, padding: "0.2rem 0.5rem", borderRadius: "10px", backdropFilter: "blur(4px)", border: "1px solid rgba(165,180,252,0.3)" }}>
+                  📷 {activeImgIndex + 1}/{images.length}
+                </span>
+              )}
+              {item.status !== 6 ? (
+                <span className="status-pill delivered" style={{ fontSize: "0.75rem" }}>In Stock</span>
+              ) : (
+                <span className="status-pill out-of-stock" style={{ fontSize: "0.75rem" }}>Out of Stock</span>
+              )}
+            </div>
+
+            {/* Left & Right Prev/Next Overlay Buttons */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={prevImg}
+                  style={{
+                    position: 'absolute',
+                    left: '6px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'rgba(0,0,0,0.5)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '50%',
+                    width: '28px',
+                    height: '28px',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backdropFilter: 'blur(4px)',
+                    zIndex: 2
+                  }}
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={nextImg}
+                  style={{
+                    position: 'absolute',
+                    right: '6px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'rgba(0,0,0,0.5)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '50%',
+                    width: '28px',
+                    height: '28px',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backdropFilter: 'blur(4px)',
+                    zIndex: 2
+                  }}
+                >
+                  ›
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Mini Thumbnail Dots Strip if Multiple Images */}
+          {images.length > 1 && (
+            <div className="d-flex gap-1 mb-2 justify-content-center overflow-auto">
+              {images.map((img, idx) => (
+                <img
+                  key={idx}
+                  src={img}
+                  alt={`Thumb ${idx + 1}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveImgIndex(idx);
+                  }}
+                  style={{
+                    width: '30px',
+                    height: '30px',
+                    objectFit: 'cover',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    border: activeImgIndex === idx ? '2px solid #a5b4fc' : '1px solid rgba(255,255,255,0.15)',
+                    opacity: activeImgIndex === idx ? 1 : 0.5,
+                    transition: 'all 0.2s ease'
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Details */}
+          <div className="mb-2 d-flex gap-1 flex-wrap">
+            <span className="status-pill ordered" style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}>
+              {item.category || "Women"}
+            </span>
+            <span className="status-pill processing" style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}>
+              {item.style || "Casual Wear"}
+            </span>
+          </div>
+
+          <h3
+            onClick={() => navigate(`/product/${item._id}`)}
+            style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.4rem", cursor: "pointer" }}
+            onMouseOver={(e) => e.currentTarget.style.color = "#a5b4fc"}
+            onMouseOut={(e) => e.currentTarget.style.color = "#ffffff"}
+          >
+            {item.prdName}
+          </h3>
+
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <span style={{ fontSize: "1.25rem", fontWeight: 800, color: "#a5b4fc" }}>
+              ₹{item.prize}
+            </span>
+            <span style={{ fontSize: "0.8rem", color: "#9ca3af", background: "rgba(255,255,255,0.08)", padding: "0.2rem 0.6rem", borderRadius: "6px" }}>
+              Size: {item.size}
+            </span>
+          </div>
+
+          <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "0.4rem" }}>
+            Material: {item.material}
+          </p>
+          <p style={{ fontSize: "0.8rem", color: item.stock > 0 ? "#34d399" : "#f87171", marginBottom: "1rem" }}>
+            Stock: {item.stock !== undefined ? (item.stock > 0 ? `${item.stock} left` : 'Out of stock') : 'Available'}
+          </p>
+        </div>
+
+        {/* Actions depending on Role */}
+        <div>
+          {role === ROLES.COMPANY || role === ROLES.ADMIN ? (
+            <div className="d-flex flex-column gap-2">
+              {item.status !== 6 ? (
+                <div className="d-flex gap-2">
+                  <Button className="btn-glass-secondary w-50 py-1" size="sm" onClick={() => handleShow(item._id)}>
+                    Edit
+                  </Button>
+                  <Button className="btn-glass-danger w-50 py-1" size="sm" onClick={() => dltproduct(item._id)}>
+                    Delete
+                  </Button>
+                </div>
+              ) : (
+                <Form.Select
+                  className="glass-input text-sm py-1"
+                  style={{ fontSize: "0.85rem" }}
+                  name="status"
+                  onChange={(e) => setStatus(item._id, e.target.value)}
+                >
+                  <option value="" style={{ color: "#000" }}>-- Select Action --</option>
+                  <option value="0" style={{ color: "#000" }}>Restock Product</option>
+                </Form.Select>
+              )}
+            </div>
+          ) : (
+            <div className="d-flex gap-2">
+              <Button className="btn-glass-secondary w-50" size="sm" onClick={() => navigate(`/product/${item._id}`)}>
+                Details
+              </Button>
+              {item.status !== 6 && item.stock > 0 ? (
+                <Button className="btn-glass-primary w-50" size="sm" onClick={() => handleSubmit(item._id)}>
+                  Add to Cart
+                </Button>
+              ) : (
+                <Button className="btn-glass-secondary w-50" disabled style={{ opacity: 0.6 }} size="sm">
+                  Unavailable
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </Col>
+  );
+};
+
 const Viewproduct = () => {
   const role = localStorage.getItem("role");
   const token = localStorage.getItem('token');
@@ -82,7 +321,8 @@ const Viewproduct = () => {
   };
 
   const fileChange = (event) => {
-    setUpdateprdt({ ...updateprdt, image: event.target.files[0] });
+    const files = Array.from(event.target.files);
+    setUpdateprdt({ ...updateprdt, imageFiles: files, image: files[0] });
   };
 
   const validateUpdate = () => {
@@ -128,7 +368,13 @@ const Viewproduct = () => {
     formdata.append('category', updateprdt.category || 'Women');
     formdata.append('style', updateprdt.style || 'Casual Wear');
     formdata.append('description', updateprdt.description || '');
-    if (updateprdt.image) formdata.append('image', updateprdt.image);
+
+    if (updateprdt.imageFiles && updateprdt.imageFiles.length > 0) {
+      updateprdt.imageFiles.forEach((file) => formdata.append('image', file));
+    } else if (updateprdt.image) {
+      formdata.append('image', updateprdt.image);
+    }
+
     formdata.append('prize', updateprdt.prize || '');
     formdata.append('stock', updateprdt.stock !== undefined ? updateprdt.stock : 0);
     formdata.append('size', updateprdt.size || '');
@@ -229,125 +475,16 @@ const Viewproduct = () => {
         {/* Products Grid */}
         <Row className="g-4">
           {filteredProducts.map((item) => (
-            <Col key={item._id} xs={12} sm={6} md={4} lg={3}>
-              <div className="glass-card h-100 d-flex flex-column justify-content-between p-3">
-                <div>
-                  {/* Product Image */}
-                  <div
-                    onClick={() => navigate(`/product/${item._id}`)}
-                    style={{
-                      borderRadius: "14px",
-                      overflow: "hidden",
-                      height: "220px",
-                      position: "relative",
-                      marginBottom: "1rem",
-                      backgroundColor: "rgba(0,0,0,0.3)",
-                      cursor: "pointer"
-                    }}
-                  >
-                    <img
-                      src={item.image ? item.image[0] : '/images/ethnic.jpg'}
-                      alt={item.prdName}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        transition: "transform 0.4s ease"
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.08)"}
-                      onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
-                    />
-                    <div style={{ position: "absolute", top: "10px", right: "10px" }}>
-                      {item.status !== 6 ? (
-                        <span className="status-pill delivered">In Stock</span>
-                      ) : (
-                        <span className="status-pill out-of-stock">Out of Stock</span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Details */}
-                  <div className="mb-2 d-flex gap-1 flex-wrap">
-                    <span className="status-pill ordered" style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}>
-                      {item.category || "Women"}
-                    </span>
-                    <span className="status-pill processing" style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}>
-                      {item.style || "Casual Wear"}
-                    </span>
-                  </div>
-
-                  <h3
-                    onClick={() => navigate(`/product/${item._id}`)}
-                    style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.4rem", cursor: "pointer" }}
-                    onMouseOver={(e) => e.currentTarget.style.color = "#a5b4fc"}
-                    onMouseOut={(e) => e.currentTarget.style.color = "#ffffff"}
-                  >
-                    {item.prdName}
-                  </h3>
-
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span style={{ fontSize: "1.25rem", fontWeight: 800, color: "#a5b4fc" }}>
-                      ₹{item.prize}
-                    </span>
-                    <span style={{ fontSize: "0.8rem", color: "#9ca3af", background: "rgba(255,255,255,0.08)", padding: "0.2rem 0.6rem", borderRadius: "6px" }}>
-                      Size: {item.size}
-                    </span>
-                  </div>
-
-                  <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "0.4rem" }}>
-                    Material: {item.material}
-                  </p>
-                  <p style={{ fontSize: "0.8rem", color: item.stock > 0 ? "#34d399" : "#f87171", marginBottom: "1rem" }}>
-                    Stock: {item.stock !== undefined ? (item.stock > 0 ? `${item.stock} left` : 'Out of stock') : 'Available'}
-                  </p>
-                </div>
-
-                {/* Actions depending on Role */}
-                <div>
-                  {role === ROLES.COMPANY || role === ROLES.ADMIN ? (
-                    /* Company Seller Actions */
-                    <div className="d-flex flex-column gap-2">
-                      {item.status !== 6 ? (
-                        <div className="d-flex gap-2">
-                          <Button className="btn-glass-secondary w-50 py-1" size="sm" onClick={() => handleShow(item._id)}>
-                            Edit
-                          </Button>
-                          <Button className="btn-glass-danger w-50 py-1" size="sm" onClick={() => dltproduct(item._id)}>
-                            Delete
-                          </Button>
-                        </div>
-                      ) : (
-                        <Form.Select
-                          className="glass-input text-sm py-1"
-                          style={{ fontSize: "0.85rem" }}
-                          name="status"
-                          onChange={(e) => setStatus(item._id, e.target.value)}
-                        >
-                          <option value="" style={{ color: "#000" }}>-- Select Action --</option>
-                          <option value="0" style={{ color: "#000" }}>Restock Product</option>
-                        </Form.Select>
-                      )}
-                    </div>
-                  ) : (
-                    /* Customer Actions */
-                    <div className="d-flex gap-2">
-                      <Button className="btn-glass-secondary w-50" size="sm" onClick={() => navigate(`/product/${item._id}`)}>
-                        Details
-                      </Button>
-                      {item.status !== 6 && item.stock > 0 ? (
-                        <Button className="btn-glass-primary w-50" size="sm" onClick={() => handleSubmit(item._id)}>
-                          Add to Cart
-                        </Button>
-                      ) : (
-                        <Button className="btn-glass-secondary w-50" disabled style={{ opacity: 0.6 }} size="sm">
-                          Unavailable
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Col>
+            <ProductCardItem
+              key={item._id}
+              item={item}
+              role={role}
+              navigate={navigate}
+              handleShow={handleShow}
+              dltproduct={dltproduct}
+              setStatus={setStatus}
+              handleSubmit={handleSubmit}
+            />
           ))}
         </Row>
       </Container>
@@ -413,13 +550,31 @@ const Viewproduct = () => {
             </Row>
 
             <Form.Group className="mb-3">
-              <Form.Label className="glass-label">Product Image</Form.Label>
+              <Form.Label className="glass-label">Product Images (Select multiple to update)</Form.Label>
               <Form.Control
                 type="file"
                 name="image"
+                multiple
+                accept="image/*"
                 className="glass-input"
                 onChange={fileChange}
               />
+              {updateprdt.imageFiles && updateprdt.imageFiles.length > 0 && (
+                <div className="d-flex gap-2 mt-2 flex-wrap">
+                  {updateprdt.imageFiles.map((file, idx) => (
+                    <div key={idx} style={{ position: 'relative', width: '50px', height: '50px' }}>
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Preview ${idx + 1}`}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px', border: '1px solid rgba(165,180,252,0.5)' }}
+                      />
+                      <span style={{ position: 'absolute', bottom: '1px', right: '1px', background: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: '0.6rem', padding: '1px 3px', borderRadius: '3px' }}>
+                        #{idx + 1}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Form.Group>
             
             <Row className="g-2 mb-3">
