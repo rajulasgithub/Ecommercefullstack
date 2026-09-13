@@ -215,7 +215,7 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
                   <Button className="btn-glass-secondary w-50 py-1" size="sm" onClick={() => handleShow(item._id)}>
                     Edit
                   </Button>
-                  <Button className="btn-glass-danger w-50 py-1" size="sm" onClick={() => dltproduct(item._id)}>
+                  <Button className="btn-glass-danger w-50 py-1" size="sm" onClick={() => dltproduct(item)}>
                     Delete
                   </Button>
                 </div>
@@ -294,28 +294,51 @@ const Viewproduct = () => {
       });
   };
 
-  const dltproduct = (id) => {
-    api.put(`/product/deleteproduct/${id}`)
-      .then((response) => {
-        setProduct(product.filter(p => p._id !== id));
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const dltproduct = (item) => {
+    setDeleteTarget({ id: item._id, prdName: item.prdName });
+  };
+
+  const confirmDeleteSingleProduct = () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    api.put(`/product/deleteproduct/${deleteTarget.id}`)
+      .then(() => {
+        setProduct(product.filter(p => p._id !== deleteTarget.id));
+        setDeleteTarget(null);
       })
       .catch((error) => {
         const msg = error.response?.data?.message || "Failed to delete product.";
         setErrorMsg(msg);
+        setDeleteTarget(null);
+      })
+      .finally(() => {
+        setDeleting(false);
       });
   };
 
   const deleteAllProductsHandler = () => {
-    if (window.confirm("⚠️ Are you sure you want to delete ALL product listings?")) {
-      api.put('/product/deleteallproduct')
-        .then(() => {
-          setProduct([]);
-        })
-        .catch((error) => {
-          const msg = error.response?.data?.message || "Failed to delete all products.";
-          setErrorMsg(msg);
-        });
-    }
+    setShowDeleteAllModal(true);
+  };
+
+  const confirmDeleteAllProducts = () => {
+    setDeleting(true);
+    api.put('/product/deleteallproduct')
+      .then(() => {
+        setProduct([]);
+        setShowDeleteAllModal(false);
+      })
+      .catch((error) => {
+        const msg = error.response?.data?.message || "Failed to delete all products.";
+        setErrorMsg(msg);
+        setShowDeleteAllModal(false);
+      })
+      .finally(() => {
+        setDeleting(false);
+      });
   };
 
   const handleChange = (event) => {
@@ -721,6 +744,73 @@ const Viewproduct = () => {
               </>
             ) : (
               'Save Changes'
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Confirmation Modal for Single Product Deletion */}
+      <Modal show={!!deleteTarget} onHide={() => setDeleteTarget(null)} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>Confirm Product Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-4 text-center">
+          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>⚠️</div>
+          <h5 style={{ color: '#ffffff', fontWeight: 600, marginBottom: '0.5rem' }}>
+            Are you sure you want to delete this product?
+          </h5>
+          {deleteTarget && (
+            <p style={{ color: '#a5b4fc', fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+              "{deleteTarget.prdName}"
+            </p>
+          )}
+          <p style={{ color: '#9ca3af', fontSize: '0.875rem', margin: 0 }}>
+            This will soft-delete the listing and remove active cart items for this product.
+          </p>
+        </Modal.Body>
+        <Modal.Footer className="glass-modal-footer">
+          <Button className="btn-glass-secondary" onClick={() => setDeleteTarget(null)} disabled={deleting}>
+            Cancel
+          </Button>
+          <Button className="btn-glass-danger" onClick={confirmDeleteSingleProduct} disabled={deleting}>
+            {deleting ? (
+              <>
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                Deleting...
+              </>
+            ) : (
+              '🗑️ Delete Product'
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Confirmation Modal for Deleting All Products */}
+      <Modal show={showDeleteAllModal} onHide={() => setShowDeleteAllModal(false)} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>Clear All Products</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-4 text-center">
+          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🚨</div>
+          <h5 style={{ color: '#ffffff', fontWeight: 600, marginBottom: '0.5rem' }}>
+            Are you sure you want to delete ALL product listings?
+          </h5>
+          <p style={{ color: '#f87171', fontSize: '0.875rem', margin: 0 }}>
+            This action will soft-delete all product listings and clear corresponding active cart items.
+          </p>
+        </Modal.Body>
+        <Modal.Footer className="glass-modal-footer">
+          <Button className="btn-glass-secondary" onClick={() => setShowDeleteAllModal(false)} disabled={deleting}>
+            Cancel
+          </Button>
+          <Button className="btn-glass-danger" onClick={confirmDeleteAllProducts} disabled={deleting}>
+            {deleting ? (
+              <>
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                Deleting All...
+              </>
+            ) : (
+              '🗑️ Delete All Products'
             )}
           </Button>
         </Modal.Footer>

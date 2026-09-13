@@ -77,14 +77,24 @@ const SingleProduct = () => {
     }
   };
 
-  const handleDeleteProduct = async () => {
-    if (window.confirm('Are you sure you want to delete this product listing?')) {
-      try {
-        await api.put(`/product/deleteproduct/${id}`);
-        navigate('/viewproduct');
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to delete product.');
-      }
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingProduct, setDeletingProduct] = useState(false);
+
+  const handleDeleteProduct = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteProduct = async () => {
+    setDeletingProduct(true);
+    try {
+      await api.put(`/product/deleteproduct/${id}`);
+      setShowDeleteModal(false);
+      navigate('/viewproduct');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete product.');
+      setShowDeleteModal(false);
+    } finally {
+      setDeletingProduct(false);
     }
   };
 
@@ -762,6 +772,40 @@ const SingleProduct = () => {
               </>
             ) : (
               'Save Changes'
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ color: '#ffffff', fontWeight: 700 }}>Confirm Product Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-4 text-center">
+          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>⚠️</div>
+          <h5 style={{ color: '#ffffff', fontWeight: 600, marginBottom: '0.5rem' }}>
+            Are you sure you want to delete this product listing?
+          </h5>
+          <p style={{ color: '#a5b4fc', fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+            "{product?.prdName}"
+          </p>
+          <p style={{ color: '#9ca3af', fontSize: '0.875rem', margin: 0 }}>
+            This will soft-delete the item and return you to the catalog.
+          </p>
+        </Modal.Body>
+        <Modal.Footer className="glass-modal-footer">
+          <Button className="btn-glass-secondary" onClick={() => setShowDeleteModal(false)} disabled={deletingProduct}>
+            Cancel
+          </Button>
+          <Button className="btn-glass-danger" onClick={confirmDeleteProduct} disabled={deletingProduct}>
+            {deletingProduct ? (
+              <>
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                Deleting...
+              </>
+            ) : (
+              '🗑️ Delete Product'
             )}
           </Button>
         </Modal.Footer>
