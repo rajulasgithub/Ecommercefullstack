@@ -15,9 +15,9 @@ import { isEmpty } from "../utils/validation";
 const Vieworders = ({ hideHeader = false }) => {
   const role = localStorage.getItem("role");
   const [order, setOrder] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [show, setShow] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const ordertime = localStorage.getItem("orderedtime");
@@ -32,38 +32,27 @@ const Vieworders = ({ hideHeader = false }) => {
     }
 
     if (role === ROLES.COMPANY || role === ROLES.ADMIN) {
-      api.get("/order/viewcartcmpny")
+      api.get(`/order/viewcartcmpny?page=${page}&limit=10`)
         .then((response) => {
           setOrder(response.data.data || []);
+          setTotalPages(Math.ceil((response.data.totalCount || 0) / 10));
         })
         .catch((error) => console.log(error));
     } else {
-      api.get("/order/vieworderuser")
+      api.get(`/order/vieworderuser?page=${page}&limit=10`)
         .then((response) => {
           setOrder(response.data.data || []);
+          setTotalPages(Math.ceil((response.data.totalCount || 0) / 10));
         })
         .catch((error) => console.log(error));
     }
-  }, [role]);
-
-  useEffect(() => {
-    const filtered = order.filter(
-      (item) =>
-        item.status === 2 ||
-        item.status === 3 ||
-        item.status === 4 ||
-        item.status === 5 ||
-        item.status === 6 ||
-        item.status === 7
-    );
-    setFilteredData(filtered);
-  }, [order]);
+  }, [role, page]);
 
   const cancelOrder = (id) => {
     api.put(`/order/cancelorder/${id}`)
       .then(() => {
         toast.success("Order cancelled successfully");
-        setFilteredData(filteredData.map(item => item._id === id ? { ...item, status: 3 } : item));
+        setOrder(order.map(item => item._id === id ? { ...item, status: 3 } : item));
       })
       .catch((error) => {
         toast.error("Failed to cancel order.");
@@ -75,7 +64,7 @@ const Vieworders = ({ hideHeader = false }) => {
     api.put(`/order/updatecartstatus/${id}/${value}`)
       .then(() => {
         toast.success("Order status updated successfully!");
-        setFilteredData(filteredData.map(item => item._id === id ? { ...item, status: parseInt(value) } : item));
+        setOrder(order.map(item => item._id === id ? { ...item, status: parseInt(value) } : item));
       })
       .catch((error) => {
         toast.error("Failed to update order status.");
@@ -104,19 +93,19 @@ const Vieworders = ({ hideHeader = false }) => {
         <div className="page-header">
           <span className="status-pill ordered mb-2">Order Management</span>
           <h1 className="page-title">{role === ROLES.COMPANY || role === ROLES.ADMIN ? "Company Orders Dashboard" : "My Order History"}</h1>
-          <p className="page-subtitle">{filteredData.length} order(s) record found</p>
+          <p className="page-subtitle">{order.length} order(s) record found on this page</p>
         </div>
       )}
 
-      {filteredData.length === 0 ? (
+      {order.length === 0 ? (
         <div className="glass-card text-center py-5" style={{ maxWidth: "550px", margin: "0 auto" }}>
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📦</div>
-          <h3 className="page-title" style={{ fontSize: "1.5rem" }}>No Orders Placed Yet</h3>
-          <p className="page-subtitle mb-4">Explore our catalog and place your first order today!</p>
+          <h3 className="page-title" style={{ fontSize: "1.5rem" }}>No Orders Found</h3>
+          <p className="page-subtitle mb-4">No order records are available for this page.</p>
         </div>
       ) : (
         <div className="d-flex flex-column gap-4">
-          {filteredData.map((item, index) => (
+          {order.map((item, index) => (
             <div key={item._id || index} className="glass-card p-4">
               <Row className="align-items-center g-3">
                 {/* Item Image */}
@@ -196,7 +185,28 @@ const Vieworders = ({ hideHeader = false }) => {
         </div>
       )}
 
-
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="d-flex justify-content-center gap-3 mt-4">
+          <Button 
+            className="btn-glass-secondary" 
+            disabled={page === 1} 
+            onClick={() => setPage(p => p - 1)}
+          >
+            Previous
+          </Button>
+          <div className="d-flex align-items-center" style={{ color: '#fff', fontWeight: 600 }}>
+            Page {page} of {totalPages}
+          </div>
+          <Button 
+            className="btn-glass-secondary" 
+            disabled={page === totalPages} 
+            onClick={() => setPage(p => p + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </Container>
   );
 

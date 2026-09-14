@@ -4,7 +4,12 @@ import addressDB from "../model/address.js";
 // View Company Orders (Vendor / Admin)
 export const getCompanyOrders = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const result = await cartDB.aggregate([
+      { $match: { status: { $ne: 1 } } },
       {
         $lookup: {
           from: "addresslists",
@@ -53,11 +58,22 @@ export const getCompanyOrders = async (req, res) => {
           BuildingNumber: { $first: { $ifNull: ["$shippingAddress.BuildingNumber", "$result.BuildingNumber"] } },
         },
       },
+      {
+        $facet: {
+          data: [{ $skip: skip }, { $limit: limit }],
+          totalCount: [{ $count: "count" }],
+        },
+      },
     ]);
+
+    const data = result[0]?.data || [];
+    const totalCount = result[0]?.totalCount[0]?.count || 0;
+
     return res.status(200).json({
       success: true,
       error: false,
-      data: result,
+      data: data,
+      totalCount: totalCount,
       message: "Orders list viewed successfully",
     });
   } catch (error) {
@@ -73,13 +89,24 @@ export const getCompanyOrders = async (req, res) => {
 // View Orders for Logged-In User
 export const getUserOrders = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const query = { loginId: req.userData.loginId, status: { $ne: 1 } };
+    const totalCount = await cartDB.countDocuments(query);
+    
     const result = await cartDB
-      .find({ loginId: req.userData.loginId })
+      .find(query)
+      .skip(skip)
+      .limit(limit)
       .populate("prdId");
+
     return res.status(200).json({
       success: true,
       error: false,
       data: result,
+      totalCount: totalCount,
       message: "User orders viewed successfully",
     });
   } catch (error) {
