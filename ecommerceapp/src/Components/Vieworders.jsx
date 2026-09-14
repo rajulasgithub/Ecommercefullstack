@@ -149,8 +149,8 @@ const Vieworders = ({ hideHeader = false }) => {
                   </div>
 
                   <div className="d-flex gap-3 mb-2 flex-wrap" style={{ fontSize: "0.85rem", color: "#9ca3af" }}>
-                    <span>Quantity: <strong style={{ color: "#ffffff" }}>{item.count || 1}</strong></span>
-                    <span>Total: <strong style={{ color: "#10b981" }}>₹{item.totalPrize || item.prize}</strong></span>
+                    <span>Quantity: <strong style={{ color: "#ffffff" }}>{item.quantity || 1}</strong></span>
+                    <span>Total: <strong style={{ color: "#10b981" }}>₹{(item.quantity || 1) * (item.prdId?.prize || item.prize || 0)}</strong></span>
                     {item.size && <span>Size: <strong style={{ color: "#ffffff" }}>{item.size}</strong></span>}
                   </div>
 
