@@ -3,6 +3,23 @@ import cartDB from "../model/cart.js";
 // Add to Cart (User)
 export const addToCart = async (req, res) => {
   try {
+    const existingItem = await cartDB.findOne({
+      loginId: req.userData.loginId,
+      prdId: req.body.productId,
+      status: 1,
+    });
+
+    if (existingItem) {
+      existingItem.quantity += 1;
+      const result = await existingItem.save();
+      return res.status(200).json({
+        success: true,
+        error: false,
+        data: result,
+        message: "Cart quantity increased",
+      });
+    }
+
     const data = {
       loginId: req.userData.loginId,
       prdId: req.body.productId,
