@@ -45,8 +45,6 @@ export const getCompanyOrders = async (req, res) => {
           quantity: { $first: "$quantity" },
           status: { $first: "$status" },
           date: { $first: "$date" },
-          deliveryDate: { $first: "$deliveryDate" },
-          payment: { $first: "$payment" },
           address: { $first: "$result.address" },
           state: { $first: "$result.state" },
           district: { $first: "$result.district" },
@@ -104,8 +102,6 @@ export const checkoutCart = async (req, res) => {
     const data = {
       status: 2,
       date: `${day}-${month}-${year}`,
-      deliveryDate: `${day + 5}-${month}-${year}`,
-      payment: "Cash on Delivery",
     };
     const result = await cartDB.updateMany(
       { loginId: req.userData.loginId, status: 1 },
@@ -128,29 +124,6 @@ export const checkoutCart = async (req, res) => {
   }
 };
 
-// Update Delivery Date (Vendor / Admin)
-export const updateDeliveryDate = async (req, res) => {
-  try {
-    const data = { deliveryDate: req.body.date };
-    const result = await cartDB.updateOne(
-      { _id: req.params.id },
-      { $set: data }
-    );
-    return res.status(200).json({
-      success: true,
-      error: false,
-      data: result,
-      message: "Delivery date updated",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error updating delivery date",
-    });
-  }
-};
 
 // Update Order Status (Vendor / Admin)
 export const updateOrderStatus = async (req, res) => {

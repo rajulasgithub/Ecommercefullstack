@@ -5,7 +5,6 @@ import {
   getCompanyOrders,
   getUserOrders,
   checkoutCart,
-  updateDeliveryDate,
   updateOrderStatus,
   cancelOrder,
   viewOrders,
@@ -22,9 +21,6 @@ orderRoute.get("/vieworderuser", checkauth, checkRole("user"), getUserOrders);
 
 // Checkout / Place Order (User)
 orderRoute.put("/updatecart", checkauth, checkRole("user"), checkoutCart);
-
-// Update Delivery Date (Seller / Admin)
-orderRoute.put("/updatedeliverydate/:id", checkauth, checkRole("seller", "admin"), updateDeliveryDate);
 
 // Update Order Status (Seller / Admin)
 orderRoute.put("/updatecartstatus/:id/:value", checkauth, checkRole("seller", "admin"), updateOrderStatus);

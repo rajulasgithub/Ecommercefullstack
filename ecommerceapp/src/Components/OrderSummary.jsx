@@ -18,7 +18,7 @@ const OrderSummary = () => {
   const [address, setAddress] = useState({});
   const [shippingaddress, setShippingAddress] = useState({});
   const [shippinginfo, setShippinginfo] = useState({});
-  const [selectedPayment, setSelectedPayment] = useState("cod");
+
   const [addrErrors, setAddrErrors] = useState({});
 
   useEffect(() => {
@@ -202,45 +202,7 @@ const OrderSummary = () => {
           {/* Payment Method & Price Details Card */}
           <Col xs={12} lg={6}>
             <div className="glass-card">
-              <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#ffffff", marginBottom: "1.25rem" }}>
-                💳 Payment Method
-              </h3>
 
-              <div className="d-flex flex-column gap-2 mb-4">
-                {[
-                  { id: "cod", label: "Cash On Delivery (COD)", icon: "💵" },
-                  { id: "upi", label: "UPI (Google Pay / PhonePe / Paytm)", icon: "⚡" },
-                  { id: "netbanking", label: "Net Banking", icon: "🏦" },
-                  { id: "card", label: "Credit / Debit / ATM Card", icon: "💳" }
-                ].map((method) => (
-                  <label
-                    key={method.id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "0.85rem 1rem",
-                      borderRadius: "12px",
-                      background: selectedPayment === method.id ? "rgba(99, 102, 241, 0.2)" : "rgba(255, 255, 255, 0.04)",
-                      border: selectedPayment === method.id ? "1px solid #6366f1" : "1px solid rgba(255, 255, 255, 0.08)",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease"
-                    }}
-                  >
-                    <div className="d-flex align-items-center gap-2">
-                      <span>{method.icon}</span>
-                      <span style={{ fontWeight: 600, color: "#ffffff", fontSize: "0.95rem" }}>{method.label}</span>
-                    </div>
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      checked={selectedPayment === method.id}
-                      onChange={() => setSelectedPayment(method.id)}
-                      style={{ accentColor: "#6366f1" }}
-                    />
-                  </label>
-                ))}
-              </div>
 
               <h4 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.85rem" }}>
                 Bill Details

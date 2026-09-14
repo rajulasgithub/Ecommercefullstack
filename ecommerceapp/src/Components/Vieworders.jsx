@@ -18,9 +18,6 @@ const Vieworders = ({ hideHeader = false }) => {
   const [filteredData, setFilteredData] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
   const [show, setShow] = useState(false);
-  const [deliveryDate, setDeliveryDate] = useState("");
-  const [dateError, setDateError] = useState("");
-  const [getid, setGetId] = useState("");
 
   useEffect(() => {
     const ordertime = localStorage.getItem("orderedtime");
@@ -86,34 +83,7 @@ const Vieworders = ({ hideHeader = false }) => {
       });
   };
 
-  const handleShow = (id) => {
-    setShow(true);
-    setGetId(id);
-    setDeliveryDate("");
-    setDateError("");
-  };
-  const handleClose = () => {
-    setShow(false);
-    setDateError("");
-  };
 
-  const dateChange = () => {
-    if (isEmpty(deliveryDate)) {
-      setDateError("Delivery date is required");
-      return;
-    }
-
-    api.put(`/order/updatedeliverydate/${getid}`, { date: deliveryDate })
-      .then(() => {
-        toast.success("Delivery date updated successfully!");
-        setFilteredData(filteredData.map(item => item._id === getid ? { ...item, deliveryDate: deliveryDate } : item));
-        handleClose();
-      })
-      .catch((error) => {
-        toast.error("Failed to update delivery date.");
-        console.log(error);
-      });
-  };
 
   const renderStatusBadge = (statusNum) => {
     switch (statusNum) {
@@ -184,11 +154,7 @@ const Vieworders = ({ hideHeader = false }) => {
                     {item.size && <span>Size: <strong style={{ color: "#ffffff" }}>{item.size}</strong></span>}
                   </div>
 
-                  {item.deliveryDate && (
-                    <div style={{ fontSize: "0.8rem", color: "#a5b4fc" }}>
-                      Expected Delivery: <strong>{new Date(item.deliveryDate).toLocaleDateString()}</strong>
-                    </div>
-                  )}
+
                 </Col>
 
                 {/* Seller / Admin Status Management Controls */}
@@ -208,15 +174,6 @@ const Vieworders = ({ hideHeader = false }) => {
                         <option value={7} style={{ color: "#000" }}>Delivered</option>
                         <option value={3} style={{ color: "#000" }}>Cancel Order</option>
                       </Form.Select>
-
-                      <Button
-                        className="btn-glass-secondary py-1 px-3"
-                        size="sm"
-                        style={{ fontSize: "0.8rem" }}
-                        onClick={() => handleShow(item._id)}
-                      >
-                        📅 Set Delivery Date
-                      </Button>
                     </div>
                   ) : (
                     <div>
@@ -239,36 +196,7 @@ const Vieworders = ({ hideHeader = false }) => {
         </div>
       )}
 
-      {/* Date Change Modal */}
-      <Modal show={show} onHide={handleClose} centered contentClassName="glass-modal">
-        <Modal.Header closeButton className="glass-modal-header">
-          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>Reschedule Delivery Date</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="p-4">
-          <Form.Group>
-            <Form.Label className="glass-label">Select Preferred Delivery Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="deliveryDate"
-              className="glass-input"
-              value={deliveryDate}
-              onChange={(e) => {
-                setDeliveryDate(e.target.value);
-                setDateError("");
-              }}
-            />
-            {dateError && <span className="glass-error-badge">{dateError}</span>}
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer className="glass-modal-footer">
-          <Button className="btn-glass-secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button className="btn-glass-primary" onClick={dateChange}>
-            Save New Date
-          </Button>
-        </Modal.Footer>
-      </Modal>
+
     </Container>
   );
 
