@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import Header from "./Header";
@@ -16,6 +17,27 @@ const Cart = () => {
   const [address, setAddress] = useState({});
   const [newaddress, setNewaddress] = useState({});
   const [totalValue, setTotalValue] = useState(0);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+
+  const confirmRemoveItem = (id) => {
+    setItemToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleRemoveConfirm = () => {
+    if (itemToDelete) {
+      removeItem(itemToDelete);
+    }
+    setShowDeleteModal(false);
+    setItemToDelete(null);
+  };
+
+  const handleRemoveCancel = () => {
+    setShowDeleteModal(false);
+    setItemToDelete(null);
+  };
 
   useEffect(() => {
     api.get("/cart/viewcart")
@@ -212,7 +234,7 @@ const Cart = () => {
                         <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "#ffffff", marginBottom: "0.5rem" }}>
                           ₹{item.prdId?.prize * item.quantity}
                         </div>
-                        <Button className="btn-glass-danger py-1 px-2" size="sm" onClick={() => removeItem(item._id)}>
+                        <Button className="btn-glass-danger py-1 px-2" size="sm" onClick={() => confirmRemoveItem(item._id)}>
                           Remove
                         </Button>
                       </Col>
@@ -377,6 +399,24 @@ const Cart = () => {
           </Row>
         )}
       </Container>
+
+      {/* Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={handleRemoveCancel} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>Remove Item</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-4" style={{ color: "#cbd5e1" }}>
+          Are you sure you want to remove this item from your shopping bag?
+        </Modal.Body>
+        <Modal.Footer className="glass-modal-footer">
+          <Button className="btn-glass-secondary" onClick={handleRemoveCancel}>
+            Cancel
+          </Button>
+          <Button className="btn-glass-danger" onClick={handleRemoveConfirm}>
+            Remove
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
