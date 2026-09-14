@@ -56,8 +56,10 @@ export const getCompanyOrders = async (req, res) => {
           district: { $first: { $ifNull: ["$shippingAddress.district", "$result.district"] } },
           pincode: { $first: { $ifNull: ["$shippingAddress.pincode", "$result.pincode"] } },
           BuildingNumber: { $first: { $ifNull: ["$shippingAddress.BuildingNumber", "$result.BuildingNumber"] } },
+          createdAt: { $first: "$createdAt" },
         },
       },
+      { $sort: { createdAt: -1 } },
       {
         $facet: {
           data: [{ $skip: skip }, { $limit: limit }],
@@ -98,6 +100,7 @@ export const getUserOrders = async (req, res) => {
     
     const result = await cartDB
       .find(query)
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("prdId");
