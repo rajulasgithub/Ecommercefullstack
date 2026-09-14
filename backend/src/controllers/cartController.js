@@ -1,8 +1,22 @@
 import cartDB from "../model/cart.js";
+import productDB from "../model/product.js";
 
 // Add to Cart (User)
 export const addToCart = async (req, res) => {
   try {
+    const product = await productDB.findOne({ _id: req.body.productId });
+    if (!product) {
+      return res.status(404).json({ success: false, error: true, message: "Product not found" });
+    }
+
+    if (String(product.loginId) === String(req.userData.loginId)) {
+      return res.status(403).json({
+        success: false,
+        error: true,
+        message: "You cannot add your own product to the cart",
+      });
+    }
+
     const existingItem = await cartDB.findOne({
       loginId: req.userData.loginId,
       prdId: req.body.productId,
