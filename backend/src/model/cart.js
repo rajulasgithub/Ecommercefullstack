@@ -34,6 +34,14 @@ const cartSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+
+    shippingAddress: {
+      address: { type: String, trim: true },
+      state: { type: String, trim: true },
+      district: { type: String, trim: true },
+      pincode: { type: Number },
+      BuildingNumber: { type: Number },
+    },
   },
   {
     timestamps: true,

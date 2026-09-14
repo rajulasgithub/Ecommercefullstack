@@ -1,4 +1,5 @@
 import cartDB from "../model/cart.js";
+import addressDB from "../model/address.js";
 
 // View Company Orders (Vendor / Admin)
 export const getCompanyOrders = async (req, res) => {
@@ -45,11 +46,11 @@ export const getCompanyOrders = async (req, res) => {
           quantity: { $first: "$quantity" },
           status: { $first: "$status" },
           date: { $first: "$date" },
-          address: { $first: "$result.address" },
-          state: { $first: "$result.state" },
-          district: { $first: "$result.district" },
-          pincode: { $first: "$result.pincode" },
-          BuildingNumber: { $first: "$result.BuildingNumber" },
+          address: { $first: { $ifNull: ["$shippingAddress.address", "$result.address"] } },
+          state: { $first: { $ifNull: ["$shippingAddress.state", "$result.state"] } },
+          district: { $first: { $ifNull: ["$shippingAddress.district", "$result.district"] } },
+          pincode: { $first: { $ifNull: ["$shippingAddress.pincode", "$result.pincode"] } },
+          BuildingNumber: { $first: { $ifNull: ["$shippingAddress.BuildingNumber", "$result.BuildingNumber"] } },
         },
       },
     ]);
@@ -94,6 +95,15 @@ export const getUserOrders = async (req, res) => {
 // Checkout / Place Order (User)
 export const checkoutCart = async (req, res) => {
   try {
+    const userAddress = await addressDB.findOne({ loginId: req.userData.loginId });
+    if (!userAddress) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Please save a shipping address before checking out.",
+      });
+    }
+
     const now = new Date();
     const day = now.getDate();
     const month = now.getMonth() + 1;
@@ -102,6 +112,13 @@ export const checkoutCart = async (req, res) => {
     const data = {
       status: 2,
       date: `${day}-${month}-${year}`,
+      shippingAddress: {
+        address: userAddress.address,
+        state: userAddress.state,
+        district: userAddress.district,
+        pincode: userAddress.pincode,
+        BuildingNumber: userAddress.BuildingNumber,
+      }
     };
     const result = await cartDB.updateMany(
       { loginId: req.userData.loginId, status: 1 },
