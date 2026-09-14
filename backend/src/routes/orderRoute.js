@@ -20,7 +20,7 @@ orderRoute.get("/viewcartcmpny", checkauth, checkRole("seller", "admin"), getCom
 orderRoute.get("/vieworderuser", checkauth, checkRole("user"), getUserOrders);
 
 // Checkout / Place Order (User)
-orderRoute.put("/updatecart", checkauth, checkRole("user"), checkoutCart);
+orderRoute.put("/updatecart", checkauth, checkRole("user", "seller", "company", "admin"), checkoutCart);
 
 // Update Order Status (Seller / Admin)
 orderRoute.put("/updatecartstatus/:id/:value", checkauth, checkRole("seller", "admin"), updateOrderStatus);

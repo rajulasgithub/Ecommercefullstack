@@ -20,19 +20,19 @@ const addToCartValidation = [
 ];
 
 // Add to Cart (User)
-cartRoute.post("/addtocart", checkauth, checkRole("user"), addToCartValidation, addToCart);
+cartRoute.post("/addtocart", checkauth, checkRole("user", "seller", "company", "admin"), addToCartValidation, addToCart);
 
 // View Cart (User)
-cartRoute.get("/viewcart", checkauth, checkRole("user"), getCart);
+cartRoute.get("/viewcart", checkauth, checkRole("user", "seller", "company", "admin"), getCart);
 
 // Increase Cart Quantity (User)
-cartRoute.put("/incrcart/:id", checkauth, checkRole("user"), increaseCartQuantity);
+cartRoute.put("/incrcart/:id", checkauth, checkRole("user", "seller", "company", "admin"), increaseCartQuantity);
 
 // Decrease Cart Quantity (User)
-cartRoute.put("/decrcart/:id", checkauth, checkRole("user"), decreaseCartQuantity);
+cartRoute.put("/decrcart/:id", checkauth, checkRole("user", "seller", "company", "admin"), decreaseCartQuantity);
 
 // Delete Cart Item (User)
-cartRoute.get("/delcartitem/:id", checkauth, checkRole("user"), deleteCartItem);
-cartRoute.delete("/delcartitem/:id", checkauth, checkRole("user"), deleteCartItem);
+cartRoute.get("/delcartitem/:id", checkauth, checkRole("user", "seller", "company", "admin"), deleteCartItem);
+cartRoute.delete("/delcartitem/:id", checkauth, checkRole("user", "seller", "company", "admin"), deleteCartItem);
 
 export default cartRoute;
