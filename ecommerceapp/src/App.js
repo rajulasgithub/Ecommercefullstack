@@ -17,6 +17,7 @@ import OrderSummary from './Components/OrderSummary';
 import Vieworders from './Components/Vieworders';
 import SellerDashboard from './Components/SellerDashboard';
 import Payment from './Components/Payment';
+import OrderSuccess from './Components/OrderSuccess';
 import ProtectedRoute from './Components/ProtectedRoute';
 import ROLES from './utils/roles';
 
@@ -77,6 +78,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
                 <Payment />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/ordersuccess'
+            element={
+              <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
+                <OrderSuccess />
               </ProtectedRoute>
             }
           />

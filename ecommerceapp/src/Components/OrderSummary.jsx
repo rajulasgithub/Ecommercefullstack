@@ -51,8 +51,7 @@ const OrderSummary = () => {
 
     api.put('/order/updatecart', {})
       .then((response) => {
-        toast.success("🎉 Order placed successfully!");
-        navigate('/vieworders');
+        navigate('/ordersuccess');
       })
       .catch((error) => {
         toast.error("Failed to place order. Please try again.");
