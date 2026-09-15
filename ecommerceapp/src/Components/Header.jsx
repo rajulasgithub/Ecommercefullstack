@@ -87,6 +87,14 @@ const Header = () => {
 
                     <Nav.Link
                       as={Link}
+                      to="/wishlist"
+                      className={`header-nav-link ${isActive("/wishlist") ? "active" : ""}`}
+                    >
+                      ❤️ Wishlist
+                    </Nav.Link>
+
+                    <Nav.Link
+                      as={Link}
                       to="/vieworders"
                       className={`header-nav-link ${isActive("/vieworders") ? "active" : ""}`}
                     >
@@ -127,6 +135,14 @@ const Header = () => {
                       {Number(itemCount) > 0 && (
                         <span className="cart-badge-dot ms-2">{itemCount}</span>
                       )}
+                    </Nav.Link>
+
+                    <Nav.Link
+                      as={Link}
+                      to="/wishlist"
+                      className={`header-nav-link ${isActive("/wishlist") ? "active" : ""}`}
+                    >
+                      ❤️ Wishlist
                     </Nav.Link>
 
                     <div className="header-divider d-none d-lg-block mx-1"></div>

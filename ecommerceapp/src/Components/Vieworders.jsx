@@ -18,6 +18,17 @@ const Vieworders = ({ hideHeader = false }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Debounce search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1); // Reset page on new search
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
 
   useEffect(() => {
     const ordertime = localStorage.getItem("orderedtime");
@@ -31,22 +42,20 @@ const Vieworders = ({ hideHeader = false }) => {
       }
     }
 
-    if (role === ROLES.COMPANY || role === ROLES.ADMIN) {
-      api.get(`/order/viewcartcmpny?page=${page}&limit=10`)
-        .then((response) => {
-          setOrder(response.data.data || []);
-          setTotalPages(Math.ceil((response.data.totalCount || 0) / 10));
-        })
-        .catch((error) => console.log(error));
-    } else {
-      api.get(`/order/vieworderuser?page=${page}&limit=10`)
-        .then((response) => {
-          setOrder(response.data.data || []);
-          setTotalPages(Math.ceil((response.data.totalCount || 0) / 10));
-        })
-        .catch((error) => console.log(error));
+    let url = `/order/vieworderuser?page=${page}&limit=10`;
+    if (role === ROLES.ADMIN) {
+      url = `/order/viewcartcmpny?page=${page}&limit=10&search=${debouncedSearch}`;
+    } else if (role === ROLES.COMPANY || role === 'seller') {
+      url = `/order/viewsellerorders?page=${page}&limit=10&search=${debouncedSearch}`;
     }
-  }, [role, page]);
+
+    api.get(url)
+      .then((response) => {
+        setOrder(response.data.data || []);
+        setTotalPages(Math.ceil((response.data.totalCount || 0) / 10));
+      })
+      .catch((error) => console.log(error));
+  }, [role, page, debouncedSearch]);
 
   const cancelOrder = (id) => {
     api.put(`/order/cancelorder/${id}`)
@@ -90,10 +99,33 @@ const Vieworders = ({ hideHeader = false }) => {
     <Container className={hideHeader ? "py-2" : "py-4"}>
       {/* Page Header */}
       {!hideHeader && (
-        <div className="page-header">
-          <span className="status-pill ordered mb-2">Order Management</span>
-          <h1 className="page-title">{role === ROLES.COMPANY || role === ROLES.ADMIN ? "Company Orders Dashboard" : "My Order History"}</h1>
-          <p className="page-subtitle">{order.length} order(s) record found on this page</p>
+        <div className="page-header d-flex justify-content-between align-items-end flex-wrap gap-3">
+          <div>
+            <span className="status-pill ordered mb-2">Order Management</span>
+            <h1 className="page-title">
+              {role === ROLES.ADMIN 
+                ? "Admin Orders Dashboard" 
+                : (role === ROLES.COMPANY || role === 'seller') 
+                  ? "Seller Orders Dashboard" 
+                  : "My Order History"}
+            </h1>
+            <p className="page-subtitle">{order.length} order(s) record found on this page</p>
+          </div>
+        </div>
+      )}
+
+      {/* Search Bar for Admin and Seller (Always visible if applicable) */}
+      {(role === ROLES.ADMIN || role === ROLES.COMPANY || role === 'seller') && (
+        <div className="mb-4 d-flex justify-content-end">
+          <div style={{ maxWidth: "300px", width: "100%" }}>
+            <Form.Control
+              type="text"
+              placeholder="Search orders..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="glass-input"
+            />
+          </div>
         </div>
       )}
 
@@ -143,7 +175,15 @@ const Vieworders = ({ hideHeader = false }) => {
                     {item.size && <span>Size: <strong style={{ color: "#ffffff" }}>{item.size}</strong></span>}
                   </div>
 
-
+                  {/* Customer Details for Sellers & Admins */}
+                  {(role === ROLES.ADMIN || role === ROLES.COMPANY || role === 'seller') && item.firstName && (
+                    <div className="mt-2 p-2 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.05)', fontSize: '0.85rem', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <div style={{ color: '#fff', marginBottom: '4px' }}><strong>👤 Customer Details</strong></div>
+                      <div>Name: <span style={{ color: '#fff' }}>{item.firstName} {item.lastName}</span></div>
+                      <div>Phone: <span style={{ color: '#fff' }}>{item.number}</span></div>
+                      <div>Address: <span style={{ color: '#fff' }}>{item.BuildingNumber}, {item.address}, {item.district}, {item.state} - {item.pincode}</span></div>
+                    </div>
+                  )}
                 </Col>
 
                 {/* Seller / Admin Status Management Controls */}

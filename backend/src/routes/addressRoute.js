@@ -23,15 +23,15 @@ const addressValidation = [
 ];
 
 // Add Address (User role)
-addressRoute.post('/addAddress', checkauth, checkRole("user"), addressValidation, addAddress);
+addressRoute.post('/addAddress', checkauth, checkRole("user", "seller", "company", "admin"), addressValidation, addAddress);
 
 // Get Address (User role)
-addressRoute.get('/getaddress', checkauth, checkRole("user"), getAddress);
+addressRoute.get('/getaddress', checkauth, checkRole("user", "seller", "company", "admin"), getAddress);
 
 // Update Address (User role)
-addressRoute.put('/updateaddress', checkauth, checkRole("user"), addressValidation, updateAddress);
+addressRoute.put('/updateaddress', checkauth, checkRole("user", "seller", "company", "admin"), addressValidation, updateAddress);
 
 // Change Delivery Address & Contact (User role)
-addressRoute.put('/changedeliveryaddress', checkauth, checkRole("user"), changeDeliveryAddress);
+addressRoute.put('/changedeliveryaddress', checkauth, checkRole("user", "seller", "company", "admin"), changeDeliveryAddress);
 
 export default addressRoute;

@@ -1,5 +1,6 @@
 import cartDB from "../model/cart.js";
 import addressDB from "../model/address.js";
+import mongoose from "mongoose";
 
 // View Company Orders (Vendor / Admin)
 export const getCompanyOrders = async (req, res) => {
@@ -12,7 +13,7 @@ export const getCompanyOrders = async (req, res) => {
       { $match: { status: { $ne: 1 } } },
       {
         $lookup: {
-          from: "addresslists",
+          from: "addresses",
           localField: "loginId",
           foreignField: "loginId",
           as: "result",
@@ -20,7 +21,7 @@ export const getCompanyOrders = async (req, res) => {
       },
       {
         $lookup: {
-          from: "productlists",
+          from: "products",
           localField: "prdId",
           foreignField: "_id",
           as: "product",
@@ -28,7 +29,7 @@ export const getCompanyOrders = async (req, res) => {
       },
       {
         $lookup: {
-          from: "registrations",
+          from: "users",
           localField: "loginId",
           foreignField: "loginId",
           as: "info",
@@ -84,6 +85,115 @@ export const getCompanyOrders = async (req, res) => {
       error: true,
       errorMessage: error.message,
       message: "Server error while viewing company orders",
+    });
+  }
+};
+
+// View Seller Orders (Vendor specific)
+export const getSellerOrders = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const skip = (page - 1) * limit;
+
+    const pipeline = [
+      { $match: { status: { $ne: 1 } } },
+      {
+        $lookup: {
+          from: "addresses",
+          localField: "loginId",
+          foreignField: "loginId",
+          as: "result",
+        },
+      },
+      {
+        $lookup: {
+          from: "products", // fixed to 'products'
+          localField: "prdId",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "loginId",
+          foreignField: "loginId",
+          as: "info",
+        },
+      },
+      { $unwind: "$result" },
+      { $unwind: "$product" },
+      { $unwind: "$info" },
+      {
+        $match: {
+          "product.loginId": new mongoose.Types.ObjectId(req.userData.loginId)
+        }
+      }
+    ];
+
+    if (search) {
+      pipeline.push({
+        $match: {
+          $or: [
+            { "product.prdName": { $regex: search, $options: "i" } },
+            { "info.firstName": { $regex: search, $options: "i" } }
+          ]
+        }
+      });
+    }
+
+    pipeline.push(
+      {
+        $group: {
+          _id: "$_id",
+          loginId: { $first: "$loginId" },
+          firstName: { $first: "$info.firstName" },
+          lastName: { $first: "$info.lastName" },
+          number: { $first: "$info.number" },
+          image: { $first: "$product.image" },
+          prdName: { $first: "$product.prdName" },
+          prize: { $first: "$product.prize" },
+          size: { $first: "$product.size" },
+          quantity: { $first: "$quantity" },
+          status: { $first: "$status" },
+          date: { $first: "$date" },
+          address: { $first: { $ifNull: ["$shippingAddress.address", "$result.address"] } },
+          state: { $first: { $ifNull: ["$shippingAddress.state", "$result.state"] } },
+          district: { $first: { $ifNull: ["$shippingAddress.district", "$result.district"] } },
+          pincode: { $first: { $ifNull: ["$shippingAddress.pincode", "$result.pincode"] } },
+          BuildingNumber: { $first: { $ifNull: ["$shippingAddress.BuildingNumber", "$result.BuildingNumber"] } },
+          createdAt: { $first: "$createdAt" },
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          data: [{ $skip: skip }, { $limit: limit }],
+          totalCount: [{ $count: "count" }],
+        },
+      }
+    );
+
+    const result = await cartDB.aggregate(pipeline);
+
+    const data = result[0]?.data || [];
+    const totalCount = result[0]?.totalCount[0]?.count || 0;
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: data,
+      totalCount: totalCount,
+      message: "Seller orders viewed successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while viewing seller orders",
     });
   }
 };

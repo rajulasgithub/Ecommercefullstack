@@ -3,6 +3,7 @@ import checkauth from "../middleware/checkauth.js";
 import { checkRole } from "../middleware/authorize.js";
 import {
   getCompanyOrders,
+  getSellerOrders,
   getUserOrders,
   checkoutCart,
   updateOrderStatus,
@@ -13,8 +14,11 @@ import {
 
 const orderRoute = express.Router();
 
-// View Company Orders (Seller / Admin)
-orderRoute.get("/viewcartcmpny", checkauth, checkRole("seller", "admin"), getCompanyOrders);
+// View Company Orders (Admin)
+orderRoute.get("/viewcartcmpny", checkauth, checkRole("admin"), getCompanyOrders);
+
+// View Seller Orders (Vendor specific)
+orderRoute.get("/viewsellerorders", checkauth, checkRole("seller", "company"), getSellerOrders);
 
 // View Orders for Logged-In User
 orderRoute.get("/vieworderuser", checkauth, checkRole("user"), getUserOrders);

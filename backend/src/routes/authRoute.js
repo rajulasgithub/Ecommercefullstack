@@ -17,6 +17,7 @@ import {
   viewSingleCompany,
   deleteCompany,
   updateCompany,
+  googleLogin,
 } from "../controllers/authController.js";
 
 const authroutes = express.Router();
@@ -82,6 +83,9 @@ authroutes.post('/signup', signupValidation, signup);
 
 // User/Company Login
 authroutes.post('/login', loginValidation, login);
+
+// Google Login
+authroutes.post('/google', googleLogin);
 
 // View Profile (Logged In User)
 authroutes.get('/viewinfo', checkauth, viewProfile);

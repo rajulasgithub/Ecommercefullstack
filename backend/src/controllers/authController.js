@@ -4,6 +4,9 @@ import loginDB from "../model/login.js";
 import userDB from "../model/user.js";
 import companyDB from "../model/company.js";
 import dotenv from "dotenv";
+import { OAuth2Client } from "google-auth-library";
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "dummy-google-client-id");
 
 dotenv.config();
 
@@ -180,6 +183,74 @@ export const login = async (req, res) => {
       error: true,
       errorMessage: error.message,
       message: "Something went wrong during login",
+    });
+  }
+};
+
+// Google Login / Signup
+export const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Google token is required",
+      });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID || "dummy-google-client-id",
+    });
+    const payload = ticket.getPayload();
+    const { email, given_name, family_name } = payload;
+
+    let user = await loginDB.findOne({ email });
+
+    if (!user) {
+      // Create new account automatically for Google users
+      const randomPassword = Math.random().toString(36).slice(-10) + "Aa1!";
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      const loginData = { email, password: hashedPassword, role: "user" };
+      user = await loginDB(loginData).save();
+
+      const signupData = {
+        loginId: user._id,
+        firstName: given_name || "User",
+        lastName: family_name || "",
+        role: "user",
+      };
+      await userDB(signupData).save();
+    }
+
+    const secret = process.env.JWT_SECRET || "encryptkey";
+    const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
+
+    const jwtToken = jwt.sign(
+      {
+        loginId: user._id,
+        role: user.role,
+        email: user.email,
+      },
+      secret,
+      { expiresIn }
+    );
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Google login successful",
+      loginId: user._id,
+      role: user.role,
+      token: jwtToken,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Something went wrong during Google login",
     });
   }
 };
