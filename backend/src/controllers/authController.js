@@ -5,6 +5,7 @@ import userDB from "../model/user.js";
 import companyDB from "../model/company.js";
 import dotenv from "dotenv";
 import { OAuth2Client } from "google-auth-library";
+import sendEmail from "../utils/sendEmail.js";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "dummy-google-client-id");
 
@@ -65,6 +66,18 @@ export const signup = async (req, res) => {
         secret,
         { expiresIn }
       );
+
+      // Send Welcome Email
+      sendEmail({
+        to: email,
+        subject: "Welcome to TrendLife!",
+        template: "userSignup",
+        context: {
+          name: firstName ? `${firstName} ${lastName || ''}`.trim() : "Valued Customer",
+          email: email,
+          role: "User"
+        }
+      }).catch((e) => console.error("Signup email send error:", e.message));
 
       return res.status(200).json({
         success: true,
@@ -222,6 +235,18 @@ export const googleLogin = async (req, res) => {
         role: "user",
       };
       await userDB(signupData).save();
+
+      // Send Welcome Email for Google Signup
+      sendEmail({
+        to: email,
+        subject: "Welcome to TrendLife!",
+        template: "userSignup",
+        context: {
+          name: given_name ? `${given_name} ${family_name || ''}`.trim() : "Valued Customer",
+          email: email,
+          role: "User"
+        }
+      }).catch((e) => console.error("Google signup email send error:", e.message));
     }
 
     const secret = process.env.JWT_SECRET || "encryptkey";
@@ -424,6 +449,18 @@ export const companySignup = async (req, res) => {
       secret,
       { expiresIn }
     );
+
+    // Send Welcome Email for Seller/Company Signup
+    sendEmail({
+      to: email,
+      subject: "Welcome to TrendLife Seller Network!",
+      template: "userSignup",
+      context: {
+        name: companyName || "Valued Seller",
+        email: email,
+        role: "Seller"
+      }
+    }).catch((e) => console.error("Company signup email send error:", e.message));
 
     return res.status(200).json({
       success: true,

@@ -2,6 +2,32 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import productDB from "../model/product.js";
 import cartDB from "../model/cart.js";
+import loginDB from "../model/login.js";
+import companyDB from "../model/company.js";
+import userDB from "../model/user.js";
+import sendEmail from "../utils/sendEmail.js";
+
+const getSellerInfo = async (loginId) => {
+  try {
+    if (!loginId) return { email: null, sellerName: "Seller" };
+    const loginUser = await loginDB.findById(loginId);
+    if (!loginUser) return { email: null, sellerName: "Seller" };
+
+    let sellerName = "Seller";
+    const company = await companyDB.findOne({ loginId });
+    if (company && company.companyName) {
+      sellerName = company.companyName;
+    } else {
+      const user = await userDB.findOne({ loginId });
+      if (user && user.firstName) {
+        sellerName = `${user.firstName} ${user.lastName || ''}`.trim();
+      }
+    }
+    return { email: loginUser.email, sellerName };
+  } catch (e) {
+    return { email: null, sellerName: "Seller" };
+  }
+};
 
 // Add Product (Vendor / Admin)
 export const addProduct = async (req, res) => {
@@ -22,6 +48,25 @@ export const addProduct = async (req, res) => {
 
     const result = await productDB(data).save();
     if (result) {
+      // Send Product Added email to seller
+      getSellerInfo(req.userData?.loginId).then(({ email, sellerName }) => {
+        if (email) {
+          sendEmail({
+            to: email,
+            subject: `Product Added: ${result.prdName}`,
+            template: "productAdded",
+            context: {
+              sellerName,
+              prdName: result.prdName,
+              prize: result.prize,
+              category: result.category,
+              style: result.style,
+              stock: result.stock,
+            }
+          });
+        }
+      }).catch((e) => console.error("Product added email error:", e.message));
+
       return res.status(200).json({
         success: true,
         error: false,
@@ -318,6 +363,22 @@ export const deleteProduct = async (req, res) => {
       { $set: productData }
     );
 
+    // Send Product Deleted email to seller
+    getSellerInfo(product.loginId || userLoginId).then(({ email, sellerName }) => {
+      if (email) {
+        sendEmail({
+          to: email,
+          subject: `Product Removed: ${product.prdName}`,
+          template: "productDeleted",
+          context: {
+            sellerName,
+            prdName: product.prdName,
+            category: product.category,
+          }
+        });
+      }
+    }).catch((e) => console.error("Product deleted email error:", e.message));
+
     return res.status(200).json({
       success: true,
       error: false,
@@ -381,6 +442,25 @@ export const updateProduct = async (req, res) => {
       { _id: id },
       { $set: data }
     );
+
+    // Send Product Updated email to seller
+    getSellerInfo(oldData.loginId || userLoginId).then(({ email, sellerName }) => {
+      if (email) {
+        sendEmail({
+          to: email,
+          subject: `Product Updated: ${data.prdName}`,
+          template: "productUpdated",
+          context: {
+            sellerName,
+            prdName: data.prdName,
+            prize: data.prize,
+            category: data.category,
+            stock: data.stock,
+          }
+        });
+      }
+    }).catch((e) => console.error("Product updated email error:", e.message));
+
     return res.status(200).json({
       success: true,
       error: false,

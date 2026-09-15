@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background: #1e293b;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 26px;
+      font-weight: 700;
+    }
+    .content {
+      padding: 30px 25px;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+    .content h2 {
+      color: #ffffff;
+      margin-top: 0;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+    .details-box {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 15px 20px;
+      margin: 20px 0;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .details-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .details-label {
+      color: #94a3b8;
+    }
+    .details-value {
+      color: #f8fafc;
+      font-weight: 600;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #64748b;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Welcome to TrendLife</h1>
+    </div>
+    <div class="content">
+      <span class="badge">Account Created</span>
+      <h2>Hello {{name}},</h2>
+      <p>Thank you for joining TrendLife! Your account has been created successfully.</p>
+      
+      <div class="details-box">
+        <div class="details-row">
+          <span class="details-label">Registered Email:</span>
+          <span class="details-value">{{email}}</span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">Account Role:</span>
+          <span class="details-value">{{role}}</span>
+        </div>
+      </div>
+
+      <p>You can now log in, explore our store, manage your account, and enjoy smooth shopping.</p>
+    </div>
+    <div class="footer">
+      &copy; {{year}} TrendLife E-Commerce. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
