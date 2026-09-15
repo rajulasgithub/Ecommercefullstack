@@ -142,6 +142,38 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
                 </button>
               </>
             )}
+            
+            {/* Wishlist Button Overlay */}
+            {role && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  item.handleAddToWishlist(item._id);
+                }}
+                style={{
+                  position: 'absolute',
+                  top: '10px',
+                  left: '10px',
+                  background: 'rgba(0,0,0,0.5)',
+                  color: '#ff4d4f',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: '50%',
+                  width: '32px',
+                  height: '32px',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backdropFilter: 'blur(4px)',
+                  zIndex: 3,
+                  transition: 'all 0.2s ease'
+                }}
+                title="Add to Wishlist"
+              >
+                ❤️
+              </button>
+            )}
           </div>
 
           {/* Mini Thumbnail Dots Strip if Multiple Images */}
@@ -320,6 +352,22 @@ const Viewproduct = () => {
         const msg = error.response?.data?.message || "Failed to add to cart.";
         toast.error(msg);
         setErrorMsg(msg);
+      });
+  };
+
+  const handleAddToWishlist = (id) => {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    api.post('/wishlist/add', { productId: id })
+      .then((response) => {
+        toast.success("❤️ Added to your wishlist!");
+      })
+      .catch((error) => {
+        const msg = error.response?.data?.message || "Failed to add to wishlist.";
+        toast.error(msg);
       });
   };
 
@@ -639,7 +687,7 @@ const Viewproduct = () => {
             product.map((item) => (
               <ProductCardItem
                 key={item._id}
-                item={item}
+                item={{ ...item, handleAddToWishlist }}
                 role={role}
                 navigate={navigate}
                 handleShow={handleShow}

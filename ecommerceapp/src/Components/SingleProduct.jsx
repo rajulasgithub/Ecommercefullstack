@@ -87,6 +87,34 @@ const SingleProduct = () => {
     }
   };
 
+  const [addingToWishlist, setAddingToWishlist] = useState(false);
+
+  const handleAddToWishlist = async () => {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    setAddingToWishlist(true);
+    setSuccessMsg('');
+    setError('');
+
+    try {
+      const response = await api.post('/wishlist/add', { productId: id });
+      if (response.data && response.data.success) {
+        toast.success('❤️ Item added to your wishlist!');
+        setSuccessMsg('❤️ Item added to your wishlist!');
+        setTimeout(() => setSuccessMsg(''), 4000);
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to add item to wishlist.';
+      toast.error(msg);
+      setError(msg);
+    } finally {
+      setAddingToWishlist(false);
+    }
+  };
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingProduct, setDeletingProduct] = useState(false);
 
@@ -573,18 +601,38 @@ const SingleProduct = () => {
                     return (
                       <div className="d-grid gap-2">
                         {product.status !== 'deleted' && product.stock !== 'Out of Stock' ? (
-                          <Button
-                            className="btn-glass-primary py-3"
-                            style={{ fontSize: '1.1rem', fontWeight: 700 }}
-                            disabled={addingToCart}
-                            onClick={handleAddToCart}
-                          >
-                            {addingToCart ? 'Adding to Bag...' : '🛍️ Add to Shopping Bag'}
-                          </Button>
+                          <div className="d-flex gap-2">
+                            <Button
+                              className="btn-glass-primary flex-grow-1 py-3"
+                              style={{ fontSize: '1.1rem', fontWeight: 700 }}
+                              disabled={addingToCart}
+                              onClick={handleAddToCart}
+                            >
+                              {addingToCart ? 'Adding to Bag...' : '🛍️ Add to Shopping Bag'}
+                            </Button>
+                            <Button
+                              className="btn-glass-secondary py-3 px-4"
+                              title="Add to Wishlist"
+                              disabled={addingToWishlist}
+                              onClick={handleAddToWishlist}
+                            >
+                              {addingToWishlist ? '...' : '❤️'}
+                            </Button>
+                          </div>
                         ) : (
-                          <Button className="btn-glass-secondary py-3" disabled style={{ opacity: 0.6 }}>
-                            Currently Out of Stock
-                          </Button>
+                          <div className="d-flex gap-2">
+                            <Button className="btn-glass-secondary flex-grow-1 py-3" disabled style={{ opacity: 0.6 }}>
+                              Currently Out of Stock
+                            </Button>
+                            <Button
+                              className="btn-glass-secondary py-3 px-4"
+                              title="Add to Wishlist"
+                              disabled={addingToWishlist}
+                              onClick={handleAddToWishlist}
+                            >
+                              {addingToWishlist ? '...' : '❤️'}
+                            </Button>
+                          </div>
                         )}
                       </div>
                     );

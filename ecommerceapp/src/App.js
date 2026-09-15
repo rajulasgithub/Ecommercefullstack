@@ -16,6 +16,7 @@ import Cart from './Components/Cart';
 import OrderSummary from './Components/OrderSummary';
 import Vieworders from './Components/Vieworders';
 import SellerDashboard from './Components/SellerDashboard';
+import Wishlist from './Components/Wishlist';
 import Payment from './Components/Payment';
 import OrderSuccess from './Components/OrderSuccess';
 import ProtectedRoute from './Components/ProtectedRoute';
@@ -86,6 +87,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
                 <OrderSuccess />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/wishlist'
+            element={
+              <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
+                <Wishlist />
               </ProtectedRoute>
             }
           />
