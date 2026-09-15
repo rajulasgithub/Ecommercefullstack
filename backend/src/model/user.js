@@ -6,12 +6,12 @@ const userSchema = new mongoose.Schema({
   loginId: { type: mongoose.Types.ObjectId, ref: "login" },
   firstName: { type: String, required: true, trim: true },
   lastName: { type: String, required: true, trim: true },
-  number: { type: Number, required: true },
-  gender: { type: String, required: true, enum: GENDERS, trim: true },
-  state: { type: String, required: true, trim: true },
-  district: { type: String, required: true, trim: true },
-  pincode: { type: Number, required: true },
-  place: { type: String, required: true, trim: true },
+  number: { type: Number },
+  gender: { type: String, enum: GENDERS, trim: true },
+  state: { type: String, trim: true },
+  district: { type: String, trim: true },
+  pincode: { type: Number },
+  place: { type: String, trim: true },
   role: { type: String, required: true, default: "user", trim: true },
 });
 

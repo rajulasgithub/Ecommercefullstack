@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { GoogleLogin } from '@react-oauth/google';
 import Header from "./Header";
 import api from "../utils/api";
 import { isValidEmail, isEmpty } from "../utils/validation";
@@ -68,6 +69,34 @@ const Login = () => {
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Login failed. Please check your credentials.";
+      toast.error(msg);
+      setServerError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const response = await api.post("/auth/google", {
+        token: credentialResponse.credential,
+      });
+      if (response.data && response.data.success) {
+        localStorage.setItem("loginId", response.data.loginId);
+        localStorage.setItem("role", response.data.role);
+        localStorage.setItem("token", response.data.token);
+
+        toast.success("Welcome! Signed in with Google successfully.");
+        const userRole = String(response.data.role || '').toLowerCase();
+        if (userRole === "seller" || userRole === "company" || userRole === "admin" || userRole.includes("seller")) {
+          navigate('/sellerdashboard');
+        } else {
+          navigate('/viewproduct');
+        }
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Google Login failed. Please try again.";
       toast.error(msg);
       setServerError(msg);
     } finally {
@@ -159,6 +188,27 @@ const Login = () => {
                     "Sign In"
                   )}
                 </Button>
+              </div>
+              
+              <div className="d-flex align-items-center my-4">
+                <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
+                <span style={{ margin: '0 10px', color: '#9ca3af', fontSize: '0.85rem' }}>OR</span>
+                <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
+              </div>
+
+              <div className="d-flex justify-content-center mb-3">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => {
+                    toast.error('Google Login Failed');
+                    setServerError('Google Login Failed');
+                  }}
+                  useOneTap
+                  theme="filled_black"
+                  shape="rectangular"
+                  text="signin_with"
+                  size="large"
+                />
               </div>
 
               <div className="text-center mt-3" style={{ fontSize: "0.875rem", color: "#9ca3af" }}>
