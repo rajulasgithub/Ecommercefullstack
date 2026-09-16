@@ -18,6 +18,9 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
   const [signup, setSignup] = useState({
     firstName: "",
     lastName: "",
@@ -34,6 +37,14 @@ const Signup = () => {
 
   const [error, setError] = useState({});
   const [serverError, setServerError] = useState("");
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleChange = (event) => {
     setSignup({ ...signup, [event.target.name]: event.target.value });
@@ -89,7 +100,20 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      const response = await api.post('/auth/signup', signupPayload);
+      let response;
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        Object.keys(signupPayload).forEach((key) => {
+          formData.append(key, signupPayload[key]);
+        });
+        response = await api.post('/auth/signup', formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await api.post('/auth/signup', signupPayload);
+      }
+
       if (response.data && response.data.success) {
         toast.success("🎉 Account created successfully!");
         if (response.data.token) {
@@ -127,6 +151,30 @@ const Signup = () => {
             )}
 
             <Form onSubmit={handleSubmit}>
+              <Row className="g-3 mb-3 justify-content-center">
+                <Col xs={12} className="text-center">
+                  <Form.Group>
+                    <Form.Label className="glass-label d-block">Profile Picture (Optional)</Form.Label>
+                    <div className="d-flex align-items-center justify-content-center gap-3">
+                      {imagePreview && (
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          style={{ width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,255,255,0.2)" }}
+                        />
+                      )}
+                      <Form.Control
+                        type="file"
+                        accept="image/*"
+                        className="glass-input"
+                        style={{ maxWidth: "300px" }}
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                  </Form.Group>
+                </Col>
+              </Row>
+
               <Row className="g-3 mb-2">
                 <Col xs={12} sm={6}>
                   <Form.Group>

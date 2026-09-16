@@ -31,3 +31,14 @@ const productImageStorage = new CloudinaryStorage({
 });
 
 export const uploadProductImage = multer({ storage: productImageStorage });
+
+// Cloudinary storage for user profile images
+const profileImageStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "ecommerceapp/profiles",
+  },
+});
+
+export const uploadProfileImage = multer({ storage: profileImageStorage });
+

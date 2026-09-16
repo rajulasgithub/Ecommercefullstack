@@ -5,12 +5,14 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import ROLES from "../utils/roles";
+import api from "../utils/api";
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [role, setRole] = useState(localStorage.getItem("role"));
   const itemCount = localStorage.getItem("itemcount") || 0;
+  const [userImage, setUserImage] = useState(null);
 
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
@@ -22,6 +24,19 @@ const Header = () => {
   useEffect(() => {
     const data = localStorage.getItem("role");
     setRole(data || null);
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      api.get("/auth/viewinfo")
+        .then((res) => {
+          if (res.data?.success && res.data?.data?.image) {
+            setUserImage(res.data.data.image);
+          }
+        })
+        .catch(() => {});
+    } else {
+      setUserImage(null);
+    }
   }, [location]);
 
   const toggleTheme = () => {
@@ -104,9 +119,19 @@ const Header = () => {
                     <Nav.Link
                       as={Link}
                       to="/profile"
-                      className={`header-nav-link ${isActive("/profile") ? "active" : ""}`}
+                      className={`header-nav-link d-inline-flex align-items-center gap-1 ${isActive("/profile") ? "active" : ""}`}
                     >
-                      👤 My Profile
+                      {userImage ? (
+                        <img
+                          src={userImage}
+                          alt="Avatar"
+                          style={{ width: "22px", height: "22px", borderRadius: "50%", objectFit: "cover" }}
+                          onError={(e) => { e.target.style.display = "none"; }}
+                        />
+                      ) : (
+                        "👤 "
+                      )}
+                      My Profile
                     </Nav.Link>
 
                     <div className="header-divider d-none d-lg-block mx-1"></div>
@@ -137,9 +162,19 @@ const Header = () => {
                     <Nav.Link
                       as={Link}
                       to="/profile"
-                      className={`header-nav-link ${isActive("/profile") ? "active" : ""}`}
+                      className={`header-nav-link d-inline-flex align-items-center gap-1 ${isActive("/profile") ? "active" : ""}`}
                     >
-                      👤 My Profile
+                      {userImage ? (
+                        <img
+                          src={userImage}
+                          alt="Avatar"
+                          style={{ width: "22px", height: "22px", borderRadius: "50%", objectFit: "cover" }}
+                          onError={(e) => { e.target.style.display = "none"; }}
+                        />
+                      ) : (
+                        "👤 "
+                      )}
+                      My Profile
                     </Nav.Link>
 
                     <Nav.Link

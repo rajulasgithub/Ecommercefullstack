@@ -44,6 +44,13 @@ export const signup = async (req, res) => {
 
     loginresult = await loginDB(loginData).save();
 
+    let imageUrl = "";
+    if (req.file) {
+      imageUrl = req.file.path || req.file.filename;
+    } else if (req.body.image) {
+      imageUrl = req.body.image;
+    }
+
     const signupData = {
       loginId: loginresult._id,
       firstName,
@@ -55,6 +62,7 @@ export const signup = async (req, res) => {
       pincode,
       place,
       role: "user",
+      image: imageUrl,
     };
 
     const signupresult = await userDB(signupData).save();
@@ -217,7 +225,7 @@ export const googleLogin = async (req, res) => {
       audience: process.env.GOOGLE_CLIENT_ID || "dummy-google-client-id",
     });
     const payload = ticket.getPayload();
-    const { email, given_name, family_name } = payload;
+    const { email, given_name, family_name, picture } = payload;
 
     let user = await loginDB.findOne({ email });
 
@@ -233,6 +241,7 @@ export const googleLogin = async (req, res) => {
         firstName: given_name || "User",
         lastName: family_name || "",
         role: "user",
+        image: picture || "",
       };
       await userDB(signupData).save();
 
@@ -485,6 +494,12 @@ export const updateOwnProfile = async (req, res) => {
         pincode: req.body.pincode !== undefined ? req.body.pincode : targetUser.pincode,
         place: req.body.place !== undefined ? req.body.place : targetUser.place,
       };
+
+      if (req.file) {
+        updateData.image = req.file.path || req.file.filename;
+      } else if (req.body.image !== undefined) {
+        updateData.image = req.body.image;
+      }
 
       await userDB.updateOne({ loginId }, { $set: updateData });
       const updatedUser = await userDB.findOne({ loginId });

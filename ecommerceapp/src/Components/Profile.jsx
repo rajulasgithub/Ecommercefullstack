@@ -72,16 +72,27 @@ const Profile = () => {
 
     try {
       let response;
-      if (isSeller && imageFile) {
+      if (imageFile) {
         const payload = new FormData();
         payload.append("image", imageFile);
-        payload.append("companyName", formData.companyName || "");
-        payload.append("contactNumber", formData.contactNumber || "");
-        payload.append("regNumber", formData.regNumber || "");
-        payload.append("gstNumber", formData.gstNumber || "");
-        payload.append("state", formData.state || "");
-        payload.append("district", formData.district || "");
-        payload.append("pincode", formData.pincode || "");
+        if (isSeller) {
+          payload.append("companyName", formData.companyName || "");
+          payload.append("contactNumber", formData.contactNumber || "");
+          payload.append("regNumber", formData.regNumber || "");
+          payload.append("gstNumber", formData.gstNumber || "");
+          payload.append("state", formData.state || "");
+          payload.append("district", formData.district || "");
+          payload.append("pincode", formData.pincode || "");
+        } else {
+          payload.append("firstName", formData.firstName || "");
+          payload.append("lastName", formData.lastName || "");
+          payload.append("number", formData.number || "");
+          payload.append("gender", formData.gender || "");
+          payload.append("place", formData.place || "");
+          payload.append("state", formData.state || "");
+          payload.append("district", formData.district || "");
+          payload.append("pincode", formData.pincode || "");
+        }
 
         response = await api.put("/auth/updateprofile", payload, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -129,19 +140,27 @@ const Profile = () => {
               {/* Header Badge & Profile Summary */}
               <div className="d-flex flex-column flex-md-row align-items-center justify-content-between pb-4 border-bottom border-secondary mb-4 gap-3">
                 <div className="d-flex align-items-center gap-3">
-                  <div className="profile-avatar-box">
+                  <div className="profile-avatar-box position-relative d-flex align-items-center justify-content-center overflow-hidden">
                     {imagePreview ? (
                       <img
                         src={imagePreview}
                         alt="Profile Avatar"
-                        className="profile-avatar-img"
+                        className="profile-avatar-img w-100 h-100"
+                        style={{ objectFit: "cover" }}
                         onError={(e) => {
                           e.target.style.display = "none";
+                          if (e.target.nextSibling) {
+                            e.target.nextSibling.style.display = "flex";
+                          }
                         }}
                       />
-                    ) : (
-                      <span className="profile-avatar-initials">{getInitials()}</span>
-                    )}
+                    ) : null}
+                    <span
+                      className="profile-avatar-initials"
+                      style={{ display: imagePreview ? "none" : "flex" }}
+                    >
+                      {getInitials()}
+                    </span>
                   </div>
                   <div>
                     <span className={`status-pill ${isSeller ? "processing" : "active"} mb-1 d-inline-block`}>
@@ -334,6 +353,20 @@ const Profile = () => {
                   ) : (
                     /* Customer Specific Fields */
                     <>
+                      {isEditing && (
+                        <Col xs={12}>
+                          <Form.Group>
+                            <Form.Label className="glass-label">Update Profile Picture</Form.Label>
+                            <Form.Control
+                              type="file"
+                              accept="image/*"
+                              className="glass-input"
+                              onChange={handleFileChange}
+                            />
+                          </Form.Group>
+                        </Col>
+                      )}
+
                       <Col xs={12} md={6}>
                         <Form.Group>
                           <Form.Label className="glass-label">First Name</Form.Label>

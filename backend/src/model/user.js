@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   pincode: { type: Number },
   place: { type: String, trim: true },
   role: { type: String, required: true, default: "user", trim: true },
+  image: { type: String, trim: true, default: "" },
 });
 
 const userDB = mongoose.model("User", userSchema);

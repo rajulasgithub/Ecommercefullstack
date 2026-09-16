@@ -2,7 +2,7 @@ import express from "express";
 import { body } from "express-validator";
 import checkauth from "../middleware/checkauth.js";
 import { checkRole } from "../middleware/authorize.js";
-import { uploadCompanyLogo } from "../middleware/upload.js";
+import { uploadCompanyLogo, uploadProfileImage } from "../middleware/upload.js";
 import { handleValidationErrors } from "../middleware/validateResult.js";
 import { GENDERS } from "../model/user.js";
 import {
@@ -84,7 +84,7 @@ const companySignupValidation = [
 ];
 
 // User Signup
-authroutes.post('/signup', signupValidation, signup);
+authroutes.post('/signup', uploadProfileImage.single("image"), signupValidation, signup);
 
 // User/Company Login
 authroutes.post('/login', loginValidation, login);
@@ -107,8 +107,8 @@ authroutes.post('/reset-password', resetPassword);
 // View Logged In Profile (User or Seller)
 authroutes.get('/viewinfo', checkauth, viewProfile);
 
-// Update Logged In Profile (User or Seller, supporting logo image upload)
-authroutes.put('/updateprofile', checkauth, uploadCompanyLogo.single("image"), updateOwnProfile);
+// Update Logged In Profile (User or Seller, supporting profile picture upload)
+authroutes.put('/updateprofile', checkauth, uploadProfileImage.single("image"), updateOwnProfile);
 
 
 // View All Users (Admin Only)
