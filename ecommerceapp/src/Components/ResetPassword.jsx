@@ -25,6 +25,10 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
+  // 15 Minutes Countdown Timer (900 seconds)
+  const [timeLeft, setTimeLeft] = useState(900);
+  const [isExpired, setIsExpired] = useState(false);
+
   const [error, setError] = useState({});
   const [serverError, setServerError] = useState("");
 
@@ -35,10 +39,39 @@ const ResetPassword = () => {
     }
   }, [searchParams]);
 
+  // Countdown timer effect
+  useEffect(() => {
+    if (isVerified) return; // Stop timer once code is verified
+
+    if (timeLeft <= 0) {
+      setIsExpired(true);
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [timeLeft, isVerified]);
+
+  // Format seconds into MM:SS
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   // Stage 1: Verify OTP Code
   const handleVerifyOtp = async (e) => {
     if (e) e.preventDefault();
     setServerError("");
+
+    if (isExpired) {
+      setServerError("The verification code has expired. Please click 'Resend Code' to get a new code.");
+      toast.error("Code expired. Please request a new code.");
+      return;
+    }
 
     const errObj = {};
     if (isEmpty(email)) {
@@ -129,6 +162,9 @@ const ResetPassword = () => {
       const response = await api.post("/auth/forgot-password", { email });
       if (response.data && response.data.success) {
         toast.success("A new 6-digit verification code has been sent to your email!");
+        setTimeLeft(900); // Reset 15-minute countdown
+        setIsExpired(false);
+        setOtp("");
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to resend code. Please try again.";
@@ -146,8 +182,8 @@ const ResetPassword = () => {
         <Container style={{ maxWidth: "480px" }}>
           <div className="glass-card">
             <div className="text-center mb-4">
-              <span className={`status-pill ${isVerified ? "active" : "ordered"} mb-2`}>
-                {isVerified ? "Code Verified ✓" : "Step 2 of 2"}
+              <span className={`status-pill ${isVerified ? "active" : isExpired ? "shipped" : "ordered"} mb-2`}>
+                {isVerified ? "Code Verified ✓" : isExpired ? "Code Expired ✖" : "Step 2 of 2"}
               </span>
               <h2 className="page-title" style={{ fontSize: "1.8rem" }}>
                 {isVerified ? "Set New Password" : "Verify Reset Code"}
@@ -184,13 +220,19 @@ const ResetPassword = () => {
                   {error.email && <span className="glass-error-badge">{error.email}</span>}
                 </Form.Group>
 
-                <Form.Group className="mb-4">
-                  <Form.Label className="glass-label">6-Digit Verification Code</Form.Label>
+                <Form.Group className="mb-3">
+                  <div className="d-flex justify-content-between align-items-center mb-1">
+                    <Form.Label className="glass-label mb-0">6-Digit Verification Code</Form.Label>
+                    <span style={{ fontSize: "0.8rem", fontWeight: "600", color: isExpired ? "#ef4444" : "#f97316" }}>
+                      {isExpired ? "Expired" : `Expires in ${formatTime(timeLeft)}`}
+                    </span>
+                  </div>
                   <Form.Control
                     type="text"
                     placeholder="e.g. 123456"
                     value={otp}
                     maxLength={6}
+                    disabled={isExpired}
                     className="glass-input text-center"
                     style={{ letterSpacing: "4px", fontSize: "1.2rem", fontWeight: "700" }}
                     onChange={(e) => {
@@ -202,8 +244,16 @@ const ResetPassword = () => {
                   {error.otp && <span className="glass-error-badge">{error.otp}</span>}
                 </Form.Group>
 
+                {isExpired && (
+                  <div className="p-2 mb-3 text-center" style={{ background: "rgba(239, 68, 68, 0.1)", borderRadius: "8px", border: "1px solid rgba(239, 68, 68, 0.3)" }}>
+                    <span style={{ color: "#ef4444", fontSize: "0.85rem" }}>
+                      ⚠️ Verification code has expired. Please click <strong>Resend Code</strong> below.
+                    </span>
+                  </div>
+                )}
+
                 <div className="d-grid mb-3">
-                  <Button type="submit" className="btn-glass-primary" disabled={loading}>
+                  <Button type="submit" className="btn-glass-primary" disabled={loading || isExpired}>
                     {loading ? (
                       <>
                         <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
@@ -219,7 +269,7 @@ const ResetPassword = () => {
                   <button
                     type="button"
                     className="btn btn-link text-decoration-none p-0"
-                    style={{ color: "#a5b4fc", fontSize: "0.85rem" }}
+                    style={{ color: "#a5b4fc", fontSize: "0.85rem", fontWeight: isExpired ? "700" : "500" }}
                     onClick={handleResendOtp}
                     disabled={resendLoading}
                   >
