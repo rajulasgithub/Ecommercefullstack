@@ -19,6 +19,9 @@ import {
   updateCompany,
   googleLogin,
   googleCompanyLogin,
+  forgotPassword,
+  resetPassword,
+  verifyOtp,
 } from "../controllers/authController.js";
 
 const authroutes = express.Router();
@@ -90,6 +93,17 @@ authroutes.post('/google', googleLogin);
 
 // Google Login/Signup (Company / Seller)
 authroutes.post('/google-company', googleCompanyLogin);
+
+// Forgot Password OTP Request
+authroutes.post('/forgot-password', forgotPassword);
+
+// Verify OTP Code Only
+authroutes.post('/verify-otp', verifyOtp);
+
+// Reset Password with OTP Verification
+authroutes.post('/reset-password', resetPassword);
+
+
 
 
 // View Profile (Logged In User)

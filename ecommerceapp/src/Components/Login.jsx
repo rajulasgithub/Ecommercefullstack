@@ -137,7 +137,12 @@ const Login = () => {
               </Form.Group>
 
               <Form.Group className="mb-4">
-                <Form.Label className="glass-label">Password</Form.Label>
+                <div className="d-flex justify-content-between align-items-center mb-1">
+                  <Form.Label className="glass-label mb-0">Password</Form.Label>
+                  <Link to="/forgot-password" style={{ color: "#a5b4fc", fontSize: "0.8rem", textDecoration: "none", fontWeight: 500 }}>
+                    Forgot Password?
+                  </Link>
+                </div>
                 <div className="password-input-wrapper">
                   <Form.Control
                     type={showPassword ? "text" : "password"}

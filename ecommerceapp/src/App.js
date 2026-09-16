@@ -6,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Signup from './Components/Signup';
 import Login from './Components/Login';
+import ForgotPassword from './Components/ForgotPassword';
+import ResetPassword from './Components/ResetPassword';
 import Companysignup from './Components/Companysignup';
 import Addproduct from './Components/Addproduct';
 import Viewproduct from './Components/Viewproduct';
@@ -44,7 +46,11 @@ function App() {
           <Route path='/home' element={<Home />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password' element={<ResetPassword />} />
           <Route path='/companysignup' element={<Companysignup />} />
+
+
           <Route path='/viewproduct' element={<Viewproduct />} />
           <Route path='/product/:id' element={<SingleProduct />} />
           <Route path='/viewone/:id' element={<SingleProduct />} />

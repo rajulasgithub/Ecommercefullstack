@@ -690,3 +690,180 @@ export const updateCompany = async (req, res) => {
     });
   }
 };
+
+// Request Password Reset OTP
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Email address is required",
+      });
+    }
+
+    const user = await loginDB.findOne({ email: email.trim().toLowerCase() });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: true,
+        message: "No account found with this email address",
+      });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
+
+    user.resetPasswordOtp = otp;
+    user.resetPasswordExpires = otpExpires;
+    await user.save();
+
+    let recipientName = "Valued User";
+    if (user.role === "seller" || user.role === "company") {
+      const company = await companyDB.findOne({ loginId: user._id });
+      if (company && company.companyName) recipientName = company.companyName;
+    } else {
+      const profile = await userDB.findOne({ loginId: user._id });
+      if (profile && profile.firstName) {
+        recipientName = `${profile.firstName} ${profile.lastName || ''}`.trim();
+      }
+    }
+
+    sendEmail({
+      to: user.email,
+      subject: "TrendLife - Password Reset OTP",
+      template: "forgotPassword",
+      context: {
+        name: recipientName,
+        email: user.email,
+        otp,
+      },
+    }).catch((e) => console.error("Forgot password email send error:", e.message));
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Password reset OTP has been sent to your email address",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while processing forgot password request",
+    });
+  }
+};
+
+// Reset Password with OTP
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Email, OTP code, and new password are required",
+      });
+    }
+
+    const user = await loginDB.findOne({ email: email.trim().toLowerCase() });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: true,
+        message: "Account not found",
+      });
+    }
+
+    if (!user.resetPasswordOtp || user.resetPasswordOtp !== otp.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Invalid OTP verification code",
+      });
+    }
+
+    if (!user.resetPasswordExpires || new Date() > new Date(user.resetPasswordExpires)) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "OTP code has expired. Please request a new password reset",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.resetPasswordOtp = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Password reset successfully. You can now log in with your new password",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while resetting password",
+    });
+  }
+};
+
+// Verify OTP Code Only
+export const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Email address and OTP code are required",
+      });
+    }
+
+    const user = await loginDB.findOne({ email: email.trim().toLowerCase() });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: true,
+        message: "Account not found",
+      });
+    }
+
+    if (!user.resetPasswordOtp || user.resetPasswordOtp !== otp.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Invalid OTP verification code",
+      });
+    }
+
+    if (!user.resetPasswordExpires || new Date() > new Date(user.resetPasswordExpires)) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "OTP code has expired. Please request a new password reset",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "OTP code verified successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while verifying OTP code",
+    });
+  }
+};
+
+
