@@ -21,6 +21,7 @@ import SellerDashboard from './Components/SellerDashboard';
 import Wishlist from './Components/Wishlist';
 import Payment from './Components/Payment';
 import OrderSuccess from './Components/OrderSuccess';
+import Profile from './Components/Profile';
 import ProtectedRoute from './Components/ProtectedRoute';
 import ROLES from './utils/roles';
 
@@ -54,6 +55,17 @@ function App() {
           <Route path='/viewproduct' element={<Viewproduct />} />
           <Route path='/product/:id' element={<SingleProduct />} />
           <Route path='/viewone/:id' element={<SingleProduct />} />
+
+          {/* Shared Authenticated Profile Route */}
+          <Route
+            path='/profile'
+            element={
+              <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
 
           {/* Shopping & Order Protected Routes (Accessible by both Users and Sellers) */}
           <Route

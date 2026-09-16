@@ -370,22 +370,134 @@ export const googleCompanyLogin = async (req, res) => {
 };
 
 
-// View Profile (Logged In User)
+// View Logged-In User / Seller Profile
 export const viewProfile = async (req, res) => {
   try {
-    const result = await userDB.findOne({ loginId: req.userData.loginId });
-    if (result) {
+    const loginUser = await loginDB.findById(req.userData.loginId).select('-password');
+    if (!loginUser) {
+      return res.status(404).json({ success: false, error: true, message: "Account not found" });
+    }
+
+    const userRole = String(req.userData.role || '').toLowerCase();
+    if (userRole === "seller" || userRole === "company") {
+      const company = await companyDB.findOne({ loginId: req.userData.loginId });
+      if (company) {
+        return res.status(200).json({
+          success: true,
+          error: false,
+          data: {
+            ...company.toObject(),
+            email: loginUser.email,
+            role: loginUser.role,
+          },
+          message: "Seller profile loaded successfully",
+        });
+      }
+    }
+
+    // Default: Customer Profile
+    const user = await userDB.findOne({ loginId: req.userData.loginId });
+    if (user) {
       return res.status(200).json({
         success: true,
         error: false,
-        data: result,
-        message: "Profile loaded successfully",
+        data: {
+          ...user.toObject(),
+          email: loginUser.email,
+          role: loginUser.role,
+        },
+        message: "User profile loaded successfully",
+      });
+    }
+
+    return res.status(404).json({
+      success: false,
+      error: true,
+      message: "Profile details not found",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Error fetching profile",
+    });
+  }
+};
+
+// Update Logged-In User / Seller Profile
+export const updateOwnProfile = async (req, res) => {
+  try {
+    const loginId = req.userData.loginId;
+    const userRole = String(req.userData.role || '').toLowerCase();
+
+    const loginUser = await loginDB.findById(loginId);
+    if (!loginUser) {
+      return res.status(404).json({ success: false, error: true, message: "Account not found" });
+    }
+
+    if (userRole === "seller" || userRole === "company") {
+      const targetCompany = await companyDB.findOne({ loginId });
+      if (!targetCompany) {
+        return res.status(404).json({ success: false, error: true, message: "Seller company profile not found" });
+      }
+
+      const updateData = {
+        companyName: req.body.companyName !== undefined ? req.body.companyName : targetCompany.companyName,
+        state: req.body.state !== undefined ? req.body.state : targetCompany.state,
+        district: req.body.district !== undefined ? req.body.district : targetCompany.district,
+        pincode: req.body.pincode !== undefined ? req.body.pincode : targetCompany.pincode,
+        contactNumber: req.body.contactNumber !== undefined ? req.body.contactNumber : targetCompany.contactNumber,
+        regNumber: req.body.regNumber !== undefined ? req.body.regNumber : targetCompany.regNumber,
+        gstNumber: req.body.gstNumber !== undefined ? req.body.gstNumber : targetCompany.gstNumber,
+      };
+
+      if (req.file) {
+        updateData.image = req.file.path || req.file.filename;
+      }
+
+      await companyDB.updateOne({ loginId }, { $set: updateData });
+      const updatedCompany = await companyDB.findOne({ loginId });
+
+      return res.status(200).json({
+        success: true,
+        error: false,
+        data: {
+          ...updatedCompany.toObject(),
+          email: loginUser.email,
+          role: loginUser.role,
+        },
+        message: "Seller profile updated successfully",
       });
     } else {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "User profile not found",
+      const targetUser = await userDB.findOne({ loginId });
+      if (!targetUser) {
+        return res.status(404).json({ success: false, error: true, message: "User profile not found" });
+      }
+
+      const updateData = {
+        firstName: req.body.firstName !== undefined ? req.body.firstName : targetUser.firstName,
+        lastName: req.body.lastName !== undefined ? req.body.lastName : targetUser.lastName,
+        number: req.body.number !== undefined ? req.body.number : targetUser.number,
+        gender: req.body.gender !== undefined ? req.body.gender : targetUser.gender,
+        state: req.body.state !== undefined ? req.body.state : targetUser.state,
+        district: req.body.district !== undefined ? req.body.district : targetUser.district,
+        pincode: req.body.pincode !== undefined ? req.body.pincode : targetUser.pincode,
+        place: req.body.place !== undefined ? req.body.place : targetUser.place,
+      };
+
+      await userDB.updateOne({ loginId }, { $set: updateData });
+      const updatedUser = await userDB.findOne({ loginId });
+
+      return res.status(200).json({
+        success: true,
+        error: false,
+        data: {
+          ...updatedUser.toObject(),
+          email: loginUser.email,
+          role: loginUser.role,
+        },
+        message: "Profile updated successfully",
       });
     }
   } catch (error) {
@@ -393,10 +505,11 @@ export const viewProfile = async (req, res) => {
       success: false,
       error: true,
       errorMessage: error.message,
-      message: "Error fetching user profile",
+      message: "Server error while updating profile",
     });
   }
 };
+
 
 // View All Users (Admin Only)
 export const viewAllUsers = async (req, res) => {

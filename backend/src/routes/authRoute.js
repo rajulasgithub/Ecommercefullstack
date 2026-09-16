@@ -22,6 +22,7 @@ import {
   forgotPassword,
   resetPassword,
   verifyOtp,
+  updateOwnProfile,
 } from "../controllers/authController.js";
 
 const authroutes = express.Router();
@@ -103,11 +104,12 @@ authroutes.post('/verify-otp', verifyOtp);
 // Reset Password with OTP Verification
 authroutes.post('/reset-password', resetPassword);
 
-
-
-
-// View Profile (Logged In User)
+// View Logged In Profile (User or Seller)
 authroutes.get('/viewinfo', checkauth, viewProfile);
+
+// Update Logged In Profile (User or Seller, supporting logo image upload)
+authroutes.put('/updateprofile', checkauth, uploadCompanyLogo.single("image"), updateOwnProfile);
+
 
 // View All Users (Admin Only)
 authroutes.get('/view', checkauth, checkRole("admin"), viewAllUsers);

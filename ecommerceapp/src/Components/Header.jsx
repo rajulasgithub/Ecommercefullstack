@@ -101,10 +101,18 @@ const Header = () => {
                       My Orders
                     </Nav.Link>
 
+                    <Nav.Link
+                      as={Link}
+                      to="/profile"
+                      className={`header-nav-link ${isActive("/profile") ? "active" : ""}`}
+                    >
+                      👤 My Profile
+                    </Nav.Link>
+
                     <div className="header-divider d-none d-lg-block mx-1"></div>
 
                     <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
-                      <span className="role-user-badge">
+                      <span className="role-user-badge" onClick={() => navigate("/profile")} style={{ cursor: "pointer" }}>
                         <span className="user-dot"></span> Customer Account
                       </span>
                       <button className="btn-header-logout" onClick={logout}>
@@ -124,6 +132,14 @@ const Header = () => {
                       className={`header-nav-link ${isActive("/sellerdashboard") ? "active" : ""}`}
                     >
                       📊 Seller Dashboard
+                    </Nav.Link>
+
+                    <Nav.Link
+                      as={Link}
+                      to="/profile"
+                      className={`header-nav-link ${isActive("/profile") ? "active" : ""}`}
+                    >
+                      👤 My Profile
                     </Nav.Link>
 
                     <Nav.Link
@@ -148,7 +164,7 @@ const Header = () => {
                     <div className="header-divider d-none d-lg-block mx-1"></div>
 
                     <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
-                      <span className="role-seller-badge" onClick={() => navigate("/sellerdashboard")} style={{ cursor: "pointer" }}>
+                      <span className="role-seller-badge" onClick={() => navigate("/profile")} style={{ cursor: "pointer" }}>
                         <span className="seller-dot"></span> Seller Portal
                       </span>
                       <button className="btn-header-logout" onClick={logout}>
