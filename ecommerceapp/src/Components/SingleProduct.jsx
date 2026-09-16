@@ -52,6 +52,10 @@ const SingleProduct = () => {
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState("");
 
+  // Review Modals state
+  const [showAddReviewModal, setShowAddReviewModal] = useState(false);
+  const [showViewReviewsModal, setShowViewReviewsModal] = useState(false);
+
   const fetchReviews = async () => {
     setReviewsLoading(true);
     try {
@@ -118,6 +122,7 @@ const SingleProduct = () => {
         toast.success(response.data.message || "🎉 Review submitted successfully!");
         setCommentInput("");
         setRatingInput(5);
+        setShowAddReviewModal(false);
         fetchReviews();
         fetchEligibility();
       }
@@ -1343,6 +1348,228 @@ const SingleProduct = () => {
             ) : (
               '🗑️ Delete Product'
             )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Add Review Modal */}
+      <Modal show={showAddReviewModal} onHide={() => setShowAddReviewModal(false)} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>✍️ Submit Product Review</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-4">
+          <p className="text-secondary mb-3" style={{ fontSize: "0.9rem" }}>
+            Reviewing <strong className="text-light">{product?.prdName}</strong>
+          </p>
+
+          {reviewError && (
+            <div className="alert alert-danger py-2 mb-3" style={{ fontSize: "0.85rem" }}>
+              {reviewError}
+            </div>
+          )}
+
+          <Form onSubmit={handleReviewSubmit}>
+            <Form.Group className="mb-4">
+              <Form.Label className="glass-label">Select Rating</Form.Label>
+              <div className="d-flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRatingInput(star)}
+                    style={{
+                      background: ratingInput >= star ? "rgba(245, 158, 11, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                      border: ratingInput >= star ? "1px solid #f59e0b" : "1px solid rgba(255, 255, 255, 0.1)",
+                      color: ratingInput >= star ? "#f59e0b" : "#9ca3af",
+                      borderRadius: "8px",
+                      padding: "0.4rem 0.8rem",
+                      fontSize: "1.2rem",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    {star} ★
+                  </button>
+                ))}
+              </div>
+            </Form.Group>
+
+            <Form.Group className="mb-4">
+              <Form.Label className="glass-label">Review Comment</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                placeholder="Share your experience regarding fabric quality, fit, and design..."
+                value={commentInput}
+                onChange={(e) => setCommentInput(e.target.value)}
+                className="glass-input"
+              />
+            </Form.Group>
+
+            <div className="d-flex justify-content-end gap-2">
+              <Button
+                variant="outline-light"
+                onClick={() => setShowAddReviewModal(false)}
+                disabled={submittingReview}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="btn-glass-primary px-4"
+                disabled={submittingReview}
+              >
+                {submittingReview ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" className="me-2" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit Review"
+                )}
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      {/* View Reviews Modal */}
+      <Modal show={showViewReviewsModal} onHide={() => setShowViewReviewsModal(false)} size="lg" centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>
+            ⭐ Customer Reviews ({totalReviews})
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-4">
+          <div className="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom border-secondary gap-3">
+            <div>
+              <h5 className="text-light fw-bold mb-1">{product?.prdName}</h5>
+              <span className="text-secondary" style={{ fontSize: "0.85rem" }}>
+                {totalReviews > 0 ? `${averageRating} out of 5 stars` : "No ratings submitted yet"}
+              </span>
+            </div>
+            {totalReviews > 0 && (
+              <div className="d-flex align-items-center gap-2 bg-dark px-3 py-2 rounded-3 border border-secondary">
+                <span className="fs-3 fw-bold text-warning">{averageRating}</span>
+                <div>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span
+                      key={star}
+                      style={{
+                        color: star <= Math.round(averageRating) ? "#f59e0b" : "#4b5563",
+                        fontSize: "1rem",
+                      }}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {reviewsLoading ? (
+            <div className="text-center py-4">
+              <Spinner animation="border" variant="light" size="sm" />
+              <p className="text-secondary mt-2" style={{ fontSize: "0.85rem" }}>
+                Loading customer reviews...
+              </p>
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="text-center py-4">
+              <span style={{ fontSize: "2.5rem" }}>💬</span>
+              <h5 className="text-light fw-bold mt-2">No Reviews Yet</h5>
+              <p className="text-secondary mb-0" style={{ fontSize: "0.85rem" }}>
+                Be the first verified purchaser to review this item!
+              </p>
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-3" style={{ maxHeight: "450px", overflowY: "auto" }}>
+              {reviews.map((rev) => (
+                <div
+                  key={rev._id}
+                  style={{
+                    background: "rgba(255, 255, 255, 0.03)",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
+                    borderRadius: "14px",
+                    padding: "1rem 1.25rem",
+                  }}
+                >
+                  <div className="d-flex align-items-center justify-content-between mb-2">
+                    <div className="d-flex align-items-center gap-2">
+                      <div
+                        style={{
+                          width: "36px",
+                          height: "36px",
+                          borderRadius: "50%",
+                          overflow: "hidden",
+                          background: "rgba(99, 102, 241, 0.2)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontWeight: 700,
+                          color: "#a5b4fc",
+                        }}
+                      >
+                        {rev.user?.image ? (
+                          <img
+                            src={rev.user.image}
+                            alt="User Avatar"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            onError={(e) => (e.target.style.display = "none")}
+                          />
+                        ) : (
+                          (rev.user?.firstName?.[0] || "U").toUpperCase()
+                        )}
+                      </div>
+                      <div>
+                        <span className="text-light fw-bold d-block" style={{ fontSize: "0.9rem" }}>
+                          {rev.user?.firstName} {rev.user?.lastName}
+                        </span>
+                        <span
+                          className="status-pill active px-2 py-0"
+                          style={{ fontSize: "0.65rem", display: "inline-block" }}
+                        >
+                          ✓ Verified Buyer
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-end">
+                      <div>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span
+                            key={star}
+                            style={{
+                              color: star <= rev.rating ? "#f59e0b" : "#4b5563",
+                              fontSize: "0.9rem",
+                            }}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                      <span className="text-secondary" style={{ fontSize: "0.75rem" }}>
+                        {new Date(rev.createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-light mb-0 mt-1" style={{ fontSize: "0.875rem", lineHeight: 1.5 }}>
+                    {rev.comment}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer className="glass-modal-footer">
+          <Button className="btn-glass-secondary" onClick={() => setShowViewReviewsModal(false)}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>

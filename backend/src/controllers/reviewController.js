@@ -35,10 +35,20 @@ export const addReview = async (req, res) => {
     }
 
     // 1. Verify purchase eligibility
-    const purchase = await cartDB.findOne({
-      loginId: new mongoose.Types.ObjectId(loginId),
-      prdId: new mongoose.Types.ObjectId(productId),
-      status: { $nin: [1, 3] },
+    const allUserOrders = await cartDB.find({
+      $or: [
+        { loginId: loginId },
+        { loginId: mongoose.Types.ObjectId.isValid(loginId) ? new mongoose.Types.ObjectId(loginId) : loginId }
+      ],
+      $or: [
+        { prdId: productId },
+        { prdId: mongoose.Types.ObjectId.isValid(productId) ? new mongoose.Types.ObjectId(productId) : productId }
+      ]
+    });
+
+    const purchase = allUserOrders.find((order) => {
+      const s = String(order.status).trim().toLowerCase();
+      return s !== "1" && s !== "3" && s !== "cancelled" && s !== "in cart";
     });
 
     if (!purchase) {
@@ -51,8 +61,14 @@ export const addReview = async (req, res) => {
 
     // 2. Check for duplicate review
     const existingReview = await reviewDB.findOne({
-      loginId: new mongoose.Types.ObjectId(loginId),
-      productId: new mongoose.Types.ObjectId(productId),
+      $or: [
+        { loginId: loginId },
+        { loginId: mongoose.Types.ObjectId.isValid(loginId) ? new mongoose.Types.ObjectId(loginId) : loginId }
+      ],
+      $or: [
+        { productId: productId },
+        { productId: mongoose.Types.ObjectId.isValid(productId) ? new mongoose.Types.ObjectId(productId) : productId }
+      ]
     });
 
     if (existingReview) {
@@ -110,19 +126,35 @@ export const checkEligibility = async (req, res) => {
       });
     }
 
-    // Check if user has purchased this product (status !== 1 [cart] and status !== 3 [cancelled])
-    const purchase = await cartDB.findOne({
-      loginId: new mongoose.Types.ObjectId(loginId),
-      prdId: new mongoose.Types.ObjectId(productId),
-      status: { $nin: [1, 3] },
+    // Check if user has purchased this product (status not 1/in-cart and not 3/cancelled)
+    const allUserOrders = await cartDB.find({
+      $or: [
+        { loginId: loginId },
+        { loginId: mongoose.Types.ObjectId.isValid(loginId) ? new mongoose.Types.ObjectId(loginId) : loginId }
+      ],
+      $or: [
+        { prdId: productId },
+        { prdId: mongoose.Types.ObjectId.isValid(productId) ? new mongoose.Types.ObjectId(productId) : productId }
+      ]
+    });
+
+    const purchase = allUserOrders.find((order) => {
+      const s = String(order.status).trim().toLowerCase();
+      return s !== "1" && s !== "3" && s !== "cancelled" && s !== "in cart";
     });
 
     const hasPurchased = !!purchase;
 
     // Check if user has already reviewed
     const existingReview = await reviewDB.findOne({
-      loginId: new mongoose.Types.ObjectId(loginId),
-      productId: new mongoose.Types.ObjectId(productId),
+      $or: [
+        { loginId: loginId },
+        { loginId: mongoose.Types.ObjectId.isValid(loginId) ? new mongoose.Types.ObjectId(loginId) : loginId }
+      ],
+      $or: [
+        { productId: productId },
+        { productId: mongoose.Types.ObjectId.isValid(productId) ? new mongoose.Types.ObjectId(productId) : productId }
+      ]
     });
 
     return res.status(200).json({

@@ -9,10 +9,12 @@ import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
 import Header from "./Header";
 import api from "../utils/api";
+import { useNavigate } from "react-router-dom";
 import ROLES from "../utils/roles";
 import { isEmpty } from "../utils/validation";
 
 const Vieworders = ({ hideHeader = false }) => {
+  const navigate = useNavigate();
   const role = localStorage.getItem("role");
   const [order, setOrder] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -205,7 +207,16 @@ const Vieworders = ({ hideHeader = false }) => {
                       </Form.Select>
                     </div>
                   ) : (
-                    <div>
+                    <div className="d-flex flex-column align-items-sm-end gap-2">
+                      {(item.prdId?._id || item.prdId) && (
+                        <Button
+                          className="btn-glass-primary py-1 px-3"
+                          size="sm"
+                          onClick={() => navigate(`/product/viewone/${item.prdId?._id || item.prdId}`)}
+                        >
+                          ⭐ {item.status === 7 ? "Review Product" : "View Product"}
+                        </Button>
+                      )}
                       {item.status !== 3 && item.status !== 7 && (
                         <Button
                           className="btn-glass-danger py-1 px-3"
