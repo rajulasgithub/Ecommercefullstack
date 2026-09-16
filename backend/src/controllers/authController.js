@@ -280,6 +280,96 @@ export const googleLogin = async (req, res) => {
   }
 };
 
+// Google Login / Signup for Seller / Company
+export const googleCompanyLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Google token is required",
+      });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID || "dummy-google-client-id",
+    });
+    const payload = ticket.getPayload();
+    const { email, name, given_name, family_name, picture } = payload;
+
+    let user = await loginDB.findOne({ email, role: "seller" });
+
+    if (!user) {
+      const existingAny = await loginDB.findOne({ email });
+      if (existingAny && existingAny.role !== "seller") {
+        return res.status(400).json({
+          success: false,
+          error: true,
+          message: `This email is already registered as a ${existingAny.role}. Please log in using your registered credentials.`,
+        });
+      }
+
+      const randomPassword = Math.random().toString(36).slice(-10) + "Aa1!";
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      const loginData = { email, password: hashedPassword, role: "seller" };
+      user = await loginDB(loginData).save();
+
+      const companyName = name || (given_name ? `${given_name} ${family_name || ''}`.trim() : "Seller Company");
+
+      const companyData = {
+        loginId: user._id,
+        companyName,
+        image: picture || "",
+        role: "seller",
+      };
+      await companyDB(companyData).save();
+
+      sendEmail({
+        to: email,
+        subject: "Welcome to TrendLife Seller Network!",
+        template: "userSignup",
+        context: {
+          name: companyName,
+          email: email,
+          role: "Seller"
+        }
+      }).catch((e) => console.error("Google company signup email send error:", e.message));
+    }
+
+    const secret = process.env.JWT_SECRET || "encryptkey";
+    const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
+
+    const jwtToken = jwt.sign(
+      {
+        loginId: user._id,
+        role: user.role,
+        email: user.email,
+      },
+      secret,
+      { expiresIn }
+    );
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Google seller login successful",
+      loginId: user._id,
+      role: user.role,
+      token: jwtToken,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Something went wrong during Google seller login",
+    });
+  }
+};
+
+
 // View Profile (Logged In User)
 export const viewProfile = async (req, res) => {
   try {

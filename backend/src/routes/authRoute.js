@@ -18,6 +18,7 @@ import {
   deleteCompany,
   updateCompany,
   googleLogin,
+  googleCompanyLogin,
 } from "../controllers/authController.js";
 
 const authroutes = express.Router();
@@ -84,8 +85,12 @@ authroutes.post('/signup', signupValidation, signup);
 // User/Company Login
 authroutes.post('/login', loginValidation, login);
 
-// Google Login
+// Google Login (User)
 authroutes.post('/google', googleLogin);
+
+// Google Login/Signup (Company / Seller)
+authroutes.post('/google-company', googleCompanyLogin);
+
 
 // View Profile (Logged In User)
 authroutes.get('/viewinfo', checkauth, viewProfile);
