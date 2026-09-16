@@ -33,10 +33,102 @@ const SingleProduct = () => {
   const [editErrors, setEditErrors] = useState({});
   const [savingEdit, setSavingEdit] = useState(false);
 
+  // Product Reviews state
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [ratingDistribution, setRatingDistribution] = useState({ 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 });
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+
+  const [eligibility, setEligibility] = useState({
+    canReview: false,
+    hasPurchased: false,
+    alreadyReviewed: false,
+    userReview: null,
+  });
+
+  const [ratingInput, setRatingInput] = useState(5);
+  const [commentInput, setCommentInput] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+
+  const fetchReviews = async () => {
+    setReviewsLoading(true);
+    try {
+      const response = await api.get(`/review/product/${id}`);
+      if (response.data && response.data.success) {
+        setReviews(response.data.data || []);
+        setAverageRating(response.data.averageRating || 0);
+        setTotalReviews(response.data.totalReviews || 0);
+        setRatingDistribution(response.data.ratingDistribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 });
+      }
+    } catch (err) {
+      console.error("Error loading reviews:", err);
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+  const fetchEligibility = async () => {
+    if (!token) return;
+    try {
+      const response = await api.get(`/review/eligibility/${id}`);
+      if (response.data && response.data.success) {
+        setEligibility({
+          canReview: response.data.canReview,
+          hasPurchased: response.data.hasPurchased,
+          alreadyReviewed: response.data.alreadyReviewed,
+          userReview: response.data.userReview,
+        });
+      }
+    } catch (err) {
+      console.error("Error checking review eligibility:", err);
+    }
+  };
+
   useEffect(() => {
     fetchProductDetails();
+    fetchReviews();
+    fetchEligibility();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!ratingInput || ratingInput < 1 || ratingInput > 5) {
+      setReviewError("Please select a star rating between 1 and 5.");
+      return;
+    }
+    if (!commentInput.trim()) {
+      setReviewError("Please write a short comment for your review.");
+      return;
+    }
+
+    setSubmittingReview(true);
+    setReviewError("");
+
+    try {
+      const response = await api.post("/review/add", {
+        productId: id,
+        rating: ratingInput,
+        comment: commentInput.trim(),
+      });
+
+      if (response.data && response.data.success) {
+        toast.success(response.data.message || "🎉 Review submitted successfully!");
+        setCommentInput("");
+        setRatingInput(5);
+        fetchReviews();
+        fetchEligibility();
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to submit review. Please try again.";
+      toast.error(msg);
+      setReviewError(msg);
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   const fetchProductDetails = async () => {
     setLoading(true);
@@ -479,9 +571,34 @@ const SingleProduct = () => {
                     )}
                   </div>
 
-                  <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.75rem', lineHeight: 1.2 }}>
+                  <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.4rem', lineHeight: 1.2 }}>
                     {product.prdName}
                   </h1>
+
+                  {/* Rating summary badge */}
+                  <div className="d-flex align-items-center gap-2 mb-3">
+                    <div className="d-flex align-items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          style={{
+                            color: star <= Math.round(averageRating) ? "#f59e0b" : "#4b5563",
+                            fontSize: "1.1rem",
+                          }}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                    <span className="text-light fw-bold" style={{ fontSize: "0.9rem" }}>
+                      {averageRating > 0 ? averageRating : "No ratings yet"}
+                    </span>
+                    {totalReviews > 0 && (
+                      <span className="text-secondary" style={{ fontSize: "0.85rem" }}>
+                        ({totalReviews} {totalReviews === 1 ? "review" : "reviews"})
+                      </span>
+                    )}
+                  </div>
 
                   {/* Pricing Display */}
                   <div className="d-flex align-items-baseline gap-3 mb-4">
@@ -639,6 +756,346 @@ const SingleProduct = () => {
                   })()}
                 </div>
               </div>
+            </Col>
+          </Row>
+        </div>
+
+        {/* Customer Reviews & Rating Section */}
+        <div className="glass-card p-4 p-md-5 mt-4">
+          <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4 pb-3 border-bottom border-secondary gap-3">
+            <div>
+              <h3 className="text-light fw-bold mb-1" style={{ fontSize: "1.5rem" }}>⭐ Customer Reviews & Ratings</h3>
+              <p className="text-secondary mb-0" style={{ fontSize: "0.875rem" }}>
+                Authentic feedback from verified purchasers of this product
+              </p>
+            </div>
+            {totalReviews > 0 && (
+              <div className="d-flex align-items-center gap-3 bg-dark px-3 py-2 rounded-3 border border-secondary">
+                <span className="fs-2 fw-bold text-warning">{averageRating}</span>
+                <div>
+                  <div>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        style={{
+                          color: star <= Math.round(averageRating) ? "#f59e0b" : "#4b5563",
+                          fontSize: "1.1rem",
+                        }}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-secondary" style={{ fontSize: "0.8rem" }}>
+                    {totalReviews} verified {totalReviews === 1 ? "review" : "reviews"}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <Row className="g-4">
+            {/* Left Column: Rating Breakdown & Review Action */}
+            <Col xs={12} lg={5}>
+              <div
+                style={{
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "16px",
+                  padding: "1.25rem",
+                }}
+              >
+                <h5 className="text-light fw-bold mb-3" style={{ fontSize: "1.05rem" }}>Rating Distribution</h5>
+                {[5, 4, 3, 2, 1].map((stars) => {
+                  const count = ratingDistribution[stars] || 0;
+                  const percentage = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+                  return (
+                    <div key={stars} className="d-flex align-items-center gap-2 mb-2">
+                      <span className="text-secondary" style={{ width: "45px", fontSize: "0.85rem" }}>
+                        {stars} ★
+                      </span>
+                      <div
+                        className="flex-grow-1"
+                        style={{
+                          height: "8px",
+                          background: "rgba(255, 255, 255, 0.1)",
+                          borderRadius: "4px",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: `${percentage}%`,
+                            height: "100%",
+                            background: "#f59e0b",
+                            borderRadius: "4px",
+                            transition: "width 0.4s ease",
+                          }}
+                        />
+                      </div>
+                      <span className="text-secondary" style={{ width: "35px", fontSize: "0.8rem", textAlign: "right" }}>
+                        {count}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Review Submission Form / Status Badge */}
+              <div className="mt-4">
+                {token ? (
+                  eligibility.canReview ? (
+                    <div
+                      style={{
+                        background: "rgba(99, 102, 241, 0.08)",
+                        border: "1px solid rgba(99, 102, 241, 0.3)",
+                        borderRadius: "16px",
+                        padding: "1.25rem",
+                      }}
+                    >
+                      <h5 className="text-light fw-bold mb-1" style={{ fontSize: "1.05rem" }}>✍️ Write a Review</h5>
+                      <p className="text-secondary mb-3" style={{ fontSize: "0.85rem" }}>
+                        You purchased this item! Share your feedback with other buyers.
+                      </p>
+
+                      {reviewError && (
+                        <div className="alert alert-danger py-2 mb-3" style={{ fontSize: "0.85rem" }}>
+                          {reviewError}
+                        </div>
+                      )}
+
+                      <Form onSubmit={handleReviewSubmit}>
+                        <Form.Group className="mb-3">
+                          <Form.Label className="glass-label">Select Rating</Form.Label>
+                          <div className="d-flex gap-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setRatingInput(star)}
+                                style={{
+                                  background: ratingInput >= star ? "rgba(245, 158, 11, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                                  border: ratingInput >= star ? "1px solid #f59e0b" : "1px solid rgba(255, 255, 255, 0.1)",
+                                  color: ratingInput >= star ? "#f59e0b" : "#9ca3af",
+                                  borderRadius: "8px",
+                                  padding: "0.4rem 0.75rem",
+                                  fontSize: "1.1rem",
+                                  cursor: "pointer",
+                                  transition: "all 0.2s ease",
+                                }}
+                              >
+                                {star} ★
+                              </button>
+                            ))}
+                          </div>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                          <Form.Label className="glass-label">Review Details</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={3}
+                            placeholder="Write your thoughts about quality, fit, or design..."
+                            value={commentInput}
+                            onChange={(e) => setCommentInput(e.target.value)}
+                            className="glass-input"
+                          />
+                        </Form.Group>
+
+                        <Button
+                          type="submit"
+                          className="btn-glass-primary w-100 py-2"
+                          disabled={submittingReview}
+                        >
+                          {submittingReview ? (
+                            <>
+                              <Spinner as="span" animation="border" size="sm" className="me-2" />
+                              Submitting...
+                            </>
+                          ) : (
+                            "Submit Review"
+                          )}
+                        </Button>
+                      </Form>
+                    </div>
+                  ) : eligibility.alreadyReviewed ? (
+                    <div
+                      style={{
+                        background: "rgba(16, 185, 129, 0.08)",
+                        border: "1px solid rgba(16, 185, 129, 0.3)",
+                        borderRadius: "16px",
+                        padding: "1.25rem",
+                      }}
+                    >
+                      <div className="d-flex align-items-center gap-2 mb-2">
+                        <span className="status-pill delivered">✓ Reviewed</span>
+                        <span className="text-light fw-bold" style={{ fontSize: "0.9rem" }}>
+                          Review Submitted
+                        </span>
+                      </div>
+                      {eligibility.userReview && (
+                        <div className="mt-2 text-secondary" style={{ fontSize: "0.85rem" }}>
+                          <div>
+                            {[1, 2, 3, 4, 5].map((s) => (
+                              <span key={s} style={{ color: s <= eligibility.userReview.rating ? "#f59e0b" : "#4b5563" }}>
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-light mt-1 mb-0" style={{ fontStyle: "italic" }}>
+                            "{eligibility.userReview.comment}"
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        background: "rgba(255, 255, 255, 0.03)",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "16px",
+                        padding: "1.25rem",
+                      }}
+                    >
+                      <span className="text-secondary d-block mb-1" style={{ fontSize: "0.85rem", fontWeight: 600 }}>
+                        🔒 Verified Buyers Only
+                      </span>
+                      <p className="text-light mb-0" style={{ fontSize: "0.85rem" }}>
+                        Only customers who have purchased this item can leave a review.
+                      </p>
+                    </div>
+                  )
+                ) : (
+                  <div
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "16px",
+                      padding: "1.25rem",
+                      textAlign: "center",
+                    }}
+                  >
+                    <p className="text-secondary mb-3" style={{ fontSize: "0.85rem" }}>
+                      Purchased this item? Sign in to submit your review.
+                    </p>
+                    <Button
+                      className="btn-glass-secondary py-1 px-4"
+                      onClick={() => navigate("/login")}
+                    >
+                      Sign In to Review
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </Col>
+
+            {/* Right Column: Customer Reviews List ("View Reviews") */}
+            <Col xs={12} lg={7}>
+              {reviewsLoading ? (
+                <div className="text-center py-5">
+                  <Spinner animation="border" variant="light" size="sm" />
+                  <p className="text-secondary mt-2" style={{ fontSize: "0.85rem" }}>
+                    Loading reviews...
+                  </p>
+                </div>
+              ) : reviews.length === 0 ? (
+                <div
+                  className="text-center py-5"
+                  style={{
+                    background: "rgba(255, 255, 255, 0.02)",
+                    border: "1px dashed rgba(255, 255, 255, 0.1)",
+                    borderRadius: "16px",
+                  }}
+                >
+                  <span style={{ fontSize: "2.5rem" }}>💬</span>
+                  <h5 className="text-light fw-bold mt-2">No Reviews Yet</h5>
+                  <p className="text-secondary mb-0" style={{ fontSize: "0.85rem" }}>
+                    Be the first verified purchaser to leave a review for this item!
+                  </p>
+                </div>
+              ) : (
+                <div className="d-flex flex-column gap-3">
+                  {reviews.map((rev) => (
+                    <div
+                      key={rev._id}
+                      style={{
+                        background: "rgba(255, 255, 255, 0.03)",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "16px",
+                        padding: "1.25rem",
+                      }}
+                    >
+                      <div className="d-flex align-items-center justify-content-between mb-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <div
+                            style={{
+                              width: "38px",
+                              height: "38px",
+                              borderRadius: "50%",
+                              overflow: "hidden",
+                              background: "rgba(99, 102, 241, 0.2)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontWeight: 700,
+                              color: "#a5b4fc",
+                            }}
+                          >
+                            {rev.user?.image ? (
+                              <img
+                                src={rev.user.image}
+                                alt="User Avatar"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                onError={(e) => (e.target.style.display = "none")}
+                              />
+                            ) : (
+                              (rev.user?.firstName?.[0] || "U").toUpperCase()
+                            )}
+                          </div>
+                          <div>
+                            <span className="text-light fw-bold d-block" style={{ fontSize: "0.95rem" }}>
+                              {rev.user?.firstName} {rev.user?.lastName}
+                            </span>
+                            <span
+                              className="status-pill active px-2 py-0"
+                              style={{ fontSize: "0.7rem", display: "inline-block" }}
+                            >
+                              ✓ Verified Buyer
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="text-end">
+                          <div>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
+                                style={{
+                                  color: star <= rev.rating ? "#f59e0b" : "#4b5563",
+                                  fontSize: "1rem",
+                                }}
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <span className="text-secondary" style={{ fontSize: "0.75rem" }}>
+                            {new Date(rev.createdAt).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-light mb-0 mt-2" style={{ fontSize: "0.9rem", lineHeight: 1.5 }}>
+                        {rev.comment}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Col>
           </Row>
         </div>
