@@ -19,6 +19,7 @@ const SingleProduct = () => {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
   const token = localStorage.getItem('token');
+  const userLoginId = localStorage.getItem('loginId');
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -55,6 +56,14 @@ const SingleProduct = () => {
   // Review Modals state
   const [showAddReviewModal, setShowAddReviewModal] = useState(false);
   const [showViewReviewsModal, setShowViewReviewsModal] = useState(false);
+
+  // Edit Review states
+  const [showEditReviewModal, setShowEditReviewModal] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const [editRatingInput, setEditRatingInput] = useState(5);
+  const [editCommentInput, setEditCommentInput] = useState("");
+  const [submittingEditReview, setSubmittingEditReview] = useState(false);
+  const [editReviewError, setEditReviewError] = useState("");
 
   const fetchReviews = async () => {
     setReviewsLoading(true);
@@ -132,6 +141,66 @@ const SingleProduct = () => {
       setReviewError(msg);
     } finally {
       setSubmittingReview(false);
+    }
+  };
+
+  const handleEditReviewClick = (review) => {
+    setEditingReviewId(review._id);
+    setEditRatingInput(review.rating);
+    setEditCommentInput(review.comment);
+    setEditReviewError("");
+    setShowEditReviewModal(true);
+  };
+
+  const handleEditReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!editRatingInput || editRatingInput < 1 || editRatingInput > 5) {
+      setEditReviewError("Please select a star rating between 1 and 5.");
+      return;
+    }
+    if (!editCommentInput.trim()) {
+      setEditReviewError("Please write a short comment for your review.");
+      return;
+    }
+
+    setSubmittingEditReview(true);
+    setEditReviewError("");
+
+    try {
+      const response = await api.put(`/review/update/${editingReviewId}`, {
+        rating: editRatingInput,
+        comment: editCommentInput.trim(),
+      });
+
+      if (response.data && response.data.success) {
+        toast.success("Review updated successfully!");
+        setShowEditReviewModal(false);
+        fetchReviews();
+        fetchEligibility();
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to update review.";
+      toast.error(msg);
+      setEditReviewError(msg);
+    } finally {
+      setSubmittingEditReview(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete this review?")) {
+      return;
+    }
+
+    try {
+      const response = await api.delete(`/review/delete/${reviewId}`);
+      if (response.data && response.data.success) {
+        toast.success("Review deleted successfully!");
+        fetchReviews();
+        fetchEligibility();
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete review.");
     }
   };
 
@@ -1084,13 +1153,33 @@ const SingleProduct = () => {
                               </span>
                             ))}
                           </div>
-                          <span className="text-secondary" style={{ fontSize: "0.75rem" }}>
+                          <span className="text-secondary d-block" style={{ fontSize: "0.75rem" }}>
                             {new Date(rev.createdAt).toLocaleDateString("en-US", {
                               year: "numeric",
                               month: "short",
                               day: "numeric",
                             })}
                           </span>
+                          {String(rev.loginId) === String(userLoginId) && (
+                            <div className="d-flex gap-2 justify-content-end mt-1">
+                              <Button
+                                variant="link"
+                                className="p-0 text-info"
+                                style={{ fontSize: "0.8rem", textDecoration: "none" }}
+                                onClick={() => handleEditReviewClick(rev)}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                variant="link"
+                                className="p-0 text-danger"
+                                style={{ fontSize: "0.8rem", textDecoration: "none" }}
+                                onClick={() => handleDeleteReview(rev._id)}
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -1433,6 +1522,82 @@ const SingleProduct = () => {
         </Modal.Body>
       </Modal>
 
+      {/* Edit Review Modal */}
+      <Modal show={showEditReviewModal} onHide={() => setShowEditReviewModal(false)} centered contentClassName="glass-modal">
+        <Modal.Header closeButton className="glass-modal-header">
+          <Modal.Title style={{ color: "#ffffff", fontWeight: 700 }}>✏️ Edit Review</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-4">
+          {editReviewError && (
+            <div className="alert alert-danger py-2 mb-3" style={{ fontSize: "0.85rem" }}>
+              {editReviewError}
+            </div>
+          )}
+
+          <Form onSubmit={handleEditReviewSubmit}>
+            <Form.Group className="mb-4">
+              <Form.Label className="glass-label">Update Rating</Form.Label>
+              <div className="d-flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setEditRatingInput(star)}
+                    style={{
+                      background: editRatingInput >= star ? "rgba(245, 158, 11, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                      border: editRatingInput >= star ? "1px solid #f59e0b" : "1px solid rgba(255, 255, 255, 0.1)",
+                      color: editRatingInput >= star ? "#f59e0b" : "#9ca3af",
+                      borderRadius: "8px",
+                      padding: "0.4rem 0.8rem",
+                      fontSize: "1.2rem",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    {star} ★
+                  </button>
+                ))}
+              </div>
+            </Form.Group>
+
+            <Form.Group className="mb-4">
+              <Form.Label className="glass-label">Review Comment</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                value={editCommentInput}
+                onChange={(e) => setEditCommentInput(e.target.value)}
+                className="glass-input"
+              />
+            </Form.Group>
+
+            <div className="d-flex justify-content-end gap-2">
+              <Button
+                variant="outline-light"
+                onClick={() => setShowEditReviewModal(false)}
+                disabled={submittingEditReview}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="btn-glass-primary px-4"
+                disabled={submittingEditReview}
+              >
+                {submittingEditReview ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" className="me-2" />
+                    Updating...
+                  </>
+                ) : (
+                  "Update Review"
+                )}
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
       {/* View Reviews Modal */}
       <Modal show={showViewReviewsModal} onHide={() => setShowViewReviewsModal(false)} size="lg" centered contentClassName="glass-modal">
         <Modal.Header closeButton className="glass-modal-header">
@@ -1549,13 +1714,39 @@ const SingleProduct = () => {
                           </span>
                         ))}
                       </div>
-                      <span className="text-secondary" style={{ fontSize: "0.75rem" }}>
+                      <span className="text-secondary d-block" style={{ fontSize: "0.75rem" }}>
                         {new Date(rev.createdAt).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
                         })}
                       </span>
+                      {String(rev.loginId) === String(userLoginId) && (
+                        <div className="d-flex gap-2 justify-content-end mt-1">
+                          <Button
+                            variant="link"
+                            className="p-0 text-info"
+                            style={{ fontSize: "0.8rem", textDecoration: "none" }}
+                            onClick={() => {
+                              setShowViewReviewsModal(false);
+                              handleEditReviewClick(rev);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="link"
+                            className="p-0 text-danger"
+                            style={{ fontSize: "0.8rem", textDecoration: "none" }}
+                            onClick={() => {
+                              setShowViewReviewsModal(false);
+                              handleDeleteReview(rev._id);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
 

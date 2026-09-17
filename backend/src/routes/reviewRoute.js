@@ -4,6 +4,8 @@ import {
   addReview,
   checkEligibility,
   getProductReviews,
+  updateReview,
+  deleteReview,
 } from "../controllers/reviewController.js";
 
 const reviewRoute = express.Router();
@@ -16,5 +18,11 @@ reviewRoute.get("/eligibility/:productId", checkauth, checkEligibility);
 
 // Authenticated: Submit a review for a purchased product
 reviewRoute.post("/add", checkauth, addReview);
+
+// Authenticated: Update an existing review
+reviewRoute.put("/update/:reviewId", checkauth, updateReview);
+
+// Authenticated: Delete an existing review
+reviewRoute.delete("/delete/:reviewId", checkauth, deleteReview);
 
 export default reviewRoute;

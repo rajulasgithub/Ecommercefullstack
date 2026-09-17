@@ -212,7 +212,7 @@ const Vieworders = ({ hideHeader = false }) => {
                         <Button
                           className="btn-glass-primary py-1 px-3"
                           size="sm"
-                          onClick={() => navigate(`/product/viewone/${item.prdId?._id || item.prdId}`)}
+                          onClick={() => navigate(`/viewone/${item.prdId?._id || item.prdId}`)}
                         >
                           ⭐ {item.status === 7 ? "Review Product" : "View Product"}
                         </Button>
