@@ -133,5 +133,65 @@ describe('Product API', () => {
       expect(res.statusCode).toEqual(403);
       expect(res.body).toHaveProperty('error', true);
     });
+
+    it('should generate product description via AI', async () => {
+      // Temporarily set the API key for the test
+      const originalApiKey = process.env.GEMINI_API_KEY;
+      process.env.GEMINI_API_KEY = 'fake-test-key';
+
+      // Mock global fetch to intercept the Gemini API call
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        headers: {
+          entries: () => [],
+          get: () => null,
+        },
+        json: async () => ({
+          candidates: [{ content: { parts: [{ text: 'This is an AI generated product description.' }] } }]
+        })
+      });
+
+      jest.spyOn(jwt, 'verify').mockReturnValue({
+        loginId: 'seller123',
+        role: 'seller'
+      });
+
+      const res = await request(app)
+        .post('/product/generate-description')
+        .set('Authorization', `Bearer ${sellerToken}`)
+        .send({
+          prdName: 'Cool Shirt',
+          category: 'Men',
+          style: 'Casual Wear'
+        });
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toHaveProperty('success', true);
+      expect(res.body.data.description).toEqual('This is an AI generated product description.');
+
+      // Restore
+      process.env.GEMINI_API_KEY = originalApiKey;
+      global.fetch = originalFetch;
+    });
+
+    it('should fail to generate description without product name', async () => {
+      jest.spyOn(jwt, 'verify').mockReturnValue({
+        loginId: 'seller123',
+        role: 'seller'
+      });
+
+      const res = await request(app)
+        .post('/product/generate-description')
+        .set('Authorization', `Bearer ${sellerToken}`)
+        .send({
+          category: 'Men'
+        });
+
+      expect(res.statusCode).toEqual(400);
+      expect(res.body).toHaveProperty('error', true);
+      expect(res.body.message).toContain('Product name is required');
+    });
   });
 });

@@ -6,6 +6,7 @@ import loginDB from "../model/login.js";
 import companyDB from "../model/company.js";
 import userDB from "../model/user.js";
 import sendEmail from "../utils/sendEmail.js";
+import { GoogleGenAI } from "@google/genai";
 
 const getSellerInfo = async (loginId) => {
   try {
@@ -575,6 +576,64 @@ export const deleteAllProducts = async (req, res) => {
       error: true,
       errorMessage: error.message,
       message: "Server error while deleting all products",
+    });
+  }
+};
+
+// Generate AI Product Description (Seller / Admin)
+export const generateProductDescription = async (req, res) => {
+  try {
+    const { prdName, category, style, material, size } = req.body;
+    
+    if (!prdName) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Product name is required to generate a description",
+      });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({
+        success: false,
+        error: true,
+        message: "AI service is not configured (missing API key)",
+      });
+    }
+
+    const ai = new GoogleGenAI({ apiKey: apiKey });
+
+    const prompt = `Write a professional, engaging, and concise product description for an e-commerce clothing store.
+    Product Details:
+    - Name: ${prdName}
+    - Category: ${category || 'Not specified'}
+    - Style: ${style || 'Not specified'}
+    - Material: ${material || 'Not specified'}
+    - Size Options: ${size || 'Not specified'}
+    
+    The description should highlight the features and suggest how to style it. Keep it between 3 to 5 sentences. Do not use markdown, just plain text.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+
+    const generatedText = response.text;
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: { description: generatedText.trim() },
+      message: "Description generated successfully",
+    });
+  } catch (error) {
+    console.error("AI Generation Error:", error);
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while generating description",
     });
   }
 };
