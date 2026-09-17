@@ -173,5 +173,50 @@ describe('Auth API', () => {
       expect(res.body.message).toContain('Password reset successfully');
     });
   });
-});
 
+  describe('Profile Management (Bio Generation)', () => {
+    it('should generate a profile bio via AI', async () => {
+      const originalApiKey = process.env.GEMINI_API_KEY;
+      process.env.GEMINI_API_KEY = 'fake-test-key';
+      
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        headers: {
+          entries: () => [],
+          get: () => null,
+        },
+        json: async () => ({
+          candidates: [{ content: { parts: [{ text: 'This is an AI generated profile bio.' }] } }]
+        })
+      });
+
+      jest.spyOn(jwt, 'verify').mockReturnValue({
+        loginId: 'user123',
+        role: 'user'
+      });
+
+      const userToken = jwt.sign(
+        { loginId: 'user123', role: 'user' },
+        process.env.JWT_SECRET || 'encryptkey',
+        { expiresIn: '1h' }
+      );
+
+      const res = await request(app)
+        .post('/auth/generate-bio')
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          firstName: 'Test',
+          lastName: 'User'
+        });
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toHaveProperty('success', true);
+      expect(res.body.data.bio).toEqual('This is an AI generated profile bio.');
+
+      process.env.GEMINI_API_KEY = originalApiKey;
+      global.fetch = originalFetch;
+    });
+  });
+});

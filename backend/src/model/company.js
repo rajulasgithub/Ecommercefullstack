@@ -11,6 +11,7 @@ const companySchema = new mongoose.Schema({
   regNumber: { type: Number, required: true },
   gstNumber: { type: Number, required: true },
   role: { type: String, required: true, default: "seller", trim: true },
+  bio: { type: String, trim: true, default: "" },
 });
 
 const companyDB = mongoose.model("Company", companySchema);

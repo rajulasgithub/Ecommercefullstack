@@ -6,6 +6,7 @@ import companyDB from "../model/company.js";
 import dotenv from "dotenv";
 import { OAuth2Client } from "google-auth-library";
 import sendEmail from "../utils/sendEmail.js";
+import { GoogleGenAI } from "@google/genai";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "dummy-google-client-id");
 
@@ -459,6 +460,7 @@ export const updateOwnProfile = async (req, res) => {
         contactNumber: req.body.contactNumber !== undefined ? req.body.contactNumber : targetCompany.contactNumber,
         regNumber: req.body.regNumber !== undefined ? req.body.regNumber : targetCompany.regNumber,
         gstNumber: req.body.gstNumber !== undefined ? req.body.gstNumber : targetCompany.gstNumber,
+        bio: req.body.bio !== undefined ? req.body.bio : targetCompany.bio,
       };
 
       if (req.file) {
@@ -493,6 +495,7 @@ export const updateOwnProfile = async (req, res) => {
         district: req.body.district !== undefined ? req.body.district : targetUser.district,
         pincode: req.body.pincode !== undefined ? req.body.pincode : targetUser.pincode,
         place: req.body.place !== undefined ? req.body.place : targetUser.place,
+        bio: req.body.bio !== undefined ? req.body.bio : targetUser.bio,
       };
 
       if (req.file) {
@@ -994,4 +997,62 @@ export const verifyOtp = async (req, res) => {
   }
 };
 
+// Generate AI Profile Bio
+export const generateProfileBio = async (req, res) => {
+  try {
+    const userRole = String(req.userData.role || '').toLowerCase();
+    const isSeller = userRole === "seller" || userRole === "company";
+    const apiKey = process.env.GEMINI_API_KEY;
+    
+    if (!apiKey) {
+      return res.status(500).json({
+        success: false,
+        error: true,
+        message: "AI service is not configured (missing API key)",
+      });
+    }
 
+    const ai = new GoogleGenAI({ apiKey: apiKey });
+    let prompt = "";
+
+    if (isSeller) {
+      const { companyName, state, district } = req.body;
+      prompt = `Write a professional, engaging, and concise company bio for an e-commerce seller.
+      Details:
+      - Company Name: ${companyName || 'Not specified'}
+      - Location: ${district || ''} ${state || ''}
+      
+      The bio should highlight trustworthiness and quality. Keep it between 3 to 4 sentences. Do not use markdown, just plain text.`;
+    } else {
+      const { firstName, lastName, state, place } = req.body;
+      prompt = `Write a friendly, engaging, and concise personal bio for a shopper on an e-commerce platform.
+      Details:
+      - Name: ${firstName || 'User'} ${lastName || ''}
+      - Location: ${place || ''} ${state || ''}
+      
+      The bio should reflect a love for shopping and discovering great products. Keep it between 2 to 3 sentences. Do not use markdown, just plain text.`;
+    }
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+
+    const generatedText = response.text;
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: { bio: generatedText.trim() },
+      message: "Bio generated successfully",
+    });
+  } catch (error) {
+    console.error("AI Generation Error:", error);
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while generating bio",
+    });
+  }
+};

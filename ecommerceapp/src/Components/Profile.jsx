@@ -21,6 +21,7 @@ const Profile = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [serverError, setServerError] = useState("");
+  const [generatingBio, setGeneratingBio] = useState(false);
 
   const role = localStorage.getItem("role");
   const userRole = role ? String(role).toLowerCase() : "user";
@@ -55,6 +56,34 @@ const Profile = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setServerError("");
+  };
+
+  const handleGenerateBio = async () => {
+    setGeneratingBio(true);
+    try {
+      const payload = isSeller ? {
+        companyName: formData.companyName,
+        state: formData.state,
+        district: formData.district,
+      } : {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        state: formData.state,
+        place: formData.place,
+      };
+
+      const response = await api.post('/auth/generate-bio', payload);
+      if (response.data && response.data.success) {
+        const bio = response.data.data.bio;
+        setFormData(prev => ({ ...prev, bio }));
+        toast.success("Bio generated successfully!");
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to generate bio.';
+      toast.error(msg);
+    } finally {
+      setGeneratingBio(false);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -483,6 +512,39 @@ const Profile = () => {
                       </Col>
                     </>
                   )}
+                  <Col xs={12}>
+                    <Form.Group className="mb-2">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <Form.Label className="glass-label mb-0">Profile Bio</Form.Label>
+                        {isEditing && (
+                          <Button 
+                            variant="outline-light" 
+                            size="sm" 
+                            className="d-flex align-items-center gap-2"
+                            onClick={handleGenerateBio}
+                            disabled={generatingBio}
+                            style={{ borderRadius: '20px', border: '1px solid rgba(255,255,255,0.3)' }}
+                          >
+                            {generatingBio ? (
+                              <><Spinner as="span" animation="border" size="sm" /> Generating...</>
+                            ) : (
+                              "✨ Generate with AI"
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        name="bio"
+                        value={formData.bio || ""}
+                        onChange={handleChange}
+                        disabled={!isEditing}
+                        className="glass-input"
+                        placeholder="Tell us a bit about yourself..."
+                      />
+                    </Form.Group>
+                  </Col>
                 </Row>
 
                 {isEditing && (

@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   place: { type: String, trim: true },
   role: { type: String, required: true, default: "user", trim: true },
   image: { type: String, trim: true, default: "" },
+  bio: { type: String, trim: true, default: "" },
 });
 
 const userDB = mongoose.model("User", userSchema);

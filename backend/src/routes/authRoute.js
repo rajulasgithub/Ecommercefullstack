@@ -23,6 +23,7 @@ import {
   resetPassword,
   verifyOtp,
   updateOwnProfile,
+  generateProfileBio,
 } from "../controllers/authController.js";
 
 const authroutes = express.Router();
@@ -95,14 +96,13 @@ authroutes.post('/google', googleLogin);
 // Google Login/Signup (Company / Seller)
 authroutes.post('/google-company', googleCompanyLogin);
 
-// Forgot Password OTP Request
+// Forgot / Reset Password
 authroutes.post('/forgot-password', forgotPassword);
-
-// Verify OTP Code Only
 authroutes.post('/verify-otp', verifyOtp);
-
-// Reset Password with OTP Verification
 authroutes.post('/reset-password', resetPassword);
+
+// Profile Bio Generation (Protected)
+authroutes.post('/generate-bio', checkauth, generateProfileBio);
 
 // View Logged In Profile (User or Seller)
 authroutes.get('/viewinfo', checkauth, viewProfile);
