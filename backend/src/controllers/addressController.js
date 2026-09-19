@@ -1,5 +1,6 @@
 import addressDB from "../model/address.js";
-import userDB from "../model/user.js";
+import User from "../model/user.js";
+import { httpError } from "../utils/httpError.js";
 
 // Add Address (User)
 export const addAddress = async (req, res) => {
@@ -21,12 +22,7 @@ export const addAddress = async (req, res) => {
       message: "Address added successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Failed to add address",
-    });
+    return httpError(res, 500, "Failed to add address", { errorMessage: error.message });
   }
 };
 
@@ -42,19 +38,10 @@ export const getAddress = async (req, res) => {
         message: "Address found",
       });
     } else {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "Address not found",
-      });
+      return httpError(res, 404, "Address not found");
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Failed to retrieve address",
-    });
+    return httpError(res, 500, "Failed to retrieve address", { errorMessage: error.message });
   }
 };
 
@@ -76,19 +63,14 @@ export const updateAddress = async (req, res) => {
       message: "Address updated successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Failed to update address",
-    });
+    return httpError(res, 500, "Failed to update address", { errorMessage: error.message });
   }
 };
 
 // Change Delivery Address & Contact (User)
 export const changeDeliveryAddress = async (req, res) => {
   try {
-    const signup = await userDB.findOne({ loginId: req.userData.loginId });
+    const signup = await User.findOne({ loginId: req.userData.loginId });
     const address = await addressDB.findOne({ loginId: req.userData.loginId });
 
     const signupdata = {
@@ -105,7 +87,7 @@ export const changeDeliveryAddress = async (req, res) => {
     };
 
     let resulttwo = await addressDB.updateOne({ loginId: req.userData.loginId }, { $set: addressdata });
-    let resultone = await userDB.updateOne({ loginId: req.userData.loginId }, { $set: signupdata });
+    let resultone = await User.updateOne({ loginId: req.userData.loginId }, { $set: signupdata });
 
     return res.status(200).json({
       success: true,
@@ -113,11 +95,6 @@ export const changeDeliveryAddress = async (req, res) => {
       message: "Delivery details updated successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Failed to update delivery address",
-    });
+    return httpError(res, 500, "Failed to update delivery address", { errorMessage: error.message });
   }
 };

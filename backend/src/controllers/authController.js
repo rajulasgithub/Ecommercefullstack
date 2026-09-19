@@ -1,11 +1,12 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import loginDB from "../model/login.js";
-import userDB from "../model/user.js";
-import companyDB from "../model/company.js";
+import Login from "../model/login.js";
+import User from "../model/user.js";
+import Company from "../model/company.js";
 import dotenv from "dotenv";
 import { OAuth2Client } from "google-auth-library";
 import sendEmail from "../utils/sendEmail.js";
+import { httpError } from "../utils/httpError.js";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "dummy-google-client-id");
 
@@ -16,24 +17,12 @@ export const signup = async (req, res) => {
   let loginresult = null;
   try {
     const { email, password, firstName, lastName, number, gender, state, district, pincode, place } = req.body;
-    
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Email and password are required"
-      });
-    }
 
-    const existingUser = await loginDB.findOne({ email, role: "user" });
+    const existingUser = await Login.findOne({ email, role: "user" });
     if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "A user account with this email address already exists"
-      });
+      return httpError(res, 400, "A user account with this email address already exists");
     }
-
+    else{
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const loginData = {
@@ -42,7 +31,7 @@ export const signup = async (req, res) => {
       role: "user",
     };
 
-    loginresult = await loginDB(loginData).save();
+    loginresult = await Login(loginData).save();
 
     let imageUrl = "";
     if (req.file) {
@@ -65,7 +54,7 @@ export const signup = async (req, res) => {
       image: imageUrl,
     };
 
-    const signupresult = await userDB(signupData).save();
+    const signupresult = await User(signupData).save();
     if (signupresult) {
       const secret = process.env.JWT_SECRET || "encryptkey";
       const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
@@ -98,24 +87,19 @@ export const signup = async (req, res) => {
       });
     } else {
       if (loginresult && loginresult._id) {
-        await loginDB.deleteOne({ _id: loginresult._id }).catch(() => {});
+        await Login.deleteOne({ _id: loginresult._id }).catch(() => {});
       }
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Registration failed",
-      });
+      return httpError(res, 400, "Registration failed");
     }
+      
+    }
+
+    
   } catch (error) {
     if (loginresult && loginresult._id) {
-      await loginDB.deleteOne({ _id: loginresult._id }).catch(() => {});
+      await Login.deleteOne({ _id: loginresult._id }).catch(() => {});
     }
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Internal server error during registration",
-    });
+    return httpError(res, 500, "Internal server error during registration", { errorMessage: error.message });
   }
 };
 
@@ -124,18 +108,14 @@ export const login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "All fields are required",
-      });
+      return httpError(res, 400, "All fields are required");
     }
 
     let user = null;
     if (role) {
-      user = await loginDB.findOne({ email, role });
+      user = await Login.findOne({ email, role });
     } else {
-      const candidates = await loginDB.find({ email });
+      const candidates = await Login.find({ email });
       if (candidates.length === 1) {
         user = candidates[0];
       } else if (candidates.length > 1) {
@@ -153,11 +133,7 @@ export const login = async (req, res) => {
     }
 
     if (!user) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid email or password",
-      });
+      return httpError(res, 400, "Invalid email or password");
     }
 
     // Support bcrypt comparison with fallback to plaintext (for old test data)
@@ -170,11 +146,7 @@ export const login = async (req, res) => {
     }
 
     if (!isPasswordMatch) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid email or password",
-      });
+      return httpError(res, 400, "Invalid email or password");
     }
 
     const secret = process.env.JWT_SECRET || "encryptkey";
@@ -199,12 +171,7 @@ export const login = async (req, res) => {
       token: token,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Something went wrong during login",
-    });
+    return httpError(res, 500, "Something went wrong during login", { errorMessage: error.message });
   }
 };
 
@@ -213,11 +180,7 @@ export const googleLogin = async (req, res) => {
   try {
     const { token } = req.body;
     if (!token) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Google token is required",
-      });
+      return httpError(res, 400, "Google token is required");
     }
 
     const ticket = await googleClient.verifyIdToken({
@@ -227,23 +190,29 @@ export const googleLogin = async (req, res) => {
     const payload = ticket.getPayload();
     const { email, given_name, family_name, picture } = payload;
 
-    let user = await loginDB.findOne({ email });
+    let user = await Login.findOne({ email });
 
     if (!user) {
       // Create new account automatically for Google users
       const randomPassword = Math.random().toString(36).slice(-10) + "Aa1!";
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
       const loginData = { email, password: hashedPassword, role: "user" };
-      user = await loginDB(loginData).save();
+      user = await Login(loginData).save();
 
       const signupData = {
         loginId: user._id,
         firstName: given_name || "User",
-        lastName: family_name || "",
+        lastName: family_name || "N/A",
+        number: 0,
+        gender: "Other",
+        state: "N/A",
+        district: "N/A",
+        pincode: 0,
+        place: "N/A",
         role: "user",
         image: picture || "",
       };
-      await userDB(signupData).save();
+      await User(signupData).save();
 
       // Send Welcome Email for Google Signup
       sendEmail({
@@ -280,12 +249,7 @@ export const googleLogin = async (req, res) => {
       token: jwtToken,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Something went wrong during Google login",
-    });
+    return httpError(res, 500, "Something went wrong during Google login", { errorMessage: error.message });
   }
 };
 
@@ -294,11 +258,7 @@ export const googleCompanyLogin = async (req, res) => {
   try {
     const { token } = req.body;
     if (!token) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Google token is required",
-      });
+      return httpError(res, 400, "Google token is required");
     }
 
     const ticket = await googleClient.verifyIdToken({
@@ -308,32 +268,35 @@ export const googleCompanyLogin = async (req, res) => {
     const payload = ticket.getPayload();
     const { email, name, given_name, family_name, picture } = payload;
 
-    let user = await loginDB.findOne({ email, role: "seller" });
+    let user = await Login.findOne({ email, role: "seller" });
 
     if (!user) {
-      const existingAny = await loginDB.findOne({ email });
+      const existingAny = await Login.findOne({ email });
       if (existingAny && existingAny.role !== "seller") {
-        return res.status(400).json({
-          success: false,
-          error: true,
-          message: `This email is already registered as a ${existingAny.role}. Please log in using your registered credentials.`,
-        });
+        return httpError(res, 400, `This email is already registered as a ${existingAny.role}. Please log in using your registered credentials.`);
       }
 
       const randomPassword = Math.random().toString(36).slice(-10) + "Aa1!";
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
       const loginData = { email, password: hashedPassword, role: "seller" };
-      user = await loginDB(loginData).save();
+      user = await Login(loginData).save();
 
       const companyName = name || (given_name ? `${given_name} ${family_name || ''}`.trim() : "Seller Company");
 
+      const randomDigits = Math.floor(1000 + Math.random() * 9000);
       const companyData = {
         loginId: user._id,
         companyName,
-        image: picture || "",
+        image: picture || "default_logo.png",
+        state: "N/A",
+        district: "N/A",
+        pincode: 0,
+        contactNumber: 0,
+        regNumber: `REG-${Date.now()}-${randomDigits}`,
+        gstNumber: `22AAAAA${randomDigits}A1Z5`,
         role: "seller",
       };
-      await companyDB(companyData).save();
+      await Company(companyData).save();
 
       sendEmail({
         to: email,
@@ -369,12 +332,7 @@ export const googleCompanyLogin = async (req, res) => {
       token: jwtToken,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Something went wrong during Google seller login",
-    });
+    return httpError(res, 500, "Something went wrong during Google seller login", { errorMessage: error.message });
   }
 };
 
@@ -382,14 +340,14 @@ export const googleCompanyLogin = async (req, res) => {
 // View Logged-In User / Seller Profile
 export const viewProfile = async (req, res) => {
   try {
-    const loginUser = await loginDB.findById(req.userData.loginId).select('-password');
+    const loginUser = await Login.findById(req.userData.loginId).select('-password');
     if (!loginUser) {
-      return res.status(404).json({ success: false, error: true, message: "Account not found" });
+      return httpError(res, 404, "Account not found");
     }
 
     const userRole = String(req.userData.role || '').toLowerCase();
     if (userRole === "seller" || userRole === "company") {
-      const company = await companyDB.findOne({ loginId: req.userData.loginId });
+      const company = await Company.findOne({ loginId: req.userData.loginId });
       if (company) {
         return res.status(200).json({
           success: true,
@@ -405,7 +363,7 @@ export const viewProfile = async (req, res) => {
     }
 
     // Default: Customer Profile
-    const user = await userDB.findOne({ loginId: req.userData.loginId });
+    const user = await User.findOne({ loginId: req.userData.loginId });
     if (user) {
       return res.status(200).json({
         success: true,
@@ -419,18 +377,9 @@ export const viewProfile = async (req, res) => {
       });
     }
 
-    return res.status(404).json({
-      success: false,
-      error: true,
-      message: "Profile details not found",
-    });
+    return httpError(res, 404, "Profile details not found");
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Error fetching profile",
-    });
+    return httpError(res, 500, "Error fetching profile", { errorMessage: error.message });
   }
 };
 
@@ -440,15 +389,15 @@ export const updateOwnProfile = async (req, res) => {
     const loginId = req.userData.loginId;
     const userRole = String(req.userData.role || '').toLowerCase();
 
-    const loginUser = await loginDB.findById(loginId);
+    const loginUser = await Login.findById(loginId);
     if (!loginUser) {
-      return res.status(404).json({ success: false, error: true, message: "Account not found" });
+      return httpError(res, 404, "Account not found");
     }
 
     if (userRole === "seller" || userRole === "company") {
-      const targetCompany = await companyDB.findOne({ loginId });
+      const targetCompany = await Company.findOne({ loginId });
       if (!targetCompany) {
-        return res.status(404).json({ success: false, error: true, message: "Seller company profile not found" });
+        return httpError(res, 404, "Seller company profile not found");
       }
 
       const updateData = {
@@ -457,16 +406,16 @@ export const updateOwnProfile = async (req, res) => {
         district: req.body.district !== undefined ? req.body.district : targetCompany.district,
         pincode: req.body.pincode !== undefined ? req.body.pincode : targetCompany.pincode,
         contactNumber: req.body.contactNumber !== undefined ? req.body.contactNumber : targetCompany.contactNumber,
-        regNumber: req.body.regNumber !== undefined ? req.body.regNumber : targetCompany.regNumber,
-        gstNumber: req.body.gstNumber !== undefined ? req.body.gstNumber : targetCompany.gstNumber,
+        regNumber: req.body.regNumber !== undefined ? String(req.body.regNumber).trim() : targetCompany.regNumber,
+        gstNumber: req.body.gstNumber !== undefined ? String(req.body.gstNumber).trim().toUpperCase() : targetCompany.gstNumber,
       };
 
       if (req.file) {
         updateData.image = req.file.path || req.file.filename;
       }
 
-      await companyDB.updateOne({ loginId }, { $set: updateData });
-      const updatedCompany = await companyDB.findOne({ loginId });
+      await Company.updateOne({ loginId }, { $set: updateData });
+      const updatedCompany = await Company.findOne({ loginId });
 
       return res.status(200).json({
         success: true,
@@ -479,9 +428,9 @@ export const updateOwnProfile = async (req, res) => {
         message: "Seller profile updated successfully",
       });
     } else {
-      const targetUser = await userDB.findOne({ loginId });
+      const targetUser = await User.findOne({ loginId });
       if (!targetUser) {
-        return res.status(404).json({ success: false, error: true, message: "User profile not found" });
+        return httpError(res, 404, "User profile not found");
       }
 
       const updateData = {
@@ -501,8 +450,8 @@ export const updateOwnProfile = async (req, res) => {
         updateData.image = req.body.image;
       }
 
-      await userDB.updateOne({ loginId }, { $set: updateData });
-      const updatedUser = await userDB.findOne({ loginId });
+      await User.updateOne({ loginId }, { $set: updateData });
+      const updatedUser = await User.findOne({ loginId });
 
       return res.status(200).json({
         success: true,
@@ -516,12 +465,7 @@ export const updateOwnProfile = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while updating profile",
-    });
+    return httpError(res, 500, "Server error while updating profile", { errorMessage: error.message });
   }
 };
 
@@ -529,7 +473,7 @@ export const updateOwnProfile = async (req, res) => {
 // View All Users (Admin Only)
 export const viewAllUsers = async (req, res) => {
   try {
-    const result = await userDB.find().populate('loginId', 'email role');
+    const result = await User.find().populate('loginId', 'email role');
     return res.status(200).json({
       success: true,
       error: false,
@@ -537,19 +481,14 @@ export const viewAllUsers = async (req, res) => {
       message: "Users list loaded successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Error fetching users",
-    });
+    return httpError(res, 500, "Error fetching users", { errorMessage: error.message });
   }
 };
 
 // Delete User (Admin Only)
 export const deleteUser = async (req, res) => {
   try {
-    const result = await userDB.deleteOne({ _id: req.params.id });
+    const result = await User.deleteOne({ _id: req.params.id });
     if (result.deletedCount > 0) {
       return res.status(200).json({
         success: true,
@@ -557,33 +496,24 @@ export const deleteUser = async (req, res) => {
         message: "User deleted successfully",
       });
     } else {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "User not found",
-      });
+      return httpError(res, 404, "User not found");
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Error deleting user",
-    });
+    return httpError(res, 500, "Error deleting user", { errorMessage: error.message });
   }
 };
 
 // Update Profile
 export const updateUser = async (req, res) => {
   try {
-    const targetUser = await userDB.findOne({ _id: req.params.id });
+    const targetUser = await User.findOne({ _id: req.params.id });
     if (!targetUser) {
-      return res.status(404).json({ success: false, error: true, message: "User profile not found" });
+      return httpError(res, 404, "User profile not found");
     }
 
     // Verify ownership or Admin role ("admin")
     if (targetUser.loginId.toString() !== req.userData.loginId && req.userData.role !== "admin") {
-      return res.status(403).json({ success: false, error: true, message: "Forbidden. Cannot update another user's profile." });
+      return httpError(res, 403, "Forbidden. Cannot update another user's profile.");
     }
 
     const data = {
@@ -597,7 +527,7 @@ export const updateUser = async (req, res) => {
       place: req.body.place || targetUser.place,
     };
 
-    const result = await userDB.updateOne({ _id: req.params.id }, { $set: data });
+    const result = await User.updateOne({ _id: req.params.id }, { $set: data });
     return res.status(200).json({
       success: true,
       error: false,
@@ -605,12 +535,7 @@ export const updateUser = async (req, res) => {
       message: "User profile updated successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Error updating profile",
-    });
+    return httpError(res, 500, "Error updating profile", { errorMessage: error.message });
   }
 };
 
@@ -621,20 +546,12 @@ export const companySignup = async (req, res) => {
     const { email, password, companyName, state, district, pincode, contactNumber, regNumber, gstNumber } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Email and password are required",
-      });
+      return httpError(res, 400, "Email and password are required");
     }
 
-    const existing = await loginDB.findOne({ email, role: "seller" });
+    const existing = await Login.findOne({ email, role: "seller" });
     if (existing) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "A seller account with this email address already exists",
-      });
+      return httpError(res, 400, "A seller account with this email address already exists");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -644,7 +561,7 @@ export const companySignup = async (req, res) => {
       password: hashedPassword,
       role: "seller",
     };
-    loginresult = await loginDB(logindata).save();
+    loginresult = await Login(logindata).save();
 
     const data = {
       loginId: loginresult._id,
@@ -654,12 +571,12 @@ export const companySignup = async (req, res) => {
       district,
       pincode,
       contactNumber,
-      regNumber,
-      gstNumber,
+      regNumber: regNumber ? String(regNumber).trim() : "",
+      gstNumber: gstNumber ? String(gstNumber).trim().toUpperCase() : "",
       role: "seller",
     };
 
-    const result = await companyDB(data).save();
+    const result = await Company(data).save();
     const secret = process.env.JWT_SECRET || "encryptkey";
     const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
     const token = jwt.sign(
@@ -691,21 +608,16 @@ export const companySignup = async (req, res) => {
     });
   } catch (error) {
     if (loginresult && loginresult._id) {
-      await loginDB.deleteOne({ _id: loginresult._id }).catch(() => {});
+      await Login.deleteOne({ _id: loginresult._id }).catch(() => {});
     }
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Company registration failed",
-    });
+    return httpError(res, 500, "Company registration failed", { errorMessage: error.message });
   }
 };
 
 // View All Companies (Admin/Seller)
 export const viewCompanies = async (req, res) => {
   try {
-    const result = await companyDB.find().populate('loginId', 'email role');
+    const result = await Company.find().populate('loginId', 'email role');
     return res.status(200).json({
       success: true,
       error: false,
@@ -713,19 +625,14 @@ export const viewCompanies = async (req, res) => {
       message: "Companies retrieved successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Error fetching companies",
-    });
+    return httpError(res, 500, "Error fetching companies", { errorMessage: error.message });
   }
 };
 
 // View Single Company
 export const viewSingleCompany = async (req, res) => {
   try {
-    const result = await companyDB.findOne({ _id: req.params.id });
+    const result = await Company.findOne({ _id: req.params.id });
     if (result) {
       return res.status(200).json({
         success: true,
@@ -734,36 +641,27 @@ export const viewSingleCompany = async (req, res) => {
         message: "Company details loaded",
       });
     } else {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "Company not found",
-      });
+      return httpError(res, 404, "Company not found");
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Error fetching company",
-    });
+    return httpError(res, 500, "Error fetching company", { errorMessage: error.message });
   }
 };
 
 // Delete Company (Admin/Seller)
 export const deleteCompany = async (req, res) => {
   try {
-    const company = await companyDB.findOne({ _id: req.params.id });
+    const company = await Company.findOne({ _id: req.params.id });
     if (!company) {
-      return res.status(404).json({ success: false, error: true, message: "Company not found" });
+      return httpError(res, 404, "Company not found");
     }
 
     if (company.loginId.toString() !== req.userData.loginId && req.userData.role !== "admin") {
-      return res.status(403).json({ success: false, error: true, message: "Forbidden. Cannot delete another company." });
+      return httpError(res, 403, "Forbidden. Cannot delete another company.");
     }
 
-    await companyDB.deleteOne({ _id: req.params.id });
-    await loginDB.deleteOne({ _id: company.loginId });
+    await Company.deleteOne({ _id: req.params.id });
+    await Login.deleteOne({ _id: company.loginId });
 
     return res.status(200).json({
       success: true,
@@ -771,25 +669,20 @@ export const deleteCompany = async (req, res) => {
       message: "Company deleted successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Error deleting company",
-    });
+    return httpError(res, 500, "Error deleting company", { errorMessage: error.message });
   }
 };
 
 // Update Company Info
 export const updateCompany = async (req, res) => {
   try {
-    const olddata = await companyDB.findOne({ _id: req.params.id });
+    const olddata = await Company.findOne({ _id: req.params.id });
     if (!olddata) {
-      return res.status(404).json({ success: false, error: true, message: "Company not found" });
+      return httpError(res, 404, "Company not found");
     }
 
     if (olddata.loginId.toString() !== req.userData.loginId && req.userData.role !== "admin") {
-      return res.status(403).json({ success: false, error: true, message: "Forbidden. Cannot update another company." });
+      return httpError(res, 403, "Forbidden. Cannot update another company.");
     }
 
     const data = {
@@ -798,11 +691,11 @@ export const updateCompany = async (req, res) => {
       district: req.body.district || olddata.district,
       pincode: req.body.pincode || olddata.pincode,
       contactNumber: req.body.contactNumber || olddata.contactNumber,
-      regNumber: req.body.regNumber || olddata.regNumber,
-      gstNumber: req.body.gstNumber || olddata.gstNumber,
+      regNumber: req.body.regNumber ? String(req.body.regNumber).trim() : olddata.regNumber,
+      gstNumber: req.body.gstNumber ? String(req.body.gstNumber).trim().toUpperCase() : olddata.gstNumber,
     };
 
-    const result = await companyDB.updateOne({ _id: req.params.id }, { $set: data });
+    const result = await Company.updateOne({ _id: req.params.id }, { $set: data });
     return res.status(200).json({
       success: true,
       error: false,
@@ -810,12 +703,7 @@ export const updateCompany = async (req, res) => {
       message: "Company updated successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Error updating company",
-    });
+    return httpError(res, 500, "Error updating company", { errorMessage: error.message });
   }
 };
 
@@ -824,20 +712,12 @@ export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Email address is required",
-      });
+      return httpError(res, 400, "Email address is required");
     }
 
-    const user = await loginDB.findOne({ email: email.trim().toLowerCase() });
+    const user = await Login.findOne({ email: email.trim().toLowerCase() });
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "No account found with this email address",
-      });
+      return httpError(res, 404, "No account found with this email address");
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -849,10 +729,10 @@ export const forgotPassword = async (req, res) => {
 
     let recipientName = "Valued User";
     if (user.role === "seller" || user.role === "company") {
-      const company = await companyDB.findOne({ loginId: user._id });
+      const company = await Company.findOne({ loginId: user._id });
       if (company && company.companyName) recipientName = company.companyName;
     } else {
-      const profile = await userDB.findOne({ loginId: user._id });
+      const profile = await User.findOne({ loginId: user._id });
       if (profile && profile.firstName) {
         recipientName = `${profile.firstName} ${profile.lastName || ''}`.trim();
       }
@@ -875,12 +755,7 @@ export const forgotPassword = async (req, res) => {
       message: "Password reset OTP has been sent to your email address",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while processing forgot password request",
-    });
+    return httpError(res, 500, "Server error while processing forgot password request", { errorMessage: error.message });
   }
 };
 
@@ -889,36 +764,20 @@ export const resetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
     if (!email || !otp || !newPassword) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Email, OTP code, and new password are required",
-      });
+      return httpError(res, 400, "Email, OTP code, and new password are required");
     }
 
-    const user = await loginDB.findOne({ email: email.trim().toLowerCase() });
+    const user = await Login.findOne({ email: email.trim().toLowerCase() });
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "Account not found",
-      });
+      return httpError(res, 404, "Account not found");
     }
 
     if (!user.resetPasswordOtp || user.resetPasswordOtp !== otp.trim()) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid OTP verification code",
-      });
+      return httpError(res, 400, "Invalid OTP verification code");
     }
 
     if (!user.resetPasswordExpires || new Date() > new Date(user.resetPasswordExpires)) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "OTP code has expired. Please request a new password reset",
-      });
+      return httpError(res, 400, "OTP code has expired. Please request a new password reset");
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -933,12 +792,7 @@ export const resetPassword = async (req, res) => {
       message: "Password reset successfully. You can now log in with your new password",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while resetting password",
-    });
+    return httpError(res, 500, "Server error while resetting password", { errorMessage: error.message });
   }
 };
 
@@ -947,36 +801,20 @@ export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
     if (!email || !otp) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Email address and OTP code are required",
-      });
+      return httpError(res, 400, "Email address and OTP code are required");
     }
 
-    const user = await loginDB.findOne({ email: email.trim().toLowerCase() });
+    const user = await Login.findOne({ email: email.trim().toLowerCase() });
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "Account not found",
-      });
+      return httpError(res, 404, "Account not found");
     }
 
     if (!user.resetPasswordOtp || user.resetPasswordOtp !== otp.trim()) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid OTP verification code",
-      });
+      return httpError(res, 400, "Invalid OTP verification code");
     }
 
     if (!user.resetPasswordExpires || new Date() > new Date(user.resetPasswordExpires)) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "OTP code has expired. Please request a new password reset",
-      });
+      return httpError(res, 400, "OTP code has expired. Please request a new password reset");
     }
 
     return res.status(200).json({
@@ -985,12 +823,7 @@ export const verifyOtp = async (req, res) => {
       message: "OTP code verified successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while verifying OTP code",
-    });
+    return httpError(res, 500, "Server error while verifying OTP code", { errorMessage: error.message });
   }
 };
 

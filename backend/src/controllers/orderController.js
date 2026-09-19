@@ -1,6 +1,7 @@
 import cartDB from "../model/cart.js";
 import addressDB from "../model/address.js";
 import mongoose from "mongoose";
+import { httpError } from "../utils/httpError.js";
 
 // View Company Orders (Vendor / Admin)
 export const getCompanyOrders = async (req, res) => {
@@ -80,12 +81,7 @@ export const getCompanyOrders = async (req, res) => {
       message: "Orders list viewed successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while viewing company orders",
-    });
+    return httpError(res, 500, "Server error while viewing company orders", { errorMessage: error.message });
   }
 };
 
@@ -189,12 +185,7 @@ export const getSellerOrders = async (req, res) => {
       message: "Seller orders viewed successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while viewing seller orders",
-    });
+    return httpError(res, 500, "Server error while viewing seller orders", { errorMessage: error.message });
   }
 };
 
@@ -223,12 +214,7 @@ export const getUserOrders = async (req, res) => {
       message: "User orders viewed successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while viewing user orders",
-    });
+    return httpError(res, 500, "Server error while viewing user orders", { errorMessage: error.message });
   }
 };
 
@@ -237,11 +223,7 @@ export const checkoutCart = async (req, res) => {
   try {
     const userAddress = await addressDB.findOne({ loginId: req.userData.loginId });
     if (!userAddress) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Please save a shipping address before checking out.",
-      });
+      return httpError(res, 400, "Please save a shipping address before checking out.");
     }
 
     const now = new Date();
@@ -272,12 +254,7 @@ export const checkoutCart = async (req, res) => {
       message: "Order placed successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error during checkout",
-    });
+    return httpError(res, 500, "Server error during checkout", { errorMessage: error.message });
   }
 };
 
@@ -297,12 +274,7 @@ export const updateOrderStatus = async (req, res) => {
       message: "Order status updated",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error updating order status",
-    });
+    return httpError(res, 500, "Server error updating order status", { errorMessage: error.message });
   }
 };
 
@@ -321,12 +293,7 @@ export const cancelOrder = async (req, res) => {
       message: "Order cancelled successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error cancelling order",
-    });
+    return httpError(res, 500, "Server error cancelling order", { errorMessage: error.message });
   }
 };
 
@@ -343,12 +310,7 @@ export const viewOrders = async (req, res) => {
       message: "Orders viewed successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error viewing orders",
-    });
+    return httpError(res, 500, "Server error viewing orders", { errorMessage: error.message });
   }
 };
 
@@ -367,11 +329,6 @@ export const rejectOrder = async (req, res) => {
       message: "Order rejected",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error rejecting order",
-    });
+    return httpError(res, 500, "Server error rejecting order", { errorMessage: error.message });
   }
 };

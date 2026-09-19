@@ -1,7 +1,8 @@
 import reviewDB from "../model/review.js";
 import cartDB from "../model/cart.js";
-import userDB from "../model/user.js";
+import User from "../model/user.js";
 import mongoose from "mongoose";
+import { httpError } from "../utils/httpError.js";
 
 // Add a Product Review (Verified Purchaser Only)
 export const addReview = async (req, res) => {
@@ -10,28 +11,16 @@ export const addReview = async (req, res) => {
     const loginId = req.userData.loginId;
 
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Valid product ID is required",
-      });
+      return httpError(res, 400, "Valid product ID is required");
     }
 
     const numRating = Number(rating);
     if (!numRating || numRating < 1 || numRating > 5) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Rating must be between 1 and 5 stars",
-      });
+      return httpError(res, 400, "Rating must be between 1 and 5 stars");
     }
 
     if (!comment || typeof comment !== "string" || !comment.trim()) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Review comment is required",
-      });
+      return httpError(res, 400, "Review comment is required");
     }
 
     // 1. Verify purchase eligibility
@@ -52,11 +41,7 @@ export const addReview = async (req, res) => {
     });
 
     if (!purchase) {
-      return res.status(403).json({
-        success: false,
-        error: true,
-        message: "You can only submit a review for products you have successfully purchased.",
-      });
+      return httpError(res, 403, "You can only submit a review for products you have successfully purchased.");
     }
 
     // 2. Check for duplicate review
@@ -72,11 +57,7 @@ export const addReview = async (req, res) => {
     });
 
     if (existingReview) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "You have already submitted a review for this product.",
-      });
+      return httpError(res, 400, "You have already submitted a review for this product.");
     }
 
     // 3. Save review
@@ -97,18 +78,9 @@ export const addReview = async (req, res) => {
     });
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "You have already submitted a review for this product.",
-      });
+      return httpError(res, 400, "You have already submitted a review for this product.");
     }
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while submitting review",
-    });
+    return httpError(res, 500, "Server error while submitting review", { errorMessage: error.message });
   }
 };
 
@@ -119,11 +91,7 @@ export const checkEligibility = async (req, res) => {
     const loginId = req.userData.loginId;
 
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid product ID",
-      });
+      return httpError(res, 400, "Invalid product ID");
     }
 
     // Check if user has purchased this product (status not 1/in-cart and not 3/cancelled)
@@ -167,12 +135,7 @@ export const checkEligibility = async (req, res) => {
       message: "Review eligibility checked successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error checking review eligibility",
-    });
+    return httpError(res, 500, "Server error checking review eligibility", { errorMessage: error.message });
   }
 };
 
@@ -181,11 +144,7 @@ export const getProductReviews = async (req, res) => {
   try {
     const { productId } = req.params;
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid product ID",
-      });
+      return httpError(res, 400, "Invalid product ID");
     }
 
     const reviews = await reviewDB.find({ productId }).sort({ createdAt: -1 });
@@ -193,7 +152,7 @@ export const getProductReviews = async (req, res) => {
     // Populate user profile info for each review
     const enrichedReviews = await Promise.all(
       reviews.map(async (rev) => {
-        const userObj = await userDB.findOne({ loginId: rev.loginId });
+        const userObj = await User.findOne({ loginId: rev.loginId });
         return {
           _id: rev._id,
           productId: rev.productId,
@@ -235,11 +194,6 @@ export const getProductReviews = async (req, res) => {
       message: "Product reviews retrieved successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while fetching reviews",
-    });
+    return httpError(res, 500, "Server error while fetching reviews", { errorMessage: error.message });
   }
 };

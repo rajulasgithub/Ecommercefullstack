@@ -10,5 +10,5 @@ const loginSchema = new mongoose.Schema({
 
 loginSchema.index({ email: 1, role: 1 }, { unique: true });
 
-const loginDB = mongoose.model("Login", loginSchema);
-export default loginDB;
+const Login = mongoose.model("Login", loginSchema);
+export default Login;

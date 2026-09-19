@@ -2,23 +2,24 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import productDB from "../model/product.js";
 import cartDB from "../model/cart.js";
-import loginDB from "../model/login.js";
-import companyDB from "../model/company.js";
-import userDB from "../model/user.js";
+import Login from "../model/login.js";
+import Company from "../model/company.js";
+import User from "../model/user.js";
 import sendEmail from "../utils/sendEmail.js";
+import { httpError } from "../utils/httpError.js";
 
 const getSellerInfo = async (loginId) => {
   try {
     if (!loginId) return { email: null, sellerName: "Seller" };
-    const loginUser = await loginDB.findById(loginId);
+    const loginUser = await Login.findById(loginId);
     if (!loginUser) return { email: null, sellerName: "Seller" };
 
     let sellerName = "Seller";
-    const company = await companyDB.findOne({ loginId });
+    const company = await Company.findOne({ loginId });
     if (company && company.companyName) {
       sellerName = company.companyName;
     } else {
-      const user = await userDB.findOne({ loginId });
+      const user = await User.findOne({ loginId });
       if (user && user.firstName) {
         sellerName = `${user.firstName} ${user.lastName || ''}`.trim();
       }
@@ -74,19 +75,10 @@ export const addProduct = async (req, res) => {
         message: "Product added successfully",
       });
     } else {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Failed to add product",
-      });
+      return httpError(res, 400, "Failed to add product");
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while adding product",
-    });
+    return httpError(res, 500, "Server error while adding product", { errorMessage: error.message });
   }
 };
 
@@ -185,12 +177,7 @@ export const getAllProducts = async (req, res) => {
       message: "Products fetched successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while fetching products",
-    });
+    return httpError(res, 500, "Server error while fetching products", { errorMessage: error.message });
   }
 };
 
@@ -199,11 +186,7 @@ export const getSellerProducts = async (req, res) => {
   try {
     const userLoginId = req.userData?.loginId;
     if (!userLoginId) {
-      return res.status(401).json({
-        success: false,
-        error: true,
-        message: "Unauthorized: Seller login required",
-      });
+      return httpError(res, 401, "Unauthorized: Seller login required");
     }
 
     const { search, category, style, minPrice, maxPrice, page, limit } = req.query;
@@ -271,12 +254,7 @@ export const getSellerProducts = async (req, res) => {
       message: "Seller products fetched successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while fetching seller products",
-    });
+    return httpError(res, 500, "Server error while fetching seller products", { errorMessage: error.message });
   }
 };
 
@@ -285,11 +263,7 @@ export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid product ID format",
-      });
+      return httpError(res, 400, "Invalid product ID format");
     }
 
     const result = await productDB.findOne({
@@ -304,19 +278,10 @@ export const getProductById = async (req, res) => {
         message: "Product details fetched successfully",
       });
     } else {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "Product not found or has been removed",
-      });
+      return httpError(res, 404, "Product not found or has been removed");
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while fetching product details",
-    });
+    return httpError(res, 500, "Server error while fetching product details", { errorMessage: error.message });
   }
 };
 
@@ -325,20 +290,12 @@ export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid product ID format",
-      });
+      return httpError(res, 400, "Invalid product ID format");
     }
 
     const product = await productDB.findById(id);
     if (!product) {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "Product not found",
-      });
+      return httpError(res, 404, "Product not found");
     }
 
     const userRole = req.userData?.role;
@@ -347,11 +304,7 @@ export const deleteProduct = async (req, res) => {
     // Authorization check: Admin can delete any product; Seller can ONLY delete products created by them.
     if (userRole !== "admin") {
       if (!userLoginId || !product.loginId || product.loginId.toString() !== userLoginId.toString()) {
-        return res.status(403).json({
-          success: false,
-          error: true,
-          message: "Unauthorized: You can only delete products created by you",
-        });
+        return httpError(res, 403, "Unauthorized: You can only delete products created by you");
       }
     }
 
@@ -386,12 +339,7 @@ export const deleteProduct = async (req, res) => {
       message: "Product soft deleted successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while deleting product",
-    });
+    return httpError(res, 500, "Server error while deleting product", { errorMessage: error.message });
   }
 };
 
@@ -400,16 +348,12 @@ export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid product ID format",
-      });
+      return httpError(res, 400, "Invalid product ID format");
     }
 
     const oldData = await productDB.findOne({ _id: id });
     if (!oldData) {
-      return res.status(404).json({ success: false, error: true, message: "Product not found" });
+      return httpError(res, 404, "Product not found");
     }
 
     const userRole = req.userData?.role;
@@ -418,11 +362,7 @@ export const updateProduct = async (req, res) => {
     // Authorization check: Admin can update any product; Seller can ONLY update products created by them.
     if (userRole !== "admin") {
       if (!userLoginId || !oldData.loginId || oldData.loginId.toString() !== userLoginId.toString()) {
-        return res.status(403).json({
-          success: false,
-          error: true,
-          message: "Unauthorized: You can only update products created by you",
-        });
+        return httpError(res, 403, "Unauthorized: You can only update products created by you");
       }
     }
 
@@ -468,12 +408,7 @@ export const updateProduct = async (req, res) => {
       message: "Product updated successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while updating product",
-    });
+    return httpError(res, 500, "Server error while updating product", { errorMessage: error.message });
   }
 };
 
@@ -482,20 +417,12 @@ export const updateProductStatus = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Invalid product ID format",
-      });
+      return httpError(res, 400, "Invalid product ID format");
     }
 
     const product = await productDB.findById(id);
     if (!product) {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "Product not found",
-      });
+      return httpError(res, 404, "Product not found");
     }
 
     const userRole = req.userData?.role;
@@ -504,11 +431,7 @@ export const updateProductStatus = async (req, res) => {
     // Authorization check: Admin can update any product status; Seller can ONLY update status of products created by them.
     if (userRole !== "admin") {
       if (!userLoginId || !product.loginId || product.loginId.toString() !== userLoginId.toString()) {
-        return res.status(403).json({
-          success: false,
-          error: true,
-          message: "Unauthorized: You can only update status of products created by you",
-        });
+        return httpError(res, 403, "Unauthorized: You can only update status of products created by you");
       }
     }
 
@@ -524,12 +447,7 @@ export const updateProductStatus = async (req, res) => {
       message: "Product status updated successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while updating product status",
-    });
+    return httpError(res, 500, "Server error while updating product status", { errorMessage: error.message });
   }
 };
 
@@ -552,11 +470,7 @@ export const deleteAllProducts = async (req, res) => {
       });
     } else {
       if (!userLoginId) {
-        return res.status(401).json({
-          success: false,
-          error: true,
-          message: "Unauthorized",
-        });
+        return httpError(res, 401, "Unauthorized");
       }
       const sellerProducts = await productDB.find({ loginId: userLoginId });
       const productIds = sellerProducts.map((p) => p._id);
@@ -570,11 +484,6 @@ export const deleteAllProducts = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while deleting all products",
-    });
+    return httpError(res, 500, "Server error while deleting all products", { errorMessage: error.message });
   }
 };

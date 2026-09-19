@@ -1,20 +1,17 @@
 import cartDB from "../model/cart.js";
 import productDB from "../model/product.js";
+import { httpError } from "../utils/httpError.js";
 
 // Add to Cart (User)
 export const addToCart = async (req, res) => {
   try {
     const product = await productDB.findOne({ _id: req.body.productId });
     if (!product) {
-      return res.status(404).json({ success: false, error: true, message: "Product not found" });
+      return httpError(res, 404, "Product not found");
     }
 
     if (String(product.loginId) === String(req.userData.loginId)) {
-      return res.status(403).json({
-        success: false,
-        error: true,
-        message: "You cannot add your own product to the cart",
-      });
+      return httpError(res, 403, "You cannot add your own product to the cart");
     }
 
     const existingItem = await cartDB.findOne({
@@ -49,12 +46,7 @@ export const addToCart = async (req, res) => {
       message: "Product added to cart",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while adding to cart",
-    });
+    return httpError(res, 500, "Server error while adding to cart", { errorMessage: error.message });
   }
 };
 
@@ -78,12 +70,7 @@ export const getCart = async (req, res) => {
       message: "Cart viewed successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while viewing cart",
-    });
+    return httpError(res, 500, "Server error while viewing cart", { errorMessage: error.message });
   }
 };
 
@@ -92,7 +79,7 @@ export const increaseCartQuantity = async (req, res) => {
   try {
     const oldData = await cartDB.findOne({ _id: req.params.id, loginId: req.userData.loginId });
     if (!oldData) {
-      return res.status(404).json({ success: false, error: true, message: "Cart item not found" });
+      return httpError(res, 404, "Cart item not found");
     }
 
     const result = await cartDB.updateOne(
@@ -106,12 +93,7 @@ export const increaseCartQuantity = async (req, res) => {
       message: "Cart quantity increased",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while updating cart item",
-    });
+    return httpError(res, 500, "Server error while updating cart item", { errorMessage: error.message });
   }
 };
 
@@ -120,7 +102,7 @@ export const decreaseCartQuantity = async (req, res) => {
   try {
     const oldData = await cartDB.findOne({ _id: req.params.id, loginId: req.userData.loginId });
     if (!oldData) {
-      return res.status(404).json({ success: false, error: true, message: "Cart item not found" });
+      return httpError(res, 404, "Cart item not found");
     }
 
     const newQuantity = Math.max(1, oldData.quantity - 1);
@@ -135,12 +117,7 @@ export const decreaseCartQuantity = async (req, res) => {
       message: "Cart quantity decreased",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while updating cart item",
-    });
+    return httpError(res, 500, "Server error while updating cart item", { errorMessage: error.message });
   }
 };
 
@@ -160,18 +137,9 @@ export const deleteCartItem = async (req, res) => {
         message: "Cart item deleted successfully",
       });
     } else {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "Cart item not found or already removed",
-      });
+      return httpError(res, 404, "Cart item not found or already removed");
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while deleting cart item",
-    });
+    return httpError(res, 500, "Server error while deleting cart item", { errorMessage: error.message });
   }
 };

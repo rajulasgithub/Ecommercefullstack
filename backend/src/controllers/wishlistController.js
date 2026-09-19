@@ -1,20 +1,17 @@
 import wishlistDB from "../model/wishlist.js";
 import productDB from "../model/product.js";
+import { httpError } from "../utils/httpError.js";
 
 // Add to Wishlist
 export const addToWishlist = async (req, res) => {
   try {
     const product = await productDB.findOne({ _id: req.body.productId });
     if (!product) {
-      return res.status(404).json({ success: false, error: true, message: "Product not found" });
+      return httpError(res, 404, "Product not found");
     }
 
     if (String(product.loginId) === String(req.userData.loginId)) {
-      return res.status(403).json({
-        success: false,
-        error: true,
-        message: "You cannot add your own product to your wishlist",
-      });
+      return httpError(res, 403, "You cannot add your own product to your wishlist");
     }
 
     const existingItem = await wishlistDB.findOne({
@@ -23,11 +20,7 @@ export const addToWishlist = async (req, res) => {
     });
 
     if (existingItem) {
-      return res.status(409).json({
-        success: false,
-        error: true,
-        message: "Product is already in your wishlist",
-      });
+      return httpError(res, 409, "Product is already in your wishlist");
     }
 
     const data = {
@@ -43,12 +36,7 @@ export const addToWishlist = async (req, res) => {
       message: "Product added to wishlist",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while adding to wishlist",
-    });
+    return httpError(res, 500, "Server error while adding to wishlist", { errorMessage: error.message });
   }
 };
 
@@ -72,12 +60,7 @@ export const getWishlist = async (req, res) => {
       message: "Wishlist viewed successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while viewing wishlist",
-    });
+    return httpError(res, 500, "Server error while viewing wishlist", { errorMessage: error.message });
   }
 };
 
@@ -96,18 +79,9 @@ export const removeFromWishlist = async (req, res) => {
         message: "Item removed from wishlist successfully",
       });
     } else {
-      return res.status(404).json({
-        success: false,
-        error: true,
-        message: "Wishlist item not found or already removed",
-      });
+      return httpError(res, 404, "Wishlist item not found or already removed");
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while removing from wishlist",
-    });
+    return httpError(res, 500, "Server error while removing from wishlist", { errorMessage: error.message });
   }
 };

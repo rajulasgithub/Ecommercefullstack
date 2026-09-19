@@ -40,19 +40,18 @@ const passwordValidationRules = body("password")
 const signupValidation = [
   body("email").trim().isEmail().withMessage("Please provide a valid email address"),
   passwordValidationRules,
-  body("firstName")
-    .trim()
-    .notEmpty().withMessage("First name is required")
-    .isLength({ min: 2 }).withMessage("First name must be at least 2 characters long")
-    .matches(/^[A-Za-z\s]+$/).withMessage("First name should only contain letters"),
+  body("firstName").trim().notEmpty().withMessage("First name is required").isLength({ min: 2, max: 50 })
+  .withMessage("First name must be between 2 and 50 characters").matches(/^[A-Za-z\s]+$/).withMessage("First name should only contain letters"),
   body("lastName")
     .trim()
     .notEmpty().withMessage("Last name is required")
+    .isLength({ min: 1, max: 50 }).withMessage("Last name must be between 1 and 50 characters")
     .matches(/^[A-Za-z\s]+$/).withMessage("Last name should only contain letters"),
   body("number")
     .trim()
     .notEmpty().withMessage("Phone number is required")
-    .matches(/^[0-9]+$/).withMessage("Phone number must contain only digits"),
+    .matches(/^[0-9]+$/).withMessage("Phone number must contain only digits")
+    .isLength({ min: 10, max: 10 }).withMessage("Phone number must be exactly 10 digits"),
   body("gender")
     .trim()
     .notEmpty().withMessage("Gender is required")
@@ -60,7 +59,12 @@ const signupValidation = [
   body("state").trim().notEmpty().withMessage("State is required"),
   body("district").trim().notEmpty().withMessage("District is required"),
   body("place").trim().notEmpty().withMessage("Place is required"),
-  body("pincode").trim().notEmpty().withMessage("Pincode is required"),
+  body("pincode")
+    .trim()
+    .notEmpty()
+    .withMessage("Pincode is required")
+    .matches(/^[0-9]{6}$/)
+    .withMessage("Pincode must be exactly 6 digits"),
   handleValidationErrors,
 ];
 
@@ -76,15 +80,35 @@ const companySignupValidation = [
   body("email").trim().isEmail().withMessage("Please provide a valid email address"),
   passwordValidationRules,
   body("companyName").trim().notEmpty().withMessage("Company name is required"),
+  body("state").trim().notEmpty().withMessage("State is required"),
+  body("district").trim().notEmpty().withMessage("District is required"),
+  body("pincode")
+    .trim()
+    .notEmpty()
+    .withMessage("Pincode is required")
+    .matches(/^[0-9]{6}$/)
+    .withMessage("Pincode must be exactly 6 digits"),
   body("contactNumber")
     .trim()
     .notEmpty().withMessage("Contact number is required")
-    .matches(/^[0-9]+$/).withMessage("Contact number must contain only digits"),
+    .matches(/^[0-9]+$/).withMessage("Contact number must contain only digits")
+    .isLength({ min: 10, max: 10 }).withMessage("Contact number must be exactly 10 digits"),
+  body("regNumber")
+    .trim()
+    .notEmpty().withMessage("Registration number is required"),
+  body("gstNumber")
+    .trim()
+    .notEmpty().withMessage("GST number is required")
+    .toUpperCase()
+    .matches(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/).withMessage("Please enter a valid 15-digit GSTIN (e.g. 22AAAAA0000A1Z5)"),
   handleValidationErrors,
 ];
 
 // User Signup
 authroutes.post('/signup', uploadProfileImage.single("image"), signupValidation, signup);
+
+// Company / Seller Signup
+authroutes.post('/companysignup', uploadCompanyLogo.single("image"), companySignupValidation, companySignup);
 
 // User/Company Login
 authroutes.post('/login', loginValidation, login);
@@ -120,8 +144,7 @@ authroutes.delete('/delete/:id', checkauth, checkRole("admin"), deleteUser);
 // Update Profile
 authroutes.put('/update/:id', checkauth, updateUser);
 
-// Company / Seller Signup
-authroutes.post('/companysignup', uploadCompanyLogo.single("image"), companySignupValidation, companySignup);
+
 
 // View All Companies (Admin, Seller)
 authroutes.get('/viewcompany', checkauth, checkRole("admin", "seller"), viewCompanies);

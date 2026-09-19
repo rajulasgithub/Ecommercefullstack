@@ -11,7 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from './Header';
 import { GoogleLogin } from '@react-oauth/google';
-import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validatePhone } from '../utils/validation';
+import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validatePhone, validateRegNumber, validateGstNumber } from '../utils/validation';
 
 const Companysignup = () => {
   const navigate = useNavigate();
@@ -36,9 +36,18 @@ const Companysignup = () => {
   const Validate = () => {
     const errormessage = {};
     if (isEmpty(companysignup.companyName)) errormessage.companyName = "Company name is required";
+    if (isEmpty(companysignup.state)) errormessage.state = "State is required";
+    if (isEmpty(companysignup.district)) errormessage.district = "District is required";
+    if (isEmpty(companysignup.pincode)) errormessage.pincode = "Pincode is required";
     
     const contactErr = validatePhone(companysignup.contactNumber, "Contact number");
     if (contactErr) errormessage.contactNumber = contactErr;
+
+    const regErr = validateRegNumber(companysignup.regNumber);
+    if (regErr) errormessage.regNumber = regErr;
+
+    const gstErr = validateGstNumber(companysignup.gstNumber);
+    if (gstErr) errormessage.gstNumber = gstErr;
 
     if (isEmpty(companysignup.email)) {
       errormessage.email = "Please provide a valid email address";
@@ -178,6 +187,7 @@ const Companysignup = () => {
                       className="glass-input"
                       onChange={handleChange}
                     />
+                    {error.state && <span className="glass-error-badge">{error.state}</span>}
                   </Form.Group>
                 </Col>
 
@@ -191,6 +201,7 @@ const Companysignup = () => {
                       className="glass-input"
                       onChange={handleChange}
                     />
+                    {error.district && <span className="glass-error-badge">{error.district}</span>}
                   </Form.Group>
                 </Col>
 
@@ -204,6 +215,7 @@ const Companysignup = () => {
                       className="glass-input"
                       onChange={handleChange}
                     />
+                    {error.pincode && <span className="glass-error-badge">{error.pincode}</span>}
                   </Form.Group>
                 </Col>
               </Row>
@@ -233,6 +245,7 @@ const Companysignup = () => {
                       className="glass-input"
                       onChange={handleChange}
                     />
+                    {error.regNumber && <span className="glass-error-badge">{error.regNumber}</span>}
                   </Form.Group>
                 </Col>
 
@@ -241,11 +254,12 @@ const Companysignup = () => {
                     <Form.Label className="glass-label">GST Number</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="GSTIN Number"
+                      placeholder="22AAAAA0000A1Z5"
                       name="gstNumber"
-                      className="glass-input"
+                      className="glass-input text-uppercase"
                       onChange={handleChange}
                     />
+                    {error.gstNumber && <span className="glass-error-badge">{error.gstNumber}</span>}
                   </Form.Group>
                 </Col>
               </Row>

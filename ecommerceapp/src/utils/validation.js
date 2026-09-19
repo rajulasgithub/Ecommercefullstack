@@ -75,6 +75,9 @@ export const validatePhone = (phone, label = "Phone number") => {
   if (!/^[0-9]+$/.test(phone.trim())) {
     return `${label} must contain only digits`;
   }
+  if (phone.trim().length !== 10) {
+    return `${label} must be exactly 10 digits`;
+  }
   return null;
 };
 
@@ -111,6 +114,24 @@ export const validateGender = (gender) => {
   }
   if (!GENDERS.includes(gender.trim())) {
     return "Please select a valid gender option";
+  }
+  return null;
+};
+
+export const validateRegNumber = (regNumber) => {
+  if (!regNumber || typeof regNumber !== 'string' || regNumber.trim() === '') {
+    return "Registration number is required";
+  }
+  return null;
+};
+
+export const validateGstNumber = (gstNumber) => {
+  if (!gstNumber || typeof gstNumber !== 'string' || gstNumber.trim() === '') {
+    return "GST number is required";
+  }
+  const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/i;
+  if (!gstRegex.test(gstNumber.trim())) {
+    return "Please enter a valid 15-digit GSTIN (e.g. 22AAAAA0000A1Z5)";
   }
   return null;
 };

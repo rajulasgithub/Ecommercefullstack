@@ -67,6 +67,17 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSeller && formData.gstNumber) {
+      const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/i;
+      if (!gstRegex.test(String(formData.gstNumber).trim())) {
+        const msg = "Please enter a valid 15-digit GSTIN (e.g. 22AAAAA0000A1Z5)";
+        toast.error(msg);
+        setServerError(msg);
+        return;
+      }
+    }
+
     setSaving(true);
     setServerError("");
 
