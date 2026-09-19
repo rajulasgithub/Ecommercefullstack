@@ -15,34 +15,30 @@ dotenv.config();
 
 // User Signup
 export const signup = async (req, res) => {
-  let loginresult = null;
+  let loginResult = null;
   try {
-    const { email, password, firstName, lastName, number, gender, state, district, pincode, place } = req.body;
+    const { email, password, firstName, lastName, number, gender, state, district, pincode, place, bio } = req.body;
 
+    // Check if user already exists
     const existingUser = await Login.findOne({ email, role: "user" });
     if (existingUser) {
       return httpError(res, 400, "A user account with this email address already exists");
     }
-    else{
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const loginData = {
+    // Hash password & create login record
+    const hashedPassword = await bcrypt.hash(password, 10);
+    loginResult = await Login.create({
       email,
       password: hashedPassword,
       role: "user",
-    };
+    });
 
-    loginresult = await Login(loginData).save();
+    // Resolve uploaded/provided profile image
+    const imageUrl = req.file ? (req.file.path || req.file.filename) : (req.body.image || "");
 
-    let imageUrl = "";
-    if (req.file) {
-      imageUrl = req.file.path || req.file.filename;
-    } else if (req.body.image) {
-      imageUrl = req.body.image;
-    }
-
-    const signupData = {
-      loginId: loginresult._id,
+    // Create user profile record
+    const signupResult = await User.create({
+      loginId: loginResult._id,
       firstName,
       lastName,
       number,
@@ -53,57 +49,48 @@ export const signup = async (req, res) => {
       place,
       role: "user",
       image: imageUrl,
-      bio: req.body.bio ? String(req.body.bio).trim() : "",
-    };
+      bio: bio ? String(bio).trim() : "",
+    });
 
-    const signupresult = await User(signupData).save();
-    if (signupresult) {
-      const secret = process.env.JWT_SECRET || "encryptkey";
-      const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
-      const token = jwt.sign(
-        { loginId: loginresult._id, role: "user", email: loginresult.email },
-        secret,
-        { expiresIn }
-      );
+    // Generate JWT token
+    const secret = process.env.JWT_SECRET || "encryptkey";
+    const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
+    const token = jwt.sign(
+      { loginId: loginResult._id, role: "user", email: loginResult.email },
+      secret,
+      { expiresIn }
+    );
 
-      // Send Welcome Email
-      sendEmail({
-        to: email,
-        subject: "Welcome to TrendLife!",
-        template: "userSignup",
-        context: {
-          name: firstName ? `${firstName} ${lastName || ''}`.trim() : "Valued Customer",
-          email: email,
-          role: "User"
-        }
-      }).catch((e) => console.error("Signup email send error:", e.message));
+    // Send Welcome Email (async background task)
+    sendEmail({
+      to: email,
+      subject: "Welcome to TrendLife!",
+      template: "userSignup",
+      context: {
+        name: firstName ? `${firstName} ${lastName || ''}`.trim() : "Valued Customer",
+        email,
+        role: "User",
+      },
+    }).catch((e) => console.error("Signup email send error:", e.message));
 
-      return res.status(200).json({
-        success: true,
-        error: false,
-        data: signupresult,
-        token: token,
-        role: "user",
-        loginId: loginresult._id,
-        message: "Successfully registered user",
-      });
-    } else {
-      if (loginresult && loginresult._id) {
-        await Login.deleteOne({ _id: loginresult._id }).catch(() => {});
-      }
-      return httpError(res, 400, "Registration failed");
-    }
-      
-    }
-
-    
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: signupResult,
+      token,
+      role: "user",
+      loginId: loginResult._id,
+      message: "Successfully registered user",
+    });
   } catch (error) {
-    if (loginresult && loginresult._id) {
-      await Login.deleteOne({ _id: loginresult._id }).catch(() => {});
+    if (loginResult && loginResult._id) {
+      await Login.deleteOne({ _id: loginResult._id }).catch(() => {});
     }
     return httpError(res, 500, "Internal server error during registration", { errorMessage: error.message });
   }
 };
+
+
 
 // User/Company Login
 export const login = async (req, res) => {
@@ -176,6 +163,8 @@ export const login = async (req, res) => {
     return httpError(res, 500, "Something went wrong during login", { errorMessage: error.message });
   }
 };
+
+
 
 // Google Login / Signup
 export const googleLogin = async (req, res) => {
@@ -545,9 +534,9 @@ export const updateUser = async (req, res) => {
 
 // Company / Seller Signup
 export const companySignup = async (req, res) => {
-  let loginresult = null;
+  let loginResult = null;
   try {
-    const { email, password, companyName, state, district, pincode, contactNumber, regNumber, gstNumber } = req.body;
+    const { email, password, companyName, state, district, pincode, contactNumber, regNumber, gstNumber, bio } = req.body;
 
     if (!email || !password) {
       return httpError(res, 400, "Email and password are required");
@@ -559,17 +548,17 @@ export const companySignup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const logindata = {
+    loginResult = await Login.create({
       email,
       password: hashedPassword,
       role: "seller",
-    };
-    loginresult = await Login(logindata).save();
+    });
 
-    const data = {
-      loginId: loginresult._id,
-      image: req.file ? req.file.path || req.file.filename : "",
+    const imageUrl = req.file ? (req.file.path || req.file.filename) : "";
+
+    const companyResult = await Company.create({
+      loginId: loginResult._id,
+      image: imageUrl,
       companyName,
       state,
       district,
@@ -578,42 +567,41 @@ export const companySignup = async (req, res) => {
       regNumber: regNumber ? String(regNumber).trim() : "",
       gstNumber: gstNumber ? String(gstNumber).trim().toUpperCase() : "",
       role: "seller",
-      bio: req.body.bio ? String(req.body.bio).trim() : "",
-    };
+      bio: bio ? String(bio).trim() : "",
+    });
 
-    const result = await Company(data).save();
     const secret = process.env.JWT_SECRET || "encryptkey";
-    const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
+    const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
     const token = jwt.sign(
-      { loginId: loginresult._id, role: "seller", email: loginresult.email },
+      { loginId: loginResult._id, role: "seller", email: loginResult.email },
       secret,
       { expiresIn }
     );
 
-    // Send Welcome Email for Seller/Company Signup
+    // Send Welcome Email for Seller/Company Signup (async background task)
     sendEmail({
       to: email,
       subject: "Welcome to TrendLife Seller Network!",
       template: "userSignup",
       context: {
         name: companyName || "Valued Seller",
-        email: email,
-        role: "Seller"
-      }
+        email,
+        role: "Seller",
+      },
     }).catch((e) => console.error("Company signup email send error:", e.message));
 
     return res.status(200).json({
       success: true,
       error: false,
-      data: result,
-      token: token,
+      data: companyResult,
+      token,
       role: "seller",
-      loginId: loginresult._id,
+      loginId: loginResult._id,
       message: "Company registered successfully",
     });
   } catch (error) {
-    if (loginresult && loginresult._id) {
-      await Login.deleteOne({ _id: loginresult._id }).catch(() => {});
+    if (loginResult && loginResult._id) {
+      await Login.deleteOne({ _id: loginResult._id }).catch(() => {});
     }
     return httpError(res, 500, "Company registration failed", { errorMessage: error.message });
   }
