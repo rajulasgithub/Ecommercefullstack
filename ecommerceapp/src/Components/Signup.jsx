@@ -10,7 +10,7 @@ import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from './Header';
-import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validateName, validatePhone, GENDERS, validateGender } from '../utils/validation';
+import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validateName, validatePhone, GENDERS, validateGender, validatePincode } from '../utils/validation';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -70,7 +70,9 @@ const Signup = () => {
     if (isEmpty(signup.state)) errormessage.state = "State is required";
     if (isEmpty(signup.district)) errormessage.district = "District is required";
     if (isEmpty(signup.place)) errormessage.place = "Place is required";
-    if (isEmpty(signup.pincode)) errormessage.pincode = "Pincode is required";
+    
+    const pinErr = validatePincode(signup.pincode);
+    if (pinErr) errormessage.pincode = pinErr;
 
     if (isEmpty(signup.email)) {
       errormessage.email = "Please provide a valid email address";

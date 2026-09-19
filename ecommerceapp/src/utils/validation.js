@@ -155,3 +155,13 @@ export const validateCompanyName = (name, minLength = 2, maxLength = 100) => {
   }
   return null;
 };
+
+export const validatePincode = (pincode) => {
+  if (!pincode || typeof pincode !== 'string' || pincode.trim() === '') {
+    return "Pincode is required";
+  }
+  if (!/^[0-9]{6}$/.test(pincode.trim())) {
+    return "Pincode must be exactly 6 digits";
+  }
+  return null;
+};
