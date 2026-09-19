@@ -18,8 +18,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Connect to MongoDB Database
-connectDB();
+// Connect to MongoDB Database if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  connectDB();
+}
 
 app.use("/auth", authroutes);
 app.use("/product", productRoute);
@@ -30,8 +32,10 @@ app.use("/cart", orderRoute); // Fallback for backward compatibility
 app.use("/wishlist", wishlistRoute);
 app.use("/review", reviewRoute);
 
-app.listen(process.env.PORT, (req, res) => {
-  console.log(`server is running on: http://localhost:${process.env.PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(process.env.PORT, () => {
+    console.log(`server is running on: http://localhost:${process.env.PORT}`);
+  });
+}
 
 export default app;

@@ -38,6 +38,10 @@ const createTransporter = () => {
  */
 export const sendEmail = async ({ to, subject, template, context = {} }) => {
   try {
+    if (process.env.NODE_ENV === 'test') {
+      return true;
+    }
+
     if (!to) {
       console.warn(`[sendEmail Warning]: No recipient email provided for template '${template}'.`);
       return false;

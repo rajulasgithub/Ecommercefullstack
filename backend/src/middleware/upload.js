@@ -12,33 +12,41 @@ cloudinary.config({
   api_secret: process.env.CLOUD_SECKEY,
 });
 
-// Cloudinary storage for company logos
-const companyLogoStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "ecommerceapp/companylogos",
-  },
-});
+const isTest = process.env.NODE_ENV === 'test';
+
+// Storage for company logos
+const companyLogoStorage = isTest 
+  ? multer.memoryStorage()
+  : new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: {
+        folder: "ecommerceapp/companylogos",
+      },
+    });
 
 export const uploadCompanyLogo = multer({ storage: companyLogoStorage });
 
-// Cloudinary storage for product images
-const productImageStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "ecommerceapp/products",
-  },
-});
+// Storage for product images
+const productImageStorage = isTest
+  ? multer.memoryStorage()
+  : new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: {
+        folder: "ecommerceapp/products",
+      },
+    });
 
 export const uploadProductImage = multer({ storage: productImageStorage });
 
-// Cloudinary storage for user profile images
-const profileImageStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "ecommerceapp/profiles",
-  },
-});
+// Storage for user profile images
+const profileImageStorage = isTest
+  ? multer.memoryStorage()
+  : new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: {
+        folder: "ecommerceapp/profiles",
+      },
+    });
 
 export const uploadProfileImage = multer({ storage: profileImageStorage });
 

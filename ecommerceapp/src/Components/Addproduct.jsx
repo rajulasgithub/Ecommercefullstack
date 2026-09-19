@@ -18,6 +18,35 @@ const Addproduct = ({ hideHeader = false, onSuccess }) => {
   const [error, setError] = useState({});
   const [serverError, setServerError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [generatingDesc, setGeneratingDesc] = useState(false);
+
+  const handleGenerateDescription = async () => {
+    if (isEmpty(addproduct.prdName)) {
+      toast.error("Please enter a product name first.");
+      return;
+    }
+    setGeneratingDesc(true);
+    try {
+      const response = await api.post('/product/generate-description', {
+        prdName: addproduct.prdName,
+        category: addproduct.category,
+        style: addproduct.style,
+        material: addproduct.material,
+        size: addproduct.size
+      });
+      if (response.data && response.data.success) {
+        const desc = response.data.data.description;
+        setAddproduct(prev => ({ ...prev, description: desc }));
+        setError(prev => ({ ...prev, description: '' }));
+        toast.success("Description generated successfully!");
+      }
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Failed to generate description.';
+      toast.error(msg);
+    } finally {
+      setGeneratingDesc(false);
+    }
+  };
 
   const handleChange = (event) => {
     setAddproduct({ ...addproduct, [event.target.name]: event.target.value });
@@ -309,7 +338,23 @@ const Addproduct = ({ hideHeader = false, onSuccess }) => {
           </Row>
 
           <Form.Group className="mb-4">
-            <Form.Label className="glass-label">Product Description</Form.Label>
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <Form.Label className="glass-label mb-0">Product Description</Form.Label>
+              <Button 
+                variant="outline-light" 
+                size="sm" 
+                className="d-flex align-items-center gap-2"
+                onClick={handleGenerateDescription}
+                disabled={generatingDesc}
+                style={{ borderRadius: '20px', border: '1px solid rgba(255,255,255,0.3)' }}
+              >
+                {generatingDesc ? (
+                  <><Spinner as="span" animation="border" size="sm" /> Generating...</>
+                ) : (
+                  "✨ Generate with AI"
+                )}
+              </Button>
+            </div>
             <Form.Control
               as="textarea"
               rows={4}

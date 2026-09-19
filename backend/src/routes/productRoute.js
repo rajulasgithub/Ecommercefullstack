@@ -14,6 +14,7 @@ import {
   updateProduct,
   updateProductStatus,
   deleteAllProducts,
+  generateProductDescription,
 } from "../controllers/productController.js";
 
 const productRoute = express.Router();
@@ -137,5 +138,8 @@ productRoute.put("/updateproductstatus/:id/:value", checkauth, checkRole("seller
 
 // Soft Delete All Products (Seller / Admin)
 productRoute.put("/deleteallproduct", checkauth, checkRole("seller", "admin"), deleteAllProducts);
+
+// Generate Product Description (Seller / Admin)
+productRoute.post("/generate-description", checkauth, checkRole("seller", "admin"), generateProductDescription);
 
 export default productRoute;

@@ -197,3 +197,119 @@ export const getProductReviews = async (req, res) => {
     return httpError(res, 500, "Server error while fetching reviews", { errorMessage: error.message });
   }
 };
+
+// Update a Review
+export const updateReview = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const { rating, comment } = req.body;
+    const loginId = req.userData.loginId;
+
+    if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Valid review ID is required",
+      });
+    }
+
+    const review = await reviewDB.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        error: true,
+        message: "Review not found",
+      });
+    }
+
+    // Convert both to strings for safe comparison
+    const reviewAuthorStr = review.loginId ? String(review.loginId) : "";
+    const userLoginStr = loginId ? String(loginId) : "";
+
+    if (reviewAuthorStr !== userLoginStr) {
+      return res.status(403).json({
+        success: false,
+        error: true,
+        message: "You can only edit your own review",
+      });
+    }
+
+    if (rating) {
+      const numRating = Number(rating);
+      if (numRating >= 1 && numRating <= 5) {
+        review.rating = numRating;
+      }
+    }
+    if (comment && typeof comment === "string" && comment.trim()) {
+      review.comment = comment.trim();
+    }
+
+    await review.save();
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: review,
+      message: "Review updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while updating review",
+    });
+  }
+};
+
+// Delete a Review
+export const deleteReview = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const loginId = req.userData.loginId;
+
+    if (!reviewId || !mongoose.Types.ObjectId.isValid(reviewId)) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Valid review ID is required",
+      });
+    }
+
+    const review = await reviewDB.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        error: true,
+        message: "Review not found",
+      });
+    }
+
+    // Convert both to strings for safe comparison
+    const reviewAuthorStr = review.loginId ? String(review.loginId) : "";
+    const userLoginStr = loginId ? String(loginId) : "";
+
+    if (reviewAuthorStr !== userLoginStr) {
+      return res.status(403).json({
+        success: false,
+        error: true,
+        message: "You can only delete your own review",
+      });
+    }
+
+    await reviewDB.findByIdAndDelete(reviewId);
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Review deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: true,
+      errorMessage: error.message,
+      message: "Server error while deleting review",
+    });
+  }
+};
