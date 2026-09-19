@@ -66,6 +66,11 @@ const signupValidation = [
     .withMessage("Pincode is required")
     .matches(/^[0-9]{6}$/)
     .withMessage("Pincode must be exactly 6 digits"),
+  body("bio")
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage("Bio cannot exceed 500 characters"),
   handleValidationErrors,
 ];
 
@@ -102,6 +107,11 @@ const companySignupValidation = [
     .notEmpty().withMessage("GST number is required")
     .toUpperCase()
     .matches(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/).withMessage("Please enter a valid 15-digit GSTIN (e.g. 22AAAAA0000A1Z5)"),
+  body("bio")
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage("Bio cannot exceed 500 characters"),
   handleValidationErrors,
 ];
 

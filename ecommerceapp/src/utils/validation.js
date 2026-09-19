@@ -135,3 +135,10 @@ export const validateGstNumber = (gstNumber) => {
   }
   return null;
 };
+
+export const validateBio = (bio, maxLength = 500) => {
+  if (bio && typeof bio === 'string' && bio.trim().length > maxLength) {
+    return `Bio cannot exceed ${maxLength} characters`;
+  }
+  return null;
+};

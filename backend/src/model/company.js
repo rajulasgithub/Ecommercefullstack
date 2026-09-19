@@ -17,7 +17,7 @@ const companySchema = new mongoose.Schema({
     match: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/
   },
   role: { type: String, required: true, default: "seller", trim: true },
-  bio: { type: String, trim: true, default: "" },
+  bio: { type: String, trim: true, default: "", maxLength: 500 },
 });
 
 const Company = mongoose.model("Company", companySchema);

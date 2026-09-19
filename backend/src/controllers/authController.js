@@ -53,6 +53,7 @@ export const signup = async (req, res) => {
       place,
       role: "user",
       image: imageUrl,
+      bio: req.body.bio ? String(req.body.bio).trim() : "",
     };
 
     const signupresult = await User(signupData).save();
@@ -409,6 +410,7 @@ export const updateOwnProfile = async (req, res) => {
         contactNumber: req.body.contactNumber !== undefined ? req.body.contactNumber : targetCompany.contactNumber,
         regNumber: req.body.regNumber !== undefined ? req.body.regNumber : targetCompany.regNumber,
         gstNumber: req.body.gstNumber !== undefined ? req.body.gstNumber : targetCompany.gstNumber,
+        bio: req.body.bio !== undefined ? req.body.bio : targetCompany.bio,
       };
 
       if (req.file) {
@@ -576,6 +578,7 @@ export const companySignup = async (req, res) => {
       regNumber: regNumber ? String(regNumber).trim() : "",
       gstNumber: gstNumber ? String(gstNumber).trim().toUpperCase() : "",
       role: "seller",
+      bio: req.body.bio ? String(req.body.bio).trim() : "",
     };
 
     const result = await Company(data).save();

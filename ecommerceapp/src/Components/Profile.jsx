@@ -10,6 +10,7 @@ import Card from "react-bootstrap/Card";
 import { toast } from "react-toastify";
 import Header from "./Header";
 import api from "../utils/api";
+import { validateBio } from "../utils/validation";
 
 const Profile = () => {
   const [loading, setLoading] = useState(true);
@@ -107,6 +108,13 @@ const Profile = () => {
       }
     }
 
+    const bioErr = validateBio(formData.bio);
+    if (bioErr) {
+      toast.error(bioErr);
+      setServerError(bioErr);
+      return;
+    }
+
     setSaving(true);
     setServerError("");
 
@@ -115,6 +123,7 @@ const Profile = () => {
       if (imageFile) {
         const payload = new FormData();
         payload.append("image", imageFile);
+        payload.append("bio", formData.bio || "");
         if (isSeller) {
           payload.append("companyName", formData.companyName || "");
           payload.append("contactNumber", formData.contactNumber || "");
