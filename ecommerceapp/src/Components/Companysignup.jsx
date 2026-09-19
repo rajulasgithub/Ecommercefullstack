@@ -11,7 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from './Header';
 import { GoogleLogin } from '@react-oauth/google';
-import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validatePhone, validateRegNumber, validateGstNumber } from '../utils/validation';
+import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validatePhone, validateRegNumber, validateGstNumber, validateCompanyName } from '../utils/validation';
 
 const Companysignup = () => {
   const navigate = useNavigate();
@@ -35,7 +35,8 @@ const Companysignup = () => {
 
   const Validate = () => {
     const errormessage = {};
-    if (isEmpty(companysignup.companyName)) errormessage.companyName = "Company name is required";
+    const companyNameErr = validateCompanyName(companysignup.companyName);
+    if (companyNameErr) errormessage.companyName = companyNameErr;
     if (isEmpty(companysignup.state)) errormessage.state = "State is required";
     if (isEmpty(companysignup.district)) errormessage.district = "District is required";
     if (isEmpty(companysignup.pincode)) errormessage.pincode = "Pincode is required";

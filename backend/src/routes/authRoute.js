@@ -85,7 +85,10 @@ const loginValidation = [
 const companySignupValidation = [
   body("email").trim().isEmail().withMessage("Please provide a valid email address"),
   passwordValidationRules,
-  body("companyName").trim().notEmpty().withMessage("Company name is required"),
+  body("companyName")
+    .trim()
+    .notEmpty().withMessage("Company name is required")
+    .isLength({ min: 2, max: 100 }).withMessage("Company name must be between 2 and 100 characters"),
   body("state").trim().notEmpty().withMessage("State is required"),
   body("district").trim().notEmpty().withMessage("District is required"),
   body("pincode")

@@ -142,3 +142,16 @@ export const validateBio = (bio, maxLength = 500) => {
   }
   return null;
 };
+
+export const validateCompanyName = (name, minLength = 2, maxLength = 100) => {
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return "Company name is required";
+  }
+  if (name.trim().length < minLength) {
+    return `Company name must be at least ${minLength} characters long`;
+  }
+  if (name.trim().length > maxLength) {
+    return `Company name cannot exceed ${maxLength} characters`;
+  }
+  return null;
+};

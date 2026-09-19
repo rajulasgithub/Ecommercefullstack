@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const companySchema = new mongoose.Schema({
   loginId: { type: mongoose.Types.ObjectId, ref: "Login" },
   image: { type: String, required: true, trim: true },
-  companyName: { type: String, required: true, trim: true },
+  companyName: { type: String, required: true, trim: true, minLength: 2, maxLength: 100 },
   state: { type: String, required: true, trim: true },
   district: { type: String, required: true, trim: true },
   pincode: { type: String, required: true, trim: true, match: /^[0-9]{6}$/ },
