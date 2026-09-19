@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
   pincode: { type: String, required: true, trim: true, match: /^[0-9]{6}$/ },
   place: { type: String, required: true, trim: true },
   role: { type: String, required: true, default: "user", trim: true },
-  image: { type: String, trim: true },
   image: { type: String, trim: true, default: "" },
   bio: { type: String, trim: true, default: "" },
 });

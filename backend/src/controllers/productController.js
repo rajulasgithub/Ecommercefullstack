@@ -495,20 +495,12 @@ export const generateProductDescription = async (req, res) => {
     const { prdName, category, style, material, size } = req.body;
     
     if (!prdName) {
-      return res.status(400).json({
-        success: false,
-        error: true,
-        message: "Product name is required to generate a description",
-      });
+      return httpError(res, 400, "Product name is required to generate a description");
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({
-        success: false,
-        error: true,
-        message: "AI service is not configured (missing API key)",
-      });
+      return httpError(res, 500, "AI service is not configured (missing API key)");
     }
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
@@ -538,11 +530,6 @@ export const generateProductDescription = async (req, res) => {
     });
   } catch (error) {
     console.error("AI Generation Error:", error);
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while generating description",
-    });
+    return httpError(res, 500, "Server error while generating description", { errorMessage: error.message });
   }
 };

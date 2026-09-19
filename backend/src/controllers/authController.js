@@ -5,7 +5,9 @@ import User from "../model/user.js";
 import Company from "../model/company.js";
 import dotenv from "dotenv";
 import { OAuth2Client } from "google-auth-library";
+import { GoogleGenAI } from "@google/genai";
 import sendEmail from "../utils/sendEmail.js";
+import { httpError } from "../utils/httpError.js";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "dummy-google-client-id");
 
@@ -835,11 +837,7 @@ export const generateProfileBio = async (req, res) => {
     const apiKey = process.env.GEMINI_API_KEY;
     
     if (!apiKey) {
-      return res.status(500).json({
-        success: false,
-        error: true,
-        message: "AI service is not configured (missing API key)",
-      });
+      return httpError(res, 500, "AI service is not configured (missing API key)");
     }
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
@@ -878,11 +876,6 @@ export const generateProfileBio = async (req, res) => {
     });
   } catch (error) {
     console.error("AI Generation Error:", error);
-    return res.status(500).json({
-      success: false,
-      error: true,
-      errorMessage: error.message,
-      message: "Server error while generating bio",
-    });
+    return httpError(res, 500, "Server error while generating bio", { errorMessage: error.message });
   }
 };
