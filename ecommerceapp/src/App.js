@@ -51,8 +51,6 @@ function App() {
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/reset-password' element={<ResetPassword />} />
           <Route path='/companysignup' element={<Companysignup />} />
-
-
           <Route path='/viewproduct' element={<Viewproduct />} />
           <Route path='/product/:id' element={<SingleProduct />} />
           <Route path='/viewone/:id' element={<SingleProduct />} />

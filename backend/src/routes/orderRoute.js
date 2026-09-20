@@ -26,8 +26,8 @@ orderRoute.get("/vieworderuser", checkauth, checkRole("user"), getUserOrders);
 // Checkout / Place Order (User)
 orderRoute.put("/updatecart", checkauth, checkRole("user", "seller", "company", "admin"), checkoutCart);
 
-// Update Order Status (Seller / Admin)
-orderRoute.put("/updatecartstatus/:id/:value", checkauth, checkRole("seller", "admin"), updateOrderStatus);
+// Update Order Status (Seller / Company / Admin)
+orderRoute.put("/updatecartstatus/:id/:value", checkauth, checkRole("seller", "company", "admin"), updateOrderStatus);
 
 // Cancel Order (User)
 orderRoute.put("/cancelorder/:id", checkauth, checkRole("user"), cancelOrder);
@@ -35,7 +35,7 @@ orderRoute.put("/cancelorder/:id", checkauth, checkRole("user"), cancelOrder);
 // View Orders (User)
 orderRoute.get("/vieworder", checkauth, checkRole("user"), viewOrders);
 
-// Reject Order (Seller / Admin)
-orderRoute.put("/rejectorder/:id", checkauth, checkRole("seller", "admin"), rejectOrder);
+// Reject Order (Seller / Company / Admin)
+orderRoute.put("/rejectorder/:id", checkauth, checkRole("seller", "company", "admin"), rejectOrder);
 
 export default orderRoute;

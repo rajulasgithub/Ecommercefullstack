@@ -483,16 +483,19 @@ export const viewAllUsers = async (req, res) => {
 // Delete User (Admin Only)
 export const deleteUser = async (req, res) => {
   try {
-    const result = await User.deleteOne({ _id: req.params.id });
-    if (result.deletedCount > 0) {
-      return res.status(200).json({
-        success: true,
-        error: false,
-        message: "User deleted successfully",
-      });
-    } else {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
       return httpError(res, 404, "User not found");
     }
+    await User.deleteOne({ _id: req.params.id });
+    if (user.loginId) {
+      await Login.deleteOne({ _id: user.loginId });
+    }
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "User deleted successfully",
+    });
   } catch (error) {
     return httpError(res, 500, "Error deleting user", { errorMessage: error.message });
   }

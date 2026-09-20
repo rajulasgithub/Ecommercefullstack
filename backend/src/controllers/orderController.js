@@ -3,14 +3,15 @@ import addressDB from "../model/address.js";
 import mongoose from "mongoose";
 import { httpError } from "../utils/httpError.js";
 
-// View Company Orders (Vendor / Admin)
+// View Company / Admin Orders (System Wide)
 export const getCompanyOrders = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
     const skip = (page - 1) * limit;
 
-    const result = await cartDB.aggregate([
+    const pipeline = [
       { $match: { status: { $ne: 1 } } },
       {
         $lookup: {
@@ -36,9 +37,24 @@ export const getCompanyOrders = async (req, res) => {
           as: "info",
         },
       },
-      { $unwind: "$result" },
-      { $unwind: "$product" },
-      { $unwind: "$info" },
+      { $unwind: { path: "$result", preserveNullAndEmptyArrays: true } },
+      { $unwind: { path: "$product", preserveNullAndEmptyArrays: true } },
+      { $unwind: { path: "$info", preserveNullAndEmptyArrays: true } },
+    ];
+
+    if (search) {
+      pipeline.push({
+        $match: {
+          $or: [
+            { "product.prdName": { $regex: search, $options: "i" } },
+            { "info.firstName": { $regex: search, $options: "i" } },
+            { "info.lastName": { $regex: search, $options: "i" } }
+          ]
+        }
+      });
+    }
+
+    pipeline.push(
       {
         $group: {
           _id: "$_id",
@@ -67,8 +83,10 @@ export const getCompanyOrders = async (req, res) => {
           data: [{ $skip: skip }, { $limit: limit }],
           totalCount: [{ $count: "count" }],
         },
-      },
-    ]);
+      }
+    );
+
+    const result = await cartDB.aggregate(pipeline);
 
     const data = result[0]?.data || [];
     const totalCount = result[0]?.totalCount[0]?.count || 0;
