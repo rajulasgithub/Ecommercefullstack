@@ -18,12 +18,16 @@
   font-family: var(--app-font);
 }
 
-.header-logo-icon {
-  font-size: 1.35rem;
-  background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.header-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
   filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.4));
+  transition: transform 0.25s ease;
+}
+
+.header-brand:hover .header-logo-img {
+  transform: scale(1.08);
 }
 
 .header-brand-text {

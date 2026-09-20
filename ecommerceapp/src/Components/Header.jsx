@@ -54,7 +54,11 @@ const Header = () => {
       <Container>
         {/* Brand Logo */}
         <Navbar.Brand as={Link} to="/" className="header-brand d-flex align-items-center gap-2">
-          <span className="header-logo-icon">✨</span>
+          <img
+            src={process.env.PUBLIC_URL + "/favicon.png"}
+            alt="TrendLife Logo"
+            className="header-logo-img"
+          />
           <span className="header-brand-text">TrendLife</span>
         </Navbar.Brand>
 
