@@ -6,7 +6,6 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import Card from "react-bootstrap/Card";
 import { toast } from "react-toastify";
 import Header from "./Header";
 import SEO from "./SEO";

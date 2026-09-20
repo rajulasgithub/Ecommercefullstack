@@ -40,6 +40,57 @@ const SellerDashboard = () => {
   const [showClearAllModal, setShowClearAllModal] = useState(false);
   const [clearAllSubmitting, setClearAllSubmitting] = useState(false);
 
+  // Notifications state
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notifLoading, setNotifLoading] = useState(false);
+
+  const fetchNotifications = useCallback(async () => {
+    setNotifLoading(true);
+    try {
+      const response = await api.get('/notification');
+      if (response.data && response.data.success) {
+        setNotifications(response.data.data || []);
+        setUnreadCount(response.data.unreadCount || 0);
+      }
+    } catch (e) {
+      console.error("Fetch notifications error:", e);
+    } finally {
+      setNotifLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications, activeTab]);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await api.put('/notification/read-all');
+      fetchNotifications();
+      toast.success('All notifications marked as read.');
+    } catch (e) {
+      toast.error('Failed to update notifications.');
+    }
+  };
+
+  const handleMarkRead = async (id) => {
+    try {
+      await api.put(`/notification/read/${id}`);
+      fetchNotifications();
+    } catch (e) { }
+  };
+
+  const handleDeleteNotif = async (id) => {
+    try {
+      await api.delete(`/notification/${id}`);
+      fetchNotifications();
+      toast.success('Notification removed.');
+    } catch (e) {
+      toast.error('Failed to remove notification.');
+    }
+  };
+
   // Fetch seller's products from backend
   const fetchSellerProducts = useCallback(async () => {
     setLoading(true);
@@ -292,6 +343,20 @@ const SellerDashboard = () => {
               >
                 <span>🛒</span> Manage Orders
               </button>
+
+              <button
+                className={`seller-nav-item ${activeTab === 'notifications' ? 'active' : ''}`}
+                onClick={() => setActiveTab('notifications')}
+              >
+                <div className="d-flex justify-content-between align-items-center w-100">
+                  <span><span>🔔</span> Notifications</span>
+                  {unreadCount > 0 && (
+                    <span className="badge rounded-pill bg-danger" style={{ fontSize: '0.75rem' }}>
+                      {unreadCount}
+                    </span>
+                  )}
+                </div>
+              </button>
             </nav>
           </div>
 
@@ -525,6 +590,81 @@ const SellerDashboard = () => {
                 </button>
               </div>
               <Vieworders hideHeader={true} />
+            </div>
+          )}
+
+          {/* TAB 5: NOTIFICATIONS */}
+          {activeTab === 'notifications' && (
+            <div>
+              <div className="seller-page-header">
+                <div className="seller-header-title">
+                  <h2>System & Admin Notifications</h2>
+                  <p>Updates regarding your catalog items, updates, and platform actions</p>
+                </div>
+                {notifications.length > 0 && (
+                  <button className="btn-seller-edit" onClick={handleMarkAllRead}>
+                    ✓ Mark All as Read
+                  </button>
+                )}
+              </div>
+
+              {notifLoading ? (
+                <div className="text-center py-5">
+                  <Spinner animation="border" variant="primary" />
+                  <p className="mt-2" style={{ color: 'var(--text-muted)' }}>Loading notifications...</p>
+                </div>
+              ) : notifications.length === 0 ? (
+                <div className="glass-card text-center py-5 px-4 my-4">
+                  <div style={{ fontSize: '3rem' }}>🔔</div>
+                  <h4 className="mt-3">No Notifications</h4>
+                  <p style={{ color: 'var(--text-muted)' }}>You're all caught up! No recent system activity or admin alerts.</p>
+                </div>
+              ) : (
+                <div className="d-flex flex-column gap-3">
+                  {notifications.map((item) => (
+                    <div
+                      key={item._id}
+                      className={`glass-card p-4 d-flex justify-content-between align-items-start gap-3 ${!item.read ? 'border-primary' : ''}`}
+                      style={{
+                        background: !item.read ? 'rgba(99, 102, 241, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <div className="d-flex gap-3 align-items-start">
+                        <div style={{ fontSize: '1.75rem', lineHeight: 1 }}>
+                          {item.type === 'product_deleted' ? '🗑️' : item.type === 'product_updated' ? '✏️' : '🔄'}
+                        </div>
+                        <div>
+                          <div className="d-flex align-items-center gap-2 mb-1">
+                            <h5 className="m-0" style={{ fontSize: '1.05rem', fontWeight: 600 }}>{item.title}</h5>
+                            {!item.read && <span className="badge bg-primary rounded-pill">New</span>}
+                            <span className="badge bg-secondary-subtle text-secondary" style={{ fontSize: '0.75rem' }}>
+                              By {item.actionBy || 'Admin'}
+                            </span>
+                          </div>
+                          <p className="m-0 mb-2" style={{ color: 'var(--app-text-main)', fontSize: '0.95rem' }}>
+                            {item.message}
+                          </p>
+                          <small style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                            {new Date(item.createdAt).toLocaleString()}
+                          </small>
+                        </div>
+                      </div>
+
+                      <div className="d-flex align-items-center gap-2">
+                        {!item.read && (
+                          <button className="btn-seller-edit py-1 px-3" style={{ fontSize: '0.8rem' }} onClick={() => handleMarkRead(item._id)}>
+                            Mark Read
+                          </button>
+                        )}
+                        <button className="btn-seller-delete py-1 px-2" style={{ fontSize: '0.85rem' }} onClick={() => handleDeleteNotif(item._id)}>
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </main>

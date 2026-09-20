@@ -136,6 +136,7 @@ const Signup = () => {
 
   return (
     <div className="page-container">
+      <SEO title="User Registration" description="Create a TrendLife account to shop modern clothing and accessories." />
       <Header />
       <div className="auth-page-container">
         <Container style={{ maxWidth: "680px" }}>

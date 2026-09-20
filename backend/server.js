@@ -10,6 +10,8 @@ import orderRoute from "./src/routes/orderRoute.js";
 import wishlistRoute from "./src/routes/wishlistRoute.js";
 import reviewRoute from "./src/routes/reviewRoute.js";
 
+import notificationRoute from "./src/routes/notificationRoute.js";
+
 dotenv.config();
 
 const app = express();
@@ -31,6 +33,7 @@ app.use("/order", orderRoute);
 app.use("/cart", orderRoute); // Fallback for backward compatibility
 app.use("/wishlist", wishlistRoute);
 app.use("/review", reviewRoute);
+app.use("/notification", notificationRoute);
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(process.env.PORT, () => {

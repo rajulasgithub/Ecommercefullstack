@@ -5,6 +5,7 @@ import cartDB from "../model/cart.js";
 import Login from "../model/login.js";
 import Company from "../model/company.js";
 import User from "../model/user.js";
+import Notification from "../model/notification.js";
 import sendEmail from "../utils/sendEmail.js";
 import { httpError } from "../utils/httpError.js";
 import { GoogleGenAI } from "@google/genai";
@@ -317,17 +318,35 @@ export const deleteProduct = async (req, res) => {
       { $set: productData }
     );
 
-    // Send Product Deleted email to seller
-    getSellerInfo(product.loginId || userLoginId).then(({ email, sellerName }) => {
+    const targetLoginId = product.loginId || userLoginId;
+    const actionByStr = userRole === "admin" ? "Platform Administrator" : "Seller";
+
+    // 1. Create In-App Notification for product owner
+    if (targetLoginId) {
+      Notification.create({
+        loginId: targetLoginId,
+        title: userRole === "admin" ? `[Admin Notice] Product Deleted` : `Product Deleted`,
+        message: `Product "${product.prdName}" was removed by ${actionByStr}.`,
+        type: "product_deleted",
+        actionBy: actionByStr,
+        productId: product._id,
+      }).catch((err) => console.error("Error creating deletion notification:", err.message));
+    }
+
+    // 2. Send Product Deleted email to seller
+    getSellerInfo(targetLoginId).then(({ email, sellerName }) => {
       if (email) {
         sendEmail({
           to: email,
-          subject: `Product Removed: ${product.prdName}`,
+          subject: userRole === "admin"
+            ? `[Admin Notice] Product Removed: ${product.prdName}`
+            : `Product Removed: ${product.prdName}`,
           template: "productDeleted",
           context: {
             sellerName,
             prdName: product.prdName,
             category: product.category,
+            actionBy: actionByStr,
           }
         });
       }
@@ -384,12 +403,29 @@ export const updateProduct = async (req, res) => {
       { $set: data }
     );
 
-    // Send Product Updated email to seller
-    getSellerInfo(oldData.loginId || userLoginId).then(({ email, sellerName }) => {
+    const targetLoginId = oldData.loginId || userLoginId;
+    const actionByStr = userRole === "admin" ? "Platform Administrator" : "Seller";
+
+    // 1. Create In-App Notification for product owner
+    if (targetLoginId) {
+      Notification.create({
+        loginId: targetLoginId,
+        title: userRole === "admin" ? `[Admin Notice] Product Details Updated` : `Product Details Updated`,
+        message: `Product "${data.prdName}" details were modified by ${actionByStr}.`,
+        type: "product_updated",
+        actionBy: actionByStr,
+        productId: oldData._id,
+      }).catch((err) => console.error("Error creating update notification:", err.message));
+    }
+
+    // 2. Send Product Updated email to seller
+    getSellerInfo(targetLoginId).then(({ email, sellerName }) => {
       if (email) {
         sendEmail({
           to: email,
-          subject: `Product Updated: ${data.prdName}`,
+          subject: userRole === "admin"
+            ? `[Admin Notice] Product Updated: ${data.prdName}`
+            : `Product Updated: ${data.prdName}`,
           template: "productUpdated",
           context: {
             sellerName,
@@ -397,6 +433,7 @@ export const updateProduct = async (req, res) => {
             prize: data.prize,
             category: data.category,
             stock: data.stock,
+            actionBy: actionByStr,
           }
         });
       }
@@ -436,11 +473,49 @@ export const updateProductStatus = async (req, res) => {
       }
     }
 
-    const data = { status: req.params.value };
+    const newStatus = req.params.value;
+    const data = { status: newStatus };
     const result = await productDB.updateOne(
       { _id: id },
       { $set: data }
     );
+
+    const targetLoginId = product.loginId || userLoginId;
+    const actionByStr = userRole === "admin" ? "Platform Administrator" : "Seller";
+
+    // 1. Create In-App Notification for product owner
+    if (targetLoginId) {
+      Notification.create({
+        loginId: targetLoginId,
+        title: userRole === "admin" ? `[Admin Notice] Product Status Changed` : `Product Status Changed`,
+        message: `Product "${product.prdName}" status was updated to "${newStatus}" by ${actionByStr}.`,
+        type: "status_changed",
+        actionBy: actionByStr,
+        productId: product._id,
+      }).catch((err) => console.error("Error creating status update notification:", err.message));
+    }
+
+    // 2. Send Email notification
+    getSellerInfo(targetLoginId).then(({ email, sellerName }) => {
+      if (email) {
+        sendEmail({
+          to: email,
+          subject: userRole === "admin"
+            ? `[Admin Notice] Status Updated: ${product.prdName}`
+            : `Status Updated: ${product.prdName}`,
+          template: "productUpdated",
+          context: {
+            sellerName,
+            prdName: product.prdName,
+            prize: product.prize,
+            category: product.category,
+            stock: newStatus,
+            actionBy: actionByStr,
+          }
+        });
+      }
+    }).catch((e) => console.error("Product status email error:", e.message));
+
     return res.status(200).json({
       success: true,
       error: false,

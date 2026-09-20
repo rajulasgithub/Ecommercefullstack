@@ -12,7 +12,6 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import { toast } from 'react-toastify';
 import api from '../utils/api';
-import ROLES from '../utils/roles';
 import { isNumeric, isEmpty, MATERIALS, STYLES } from '../utils/validation';
 
 const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStatus, handleSubmit }) => {
@@ -388,7 +387,6 @@ const Viewproduct = () => {
   };
 
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const dltproduct = (item) => {
@@ -409,29 +407,6 @@ const Viewproduct = () => {
         toast.error(msg);
         setErrorMsg(msg);
         setDeleteTarget(null);
-      })
-      .finally(() => {
-        setDeleting(false);
-      });
-  };
-
-  const deleteAllProductsHandler = () => {
-    setShowDeleteAllModal(true);
-  };
-
-  const confirmDeleteAllProducts = () => {
-    setDeleting(true);
-    api.put('/product/deleteallproduct')
-      .then(() => {
-        toast.success("🗑️ All products deleted successfully!");
-        setProduct([]);
-        setShowDeleteAllModal(false);
-      })
-      .catch((error) => {
-        const msg = error.response?.data?.message || "Failed to delete all products.";
-        toast.error(msg);
-        setErrorMsg(msg);
-        setShowDeleteAllModal(false);
       })
       .finally(() => {
         setDeleting(false);
