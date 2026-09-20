@@ -9,6 +9,7 @@ import Spinner from "react-bootstrap/Spinner";
 import Card from "react-bootstrap/Card";
 import { toast } from "react-toastify";
 import Header from "./Header";
+import SEO from "./SEO";
 import api from "../utils/api";
 import { validateBio } from "../utils/validation";
 
@@ -176,6 +177,7 @@ const Profile = () => {
 
   return (
     <div className="page-container">
+      <SEO title="My Profile" noindex={true} />
       <Header />
       <div className="auth-page-container">
         <Container style={{ maxWidth: "800px" }}>
@@ -215,11 +217,11 @@ const Profile = () => {
                     <span className={`status-pill ${isSeller ? "processing" : "active"} mb-1 d-inline-block`}>
                       {isSeller ? "Seller / Company Account" : "Customer Account"}
                     </span>
-                    <h2 className="page-title mb-0" style={{ fontSize: "1.6rem" }}>
+                    <h1 className="page-title mb-0" style={{ fontSize: "1.6rem" }}>
                       {isSeller
                         ? profile.companyName || "Company Profile"
                         : `${profile.firstName || "User"} ${profile.lastName || ""}`}
-                    </h2>
+                    </h1>
                     <p className="page-subtitle mb-0" style={{ fontSize: "0.85rem" }}>
                       {profile.email}
                     </p>

@@ -7,6 +7,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Header from "./Header";
+import SEO from "./SEO";
 import api from "../utils/api";
 import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword } from "../utils/validation";
 
@@ -177,6 +178,7 @@ const ResetPassword = () => {
 
   return (
     <div className="page-container">
+      <SEO title="Reset Password" noindex={true} />
       <Header />
       <div className="auth-page-container">
         <Container style={{ maxWidth: "480px" }}>
@@ -185,9 +187,9 @@ const ResetPassword = () => {
               <span className={`status-pill ${isVerified ? "active" : isExpired ? "shipped" : "ordered"} mb-2`}>
                 {isVerified ? "Code Verified ✓" : isExpired ? "Code Expired ✖" : "Step 2 of 2"}
               </span>
-              <h2 className="page-title" style={{ fontSize: "1.8rem" }}>
+              <h1 className="page-title" style={{ fontSize: "1.8rem" }}>
                 {isVerified ? "Set New Password" : "Verify Reset Code"}
-              </h2>
+              </h1>
               <p className="page-subtitle" style={{ fontSize: "0.85rem" }}>
                 {isVerified
                   ? "Your identity is verified. Enter your new password below."

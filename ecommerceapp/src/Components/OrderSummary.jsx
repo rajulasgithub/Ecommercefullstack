@@ -9,6 +9,7 @@ import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import Header from './Header';
+import SEO from './SEO';
 import api from '../utils/api';
 import { isEmpty, validateName, validatePhone } from '../utils/validation';
 
@@ -143,6 +144,7 @@ const OrderSummary = () => {
 
   return (
     <div className="page-container">
+      <SEO title="Order Summary" noindex={true} />
       <Header />
 
       <Container className="py-4">

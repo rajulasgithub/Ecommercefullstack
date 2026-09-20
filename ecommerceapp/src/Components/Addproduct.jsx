@@ -9,6 +9,7 @@ import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from './Header';
+import SEO from './SEO';
 import { isEmpty, isNumeric, MATERIALS, STYLES } from '../utils/validation';
 import './Style.css';
 
@@ -397,6 +398,7 @@ const Addproduct = ({ hideHeader = false, onSuccess }) => {
 
   return (
     <div className="page-container">
+      <SEO title="Add New Product" noindex={true} />
       <Header />
       {formContent}
     </div>

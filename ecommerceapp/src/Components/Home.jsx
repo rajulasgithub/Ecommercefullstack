@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import SEO from './SEO';
 import './Home.css';
 
 const categories = [
@@ -15,6 +16,30 @@ const categories = [
   { id: 5, title: 'Kids Collection', tag: 'Cute & Vibrant', img: '/images/kidswear.jpg' },
   { id: 6, title: 'Menswear', tag: 'Smart & Tailored', img: '/images/menswear.jpg' },
 ];
+
+const homeStructuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://trendlife.com/#organization',
+      'name': 'TrendLife',
+      'url': 'https://trendlife.com/',
+      'logo': 'https://trendlife.com/favicon.png',
+      'description': 'Premier destination for trendsetting fashion, ethnic wear, party dresses, and modern apparel.'
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://trendlife.com/#website',
+      'url': 'https://trendlife.com/',
+      'name': 'TrendLife E-Commerce',
+      'description': 'Discover your perfect style for every occasion.',
+      'publisher': {
+        '@id': 'https://trendlife.com/#organization'
+      }
+    }
+  ]
+};
 
 const features = [
   {
@@ -61,6 +86,12 @@ const Home = () => {
 
   return (
     <div className="home-container">
+      <SEO
+        title="Premier Online Fashion & Clothing Store"
+        description="Shop the latest trends in ethnic wear, party dresses, gowns, menswear, and kidswear with free express shipping across India."
+        keywords="trendlife, fashion store, ethnic wear, party wear dresses, casual outfits, gowns, menswear, kidswear"
+        structuredData={homeStructuredData}
+      />
       <Header />
 
       {/* Hero Section */}

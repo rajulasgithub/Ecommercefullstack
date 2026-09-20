@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import { toast } from 'react-toastify';
 import Header from './Header';
+import SEO from './SEO';
 import api from '../utils/api';
 import './Style.css';
 
@@ -96,6 +97,7 @@ const Wishlist = () => {
 
   return (
     <div className="page-container">
+      <SEO title="My Wishlist" noindex={true} />
       <Header />
       <Container className="py-4">
         <div className="page-header mb-4">

@@ -8,6 +8,7 @@ import Form from "react-bootstrap/Form";
 import Modal from 'react-bootstrap/Modal';
 import { toast } from 'react-toastify';
 import Header from "./Header";
+import SEO from "./SEO";
 import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import ROLES from "../utils/roles";
@@ -267,6 +268,7 @@ const Vieworders = ({ hideHeader = false }) => {
 
   return (
     <div className="page-container">
+      <SEO title="My Orders" noindex={true} />
       <Header />
       {ordersContent}
     </div>

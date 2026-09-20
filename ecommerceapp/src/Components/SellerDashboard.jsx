@@ -8,6 +8,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import { toast } from 'react-toastify';
 import api from '../utils/api';
 import Header from './Header';
+import SEO from './SEO';
 import Addproduct from './Addproduct';
 import Vieworders from './Vieworders';
 import { isNumeric, isEmpty, MATERIALS, STYLES } from '../utils/validation';
@@ -249,6 +250,7 @@ const SellerDashboard = () => {
 
   return (
     <div className="page-container d-flex flex-column" style={{ minHeight: '100vh' }}>
+      <SEO title="Seller Dashboard" noindex={true} />
       <Header />
 
       <div className="seller-dashboard-container flex-grow-1">

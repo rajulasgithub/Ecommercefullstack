@@ -1,3 +1,22 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Allow: /viewproduct
+Allow: /product/
+
+# Private and authenticated routes
+Disallow: /cart
+Disallow: /wishlist
+Disallow: /profile
+Disallow: /sellerdashboard
+Disallow: /addproduct
+Disallow: /order
+Disallow: /ordersummary
+Disallow: /payment
+Disallow: /ordersuccess
+Disallow: /vieworders
+Disallow: /reset-password
+Disallow: /forgot-password
+
+# Sitemap directive
+Sitemap: https://trendlife.com/sitemap.xml

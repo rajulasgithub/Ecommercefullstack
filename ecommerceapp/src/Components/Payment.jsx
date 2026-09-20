@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import SEO from './SEO';
 import './Style.css';
 
 const Payment = () => {
@@ -10,6 +11,7 @@ const Payment = () => {
 
   return (
     <div className="page-container">
+      <SEO title="Payment Gateway" noindex={true} />
       <Header />
       <Container className="py-5" style={{ maxWidth: "550px" }}>
         <div className="glass-card text-center py-5">
@@ -27,7 +29,7 @@ const Payment = () => {
           }}>
             ✓
           </div>
-          <h2 className="page-title" style={{ fontSize: "1.8rem" }}>Payment Successful!</h2>
+          <h1 className="page-title" style={{ fontSize: "1.8rem" }}>Payment Successful!</h1>
           <p className="page-subtitle mb-4">
             Thank you for shopping with TrendLife. Your order has been placed and is currently being processed.
           </p>

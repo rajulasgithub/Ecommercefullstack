@@ -7,6 +7,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Header from "./Header";
+import SEO from "./SEO";
 import api from "../utils/api";
 import { isValidEmail, isEmpty } from "../utils/validation";
 
@@ -51,13 +52,14 @@ const ForgotPassword = () => {
 
   return (
     <div className="page-container">
+      <SEO title="Forgot Password" noindex={true} />
       <Header />
       <div className="auth-page-container">
         <Container style={{ maxWidth: "480px" }}>
           <div className="glass-card">
             <div className="text-center mb-4">
               <span className="status-pill pending mb-2">Step 1 of 2</span>
-              <h2 className="page-title" style={{ fontSize: "1.8rem" }}>Forgot Password</h2>
+              <h1 className="page-title" style={{ fontSize: "1.8rem" }}>Forgot Password</h1>
               <p className="page-subtitle" style={{ fontSize: "0.85rem" }}>
                 Enter your registered account email to receive a 6-digit verification code.
               </p>

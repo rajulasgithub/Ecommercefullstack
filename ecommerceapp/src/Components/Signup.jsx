@@ -10,6 +10,7 @@ import api from '../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from './Header';
+import SEO from './SEO';
 import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validateName, validatePhone, GENDERS, validateGender, validatePincode } from '../utils/validation';
 
 const Signup = () => {

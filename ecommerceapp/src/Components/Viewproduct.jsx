@@ -4,8 +4,9 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from './Header';
+import SEO from './SEO';
 import Modal from 'react-bootstrap/Modal';
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
@@ -64,6 +65,8 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
             <img
               src={images[activeImgIndex] || images[0]}
               alt={item.prdName}
+              loading="lazy"
+              decoding="async"
               style={{
                 width: "100%",
                 height: "100%",
@@ -265,16 +268,17 @@ const Viewproduct = () => {
   const role = localStorage.getItem("role");
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [product, setProduct] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedStyle, setSelectedStyle] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
+  const [selectedStyle, setSelectedStyle] = useState(searchParams.get("style") || "");
+  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
+  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
   const [limit] = useState(8);
   const [paginationInfo, setPaginationInfo] = useState({ total: 0, page: 1, limit: 8, totalPages: 1 });
 
@@ -284,6 +288,18 @@ const Viewproduct = () => {
   const [show, setShow] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [updating, setUpdating] = useState(false);
+
+  // Sync state to URL Search Params for SEO-friendly filter URLs
+  useEffect(() => {
+    const params = {};
+    if (searchQuery.trim()) params.search = searchQuery.trim();
+    if (selectedCategory) params.category = selectedCategory;
+    if (selectedStyle) params.style = selectedStyle;
+    if (minPrice !== '') params.minPrice = minPrice;
+    if (maxPrice !== '') params.maxPrice = maxPrice;
+    if (page > 1) params.page = page;
+    setSearchParams(params, { replace: true });
+  }, [searchQuery, selectedCategory, selectedStyle, minPrice, maxPrice, page, setSearchParams]);
 
   const fetchProducts = (targetPage = page) => {
     setLoadingProducts(true);
@@ -560,8 +576,26 @@ const Viewproduct = () => {
 
 
 
+  const catalogStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    'name': 'TrendLife Apparel Catalog',
+    'itemListElement': product.map((item, index) => ({
+      '@type': 'ListItem',
+      'position': index + 1,
+      'name': item.prdName,
+      'url': `${window.location.origin}/product/${item._id}`
+    }))
+  };
+
   return (
     <div className="page-container">
+      <SEO
+        title={selectedCategory ? `${selectedCategory} Collection - Apparel Catalog` : "Shop Apparel Catalog & Collections"}
+        description="Browse our curated catalog of handcrafted dresses, casual wear, party outfits, ethnic wear, and modern clothing on TrendLife."
+        keywords={`trendlife, ${selectedCategory || 'fashion'}, ${selectedStyle || 'clothing'}, catalog, online shop`}
+        structuredData={catalogStructuredData}
+      />
       <Header />
 
       <Container className="py-4">

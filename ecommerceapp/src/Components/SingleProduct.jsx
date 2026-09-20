@@ -9,6 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 import { toast } from 'react-toastify';
 import Header from './Header';
+import SEO from './SEO';
 import api from '../utils/api';
 import ROLES from '../utils/roles';
 import { isEmpty, isNumeric, MATERIALS, STYLES } from '../utils/validation';
@@ -464,8 +465,43 @@ const SingleProduct = () => {
     setSelectedImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
+  const productStructuredData = product ? {
+    '@context': 'https://schema.org/',
+    '@type': 'Product',
+    'name': product.prdName,
+    'image': images,
+    'description': product.description || `Handcrafted with premium ${product.material || ''} fabric tailored for elegant fit and lasting durability.`,
+    'category': product.category || 'Apparel',
+    'offers': {
+      '@type': 'Offer',
+      'url': window.location.href,
+      'priceCurrency': 'INR',
+      'price': product.prize,
+      'availability': product.stock !== 'Out of Stock' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      'seller': {
+        '@type': 'Organization',
+        'name': 'TrendLife'
+      }
+    },
+    ...(totalReviews > 0 ? {
+      'aggregateRating': {
+        '@type': 'AggregateRating',
+        'ratingValue': averageRating,
+        'reviewCount': totalReviews
+      }
+    } : {})
+  } : null;
+
   return (
     <div className="page-container">
+      <SEO
+        title={`${product.prdName} - Buy Online`}
+        description={product.description || `Buy ${product.prdName} (${product.category || 'Women'}, ${product.style || 'Casual Wear'}) online at ₹${product.prize} on TrendLife. Free delivery & 30-day returns.`}
+        keywords={`trendlife, ${product.prdName}, ${product.category || ''}, ${product.style || ''}, ${product.material || ''}, buy fashion online`}
+        ogImage={images[0]}
+        ogType="product"
+        structuredData={productStructuredData}
+      />
       <Header />
 
       <Container className="py-4">

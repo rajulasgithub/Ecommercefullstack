@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Header from './Header';
+import SEO from './SEO';
 import './Style.css';
 
 const OrderSuccess = () => {
@@ -10,6 +11,7 @@ const OrderSuccess = () => {
 
   return (
     <div className="page-container" style={{ display: 'flex', flexDirection: 'column' }}>
+      <SEO title="Order Confirmation" noindex={true} />
       <Header />
 
       <Container className="d-flex flex-grow-1 align-items-center justify-content-center py-5 mt-4">

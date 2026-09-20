@@ -10,6 +10,7 @@ import api from './../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from './Header';
+import SEO from './SEO';
 import { GoogleLogin } from '@react-oauth/google';
 import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validatePhone, validateRegNumber, validateGstNumber, validateCompanyName, validatePincode } from '../utils/validation';
 
@@ -134,13 +135,17 @@ const Companysignup = () => {
 
   return (
     <div className="page-container">
+      <SEO
+        title="Become a Seller"
+        description="Register as a seller or merchant partner on TrendLife to list and sell your fashion and apparel collections to millions of customers."
+      />
       <Header />
       <div className="auth-page-container">
         <Container style={{ maxWidth: "700px" }}>
           <div className="glass-card">
             <div className="text-center mb-4">
               <span className="status-pill processing mb-2">Seller Portal</span>
-              <h2 className="page-title" style={{ fontSize: "2rem" }}>Company Registration</h2>
+              <h1 className="page-title" style={{ fontSize: "2rem" }}>Company Registration</h1>
               <p className="page-subtitle" style={{ fontSize: "0.9rem" }}>Partner with TrendLife to showcase your apparel collections</p>
             </div>
 

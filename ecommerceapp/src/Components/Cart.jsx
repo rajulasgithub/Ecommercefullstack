@@ -9,6 +9,7 @@ import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import Header from "./Header";
+import SEO from "./SEO";
 import api from "../utils/api";
 
 const Cart = () => {
@@ -159,6 +160,7 @@ const Cart = () => {
 
   return (
     <div className="page-container">
+      <SEO title="Shopping Bag" noindex={true} />
       <Header />
 
       <Container className="py-4">

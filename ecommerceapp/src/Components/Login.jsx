@@ -8,6 +8,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
 import Header from "./Header";
+import SEO from "./SEO";
 import api from "../utils/api";
 import { isValidEmail, isEmpty } from "../utils/validation";
 
@@ -23,75 +24,80 @@ const Login = () => {
     password: "",
   });
 
-
-  const handleChange = (event) => {
-    setLogin({ ...login, [event.target.name]: event.target.value });
-    setError({ ...error, [event.target.name]: "" });
+  const handleChange = (e) => {
+    setLogin({ ...login, [e.target.name]: e.target.value });
+    setError({ ...error, [e.target.name]: "" });
     setServerError("");
   };
 
-  const Validate = () => {
-    const errormessage = {};
-    if (isEmpty(login.email)) {
-      errormessage.email = "Please provide a valid email address";
-    } else if (!isValidEmail(login.email)) {
-      errormessage.email = "Please provide a valid email address";
+  const validate = () => {
+    const errs = {};
+    if (isEmpty(login.email) || !isValidEmail(login.email)) {
+      errs.email = "Please provide a valid email address";
     }
 
     if (isEmpty(login.password)) {
-      errormessage.password = "Password is required";
+      errs.password = "Password is required";
     }
-    setError(errormessage);
-    return Object.keys(errormessage).length === 0;
+
+    setError(errs);
+    return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    if (!Validate()) {
+  const handleSubmit = (event) => {
+    if (event) event.preventDefault();
+    if (!validate()) return;
+
+    setLoading(true);
+    api.post("/auth/login", login)
+      .then((response) => {
+        if (response.data.success) {
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("role", response.data.role);
+          localStorage.setItem("loginId", response.data.loginId);
+
+          toast.success("Welcome back! Signed in successfully.");
+          const userRole = String(response.data.role).toLowerCase();
+          if (userRole === "seller" || userRole === "company" || userRole === "admin") {
+            navigate("/sellerdashboard");
+          } else {
+            navigate("/");
+          }
+        }
+      })
+      .catch((error) => {
+        const msg = error.response?.data?.message || "Invalid credentials. Please try again.";
+        toast.error(msg);
+        setServerError(msg);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    if (!credentialResponse?.credential) {
+      toast.error("Google Login failed to retrieve credentials.");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await api.post("/auth/login", login);
-      if (response.data && response.data.success) {
-        localStorage.setItem("loginId", response.data.loginId);
-        localStorage.setItem("role", response.data.role);
-        localStorage.setItem("token", response.data.token);
-        toast.success("Welcome back! Signed in successfully.");
-        const userRole = String(response.data.role || '').toLowerCase();
-        if (userRole === "seller" || userRole === "company" || userRole === "admin" || userRole.includes("seller")) {
-          navigate('/sellerdashboard');
-        } else {
-          navigate('/viewproduct');
-        }
-      }
-    } catch (err) {
-      const msg = err.response?.data?.message || "Login failed. Please check your credentials.";
-      toast.error(msg);
-      setServerError(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleSuccess = async (credentialResponse) => {
-    setLoading(true);
-    try {
       const response = await api.post("/auth/google", {
         token: credentialResponse.credential,
       });
-      if (response.data && response.data.success) {
-        localStorage.setItem("loginId", response.data.loginId);
-        localStorage.setItem("role", response.data.role);
-        localStorage.setItem("token", response.data.token);
 
-        toast.success("Welcome! Signed in with Google successfully.");
-        const userRole = String(response.data.role || '').toLowerCase();
-        if (userRole === "seller" || userRole === "company" || userRole === "admin" || userRole.includes("seller")) {
-          navigate('/sellerdashboard');
+      if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("role", response.data.role);
+        localStorage.setItem("loginId", response.data.loginId);
+
+        toast.success("Google Login successful! Welcome.");
+        const userRole = String(response.data.role).toLowerCase();
+        if (userRole === "seller" || userRole === "company" || userRole === "admin") {
+          navigate("/sellerdashboard");
         } else {
-          navigate('/viewproduct');
+          navigate("/");
         }
       }
     } catch (err) {
@@ -105,13 +111,17 @@ const Login = () => {
 
   return (
     <div className="page-container">
+      <SEO
+        title="Account Sign In"
+        description="Sign in to your TrendLife account to access your shopping bag, order history, wishlist, and profile."
+      />
       <Header />
       <div className="auth-page-container">
         <Container style={{ maxWidth: "480px" }}>
           <div className="glass-card">
             <div className="text-center mb-4">
               <span className="status-pill ordered mb-2">Welcome Back</span>
-              <h2 className="page-title" style={{ fontSize: "2rem" }}>Sign In to TrendLife</h2>
+              <h1 className="page-title" style={{ fontSize: "2rem" }}>Sign In to TrendLife</h1>
               <p className="page-subtitle" style={{ fontSize: "0.9rem" }}>Access your account securely</p>
             </div>
 
