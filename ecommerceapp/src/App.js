@@ -18,6 +18,7 @@ import Cart from './Components/Cart';
 import OrderSummary from './Components/OrderSummary';
 import Vieworders from './Components/Vieworders';
 import SellerDashboard from './Components/SellerDashboard';
+import AdminDashboard from './Components/AdminDashboard';
 import Wishlist from './Components/Wishlist';
 import Payment from './Components/Payment';
 import OrderSuccess from './Components/OrderSuccess';
@@ -113,6 +114,16 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={[ROLES.USER, ROLES.COMPANY, ROLES.ADMIN, 'seller', 'company']}>
                 <Wishlist />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin Protected Routes */}
+          <Route
+            path='/admindashboard'
+            element={
+              <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+                <AdminDashboard />
               </ProtectedRoute>
             }
           />

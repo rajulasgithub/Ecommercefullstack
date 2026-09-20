@@ -150,7 +150,59 @@ const Header = () => {
                 );
               }
 
-              if (userRole === "seller" || userRole === "company" || userRole === "admin") {
+              if (userRole === "admin") {
+                return (
+                  <>
+                    <Nav.Link
+                      as={Link}
+                      to="/admindashboard"
+                      className={`header-nav-link ${isActive("/admindashboard") ? "active" : ""}`}
+                      style={{ color: "#fcd34d", fontWeight: 700 }}
+                    >
+                      👑 Admin Dashboard
+                    </Nav.Link>
+
+                    <Nav.Link
+                      as={Link}
+                      to="/sellerdashboard"
+                      className={`header-nav-link ${isActive("/sellerdashboard") ? "active" : ""}`}
+                    >
+                      📊 Seller Dashboard
+                    </Nav.Link>
+
+                    <Nav.Link
+                      as={Link}
+                      to="/profile"
+                      className={`header-nav-link d-inline-flex align-items-center gap-1 ${isActive("/profile") ? "active" : ""}`}
+                    >
+                      {userImage ? (
+                        <img
+                          src={userImage}
+                          alt="Avatar"
+                          style={{ width: "22px", height: "22px", borderRadius: "50%", objectFit: "cover" }}
+                          onError={(e) => { e.target.style.display = "none"; }}
+                        />
+                      ) : (
+                        "👤 "
+                      )}
+                      My Profile
+                    </Nav.Link>
+
+                    <div className="header-divider d-none d-lg-block mx-1"></div>
+
+                    <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
+                      <span className="role-seller-badge" onClick={() => navigate("/admindashboard")} style={{ cursor: "pointer", background: "rgba(245, 158, 11, 0.2)", color: "#fcd34d", borderColor: "rgba(245, 158, 11, 0.4)" }}>
+                        <span className="seller-dot" style={{ background: "#fcd34d", boxShadow: "0 0 8px #fcd34d" }}></span> Admin Portal
+                      </span>
+                      <button className="btn-header-logout" onClick={logout}>
+                        Logout
+                      </button>
+                    </div>
+                  </>
+                );
+              }
+
+              if (userRole === "seller" || userRole === "company") {
                 return (
                   <>
                     <Nav.Link

@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import Login from "../model/login.js";
 import User from "../model/user.js";
 import Company from "../model/company.js";
+import productDB from "../model/product.js";
+import cartDB from "../model/cart.js";
 import dotenv from "dotenv";
 import { OAuth2Client } from "google-auth-library";
 import { GoogleGenAI } from "@google/genai";
@@ -868,5 +870,59 @@ export const generateProfileBio = async (req, res) => {
   } catch (error) {
     console.error("AI Generation Error:", error);
     return httpError(res, 500, "Server error while generating bio", { errorMessage: error.message });
+  }
+};
+
+// Get Admin Overview Stats (Admin Only)
+export const getAdminStats = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalSellers = await Company.countDocuments();
+    const totalProducts = await productDB.countDocuments({ status: { $ne: "deleted" } });
+    const totalDeletedProducts = await productDB.countDocuments({ status: "deleted" });
+    const totalOrders = await cartDB.countDocuments({ status: { $ne: 1 } });
+
+    // Revenue calculation from non-cart orders
+    const orders = await cartDB.aggregate([
+      { $match: { status: { $ne: 1 } } },
+      {
+        $lookup: {
+          from: "products",
+          localField: "prdId",
+          foreignField: "_id",
+          as: "product"
+        }
+      },
+      { $unwind: "$product" },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: { $multiply: ["$quantity", "$product.prize"] } }
+        }
+      }
+    ]);
+
+    const totalRevenue = orders.length > 0 ? orders[0].totalRevenue : 0;
+
+    const recentUsers = await User.find().sort({ _id: -1 }).limit(5).populate('loginId', 'email role');
+    const recentSellers = await Company.find().sort({ _id: -1 }).limit(5).populate('loginId', 'email role');
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      data: {
+        totalUsers,
+        totalSellers,
+        totalProducts,
+        totalDeletedProducts,
+        totalOrders,
+        totalRevenue,
+        recentUsers,
+        recentSellers,
+      },
+      message: "Admin statistics fetched successfully",
+    });
+  } catch (error) {
+    return httpError(res, 500, "Error fetching admin stats", { errorMessage: error.message });
   }
 };

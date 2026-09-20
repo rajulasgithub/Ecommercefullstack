@@ -58,7 +58,9 @@ const Login = () => {
 
           toast.success("Welcome back! Signed in successfully.");
           const userRole = String(response.data.role).toLowerCase();
-          if (userRole === "seller" || userRole === "company" || userRole === "admin") {
+          if (userRole === "admin") {
+            navigate("/admindashboard");
+          } else if (userRole === "seller" || userRole === "company") {
             navigate("/sellerdashboard");
           } else {
             navigate("/");
@@ -94,7 +96,9 @@ const Login = () => {
 
         toast.success("Google Login successful! Welcome.");
         const userRole = String(response.data.role).toLowerCase();
-        if (userRole === "seller" || userRole === "company" || userRole === "admin") {
+        if (userRole === "admin") {
+          navigate("/admindashboard");
+        } else if (userRole === "seller" || userRole === "company") {
           navigate("/sellerdashboard");
         } else {
           navigate("/");

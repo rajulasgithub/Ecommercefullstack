@@ -24,6 +24,7 @@ import {
   verifyOtp,
   updateOwnProfile,
   generateProfileBio,
+  getAdminStats,
 } from "../controllers/authController.js";
 
 const authroutes = express.Router();
@@ -170,5 +171,8 @@ authroutes.delete('/deletecompany/:id', checkauth, checkRole("admin", "seller"),
 
 // Update Company Info (Admin, Seller)
 authroutes.put('/updatecompany/:id', checkauth, checkRole("admin", "seller"), updateCompany);
+
+// Admin Dashboard Overview Metrics (Admin Only)
+authroutes.get('/admin-stats', checkauth, checkRole("admin"), getAdminStats);
 
 export default authroutes;
