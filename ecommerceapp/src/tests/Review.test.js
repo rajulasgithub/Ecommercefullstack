@@ -79,7 +79,7 @@ describe('SingleProduct Component (Reviews)', () => {
       if (url === '/auth/viewinfo') return Promise.resolve({ data: { success: true, data: {} } });
       return Promise.resolve({ data: {} });
     });
-    
+
     api.post.mockResolvedValue({ data: { success: true, message: 'Review submitted successfully!' } });
   });
 

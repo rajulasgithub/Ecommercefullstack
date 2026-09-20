@@ -4,7 +4,6 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import ROLES from "../utils/roles";
 import api from "../utils/api";
 
 const Header = () => {
@@ -13,7 +12,6 @@ const Header = () => {
   const [role, setRole] = useState(localStorage.getItem("role"));
   const itemCount = localStorage.getItem("itemcount") || 0;
   const [userImage, setUserImage] = useState(null);
-
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
   useEffect(() => {
@@ -33,7 +31,7 @@ const Header = () => {
             setUserImage(res.data.data.image);
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     } else {
       setUserImage(null);
     }

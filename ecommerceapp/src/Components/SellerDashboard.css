@@ -1,5 +1,6 @@
 /* Seller Dashboard Styles */
-:root, [data-theme="dark"] {
+:root,
+[data-theme="dark"] {
   --bg-dark: var(--app-bg, #0b0f19);
   --surface-bg: var(--app-card-bg, rgba(255, 255, 255, 0.05));
   --border-color: var(--app-card-border, rgba(255, 255, 255, 0.1));
@@ -402,15 +403,18 @@
   .seller-dashboard-container {
     flex-direction: column;
   }
+
   .seller-sidebar {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
   }
+
   .seller-nav-menu {
     flex-direction: row;
     overflow-x: auto;
   }
+
   .seller-nav-item {
     white-space: nowrap;
   }

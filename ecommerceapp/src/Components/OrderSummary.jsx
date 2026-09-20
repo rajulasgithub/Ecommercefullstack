@@ -28,7 +28,7 @@ const OrderSummary = () => {
     const year = now.getFullYear();
     const exptdeliverydate = (`${day + 5}-${month}-${year}`);
     localStorage.setItem("expdeliverydate", exptdeliverydate);
-    
+
     const itemTotal = JSON.parse(localStorage.getItem('totalprize')) || 0;
     localStorage.setItem('total', itemTotal + 40);
 
@@ -105,7 +105,7 @@ const OrderSummary = () => {
     if (isEmpty(dist)) errs.district = "District field is required";
     if (isEmpty(st)) errs.state = "State field is required";
     if (isEmpty(pin)) errs.pincode = "Pincode field is required";
-    
+
     const phoneErr = validatePhone(num, "Phone number");
     if (phoneErr) errs.number = phoneErr;
 

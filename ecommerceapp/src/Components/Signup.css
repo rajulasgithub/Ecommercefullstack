@@ -1,46 +1,52 @@
-.signupbg{
+.signupbg {
     background-image: url('../../public/images/signupback.jpg');
     background-repeat: no-repeat;
     background-size: 100% 100%;
     /* width: 100%; */
     height: 700px;
-    font-family:'Aleo';
+    font-family: 'Aleo';
 }
 
 
-.forminnerdiv{
-    width: 100%;  
+.forminnerdiv {
+    width: 100%;
 }
-.formdiv{
+
+.formdiv {
     margin: auto;
     width: 50%;
     /* border:1px solid black; */
     padding-top: 150px;
- 
-   
+
+
 }
-.formborder:hover{
+
+.formborder:hover {
     border: 1px solid blue;
-   
+
 }
-.signuphead{
+
+.signuphead {
     font-size: 30px;
 }
-.btnstyle:hover{
+
+.btnstyle:hover {
     font-size: 15px;
-    border:2px solid blue
-    /* background-color: pink; */
-    
+    border: 2px solid blue
+        /* background-color: pink; */
+
 }
+
 @media screen and (max-width: 600px) {
-    .formdiv{
+    .formdiv {
         width: 300px;
         /* height: 100px; */
-        padding-top:50px;
+        padding-top: 50px;
     }
-    .signuphead{
+
+    .signuphead {
         font-size: 20px;
         /* margin-bottom: 0px; */
     }
-    
-  }
+
+}

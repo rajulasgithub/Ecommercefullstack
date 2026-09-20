@@ -73,7 +73,7 @@ const Wishlist = () => {
         try {
           const parsed = JSON.parse(imgData);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-        } catch (e) {}
+        } catch (e) { }
       }
       return [imgData];
     }
@@ -182,9 +182,9 @@ const Wishlist = () => {
 
                     <div className="d-flex flex-column gap-2">
                       {product.stock !== 'Out of Stock' ? (
-                        <Button 
-                          className="btn-glass-primary w-100" 
-                          size="sm" 
+                        <Button
+                          className="btn-glass-primary w-100"
+                          size="sm"
                           onClick={() => handleAddToCart(product._id, item._id)}
                         >
                           🛍️ Move to Bag
@@ -194,9 +194,9 @@ const Wishlist = () => {
                           Out of Stock
                         </Button>
                       )}
-                      <Button 
-                        className="btn-glass-danger w-100" 
-                        size="sm" 
+                      <Button
+                        className="btn-glass-danger w-100"
+                        size="sm"
                         onClick={() => removeFromWishlist(item._id)}
                       >
                         🗑️ Remove

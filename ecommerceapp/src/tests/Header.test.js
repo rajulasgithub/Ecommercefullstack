@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import Header from './Header';
+import Header from '../Components/Header';
 import '@testing-library/jest-dom';
 
 describe('Header Component', () => {
@@ -38,17 +38,17 @@ describe('Header Component', () => {
         <Header />
       </BrowserRouter>
     );
-    
+
     // By default, the theme in Header is 'dark' if localStorage is empty
     const themeButtonDark = screen.getByTitle(/Switch to Light Mode/i);
     expect(themeButtonDark).toBeInTheDocument();
-    
+
     // Click the button to toggle to light mode
     fireEvent.click(themeButtonDark);
-    
+
     // Check if the localStorage was updated
     expect(window.localStorage.getItem('theme')).toBe('light');
-    
+
     // Check if the button text/title changed
     const themeButtonLight = screen.getByTitle(/Switch to Dark Mode/i);
     expect(themeButtonLight).toBeInTheDocument();

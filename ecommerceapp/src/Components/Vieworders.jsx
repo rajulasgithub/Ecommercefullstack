@@ -105,10 +105,10 @@ const Vieworders = ({ hideHeader = false }) => {
           <div>
             <span className="status-pill ordered mb-2">Order Management</span>
             <h1 className="page-title">
-              {role === ROLES.ADMIN 
-                ? "Admin Orders Dashboard" 
-                : (role === ROLES.COMPANY || role === 'seller') 
-                  ? "Seller Orders Dashboard" 
+              {role === ROLES.ADMIN
+                ? "Admin Orders Dashboard"
+                : (role === ROLES.COMPANY || role === 'seller')
+                  ? "Seller Orders Dashboard"
                   : "My Order History"}
             </h1>
             <p className="page-subtitle">{order.length} order(s) record found on this page</p>
@@ -149,8 +149,8 @@ const Vieworders = ({ hideHeader = false }) => {
                       item.prdId?.image
                         ? item.prdId.image[0]
                         : item.image
-                        ? item.image[0]
-                        : '/images/ethnic.jpg'
+                          ? item.image[0]
+                          : '/images/ethnic.jpg'
                     }
                     alt={item.prdId?.prdName || item.prdName}
                     style={{
@@ -239,9 +239,9 @@ const Vieworders = ({ hideHeader = false }) => {
       {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="d-flex justify-content-center gap-3 mt-4">
-          <Button 
-            className="btn-glass-secondary" 
-            disabled={page === 1} 
+          <Button
+            className="btn-glass-secondary"
+            disabled={page === 1}
             onClick={() => setPage(p => p - 1)}
           >
             Previous
@@ -249,9 +249,9 @@ const Vieworders = ({ hideHeader = false }) => {
           <div className="d-flex align-items-center" style={{ color: '#fff', fontWeight: 600 }}>
             Page {page} of {totalPages}
           </div>
-          <Button 
-            className="btn-glass-secondary" 
-            disabled={page === totalPages} 
+          <Button
+            className="btn-glass-secondary"
+            disabled={page === totalPages}
             onClick={() => setPage(p => p + 1)}
           >
             Next

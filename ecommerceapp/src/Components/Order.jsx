@@ -10,29 +10,29 @@ const Order = () => {
   return (
     <div>
       <div>
-      <Container>
-      <Row>
-       
+        <Container>
+          <Row>
 
-<Col>
-<Card  className=''>
-  <div>
-<Card.Img variant="top" src='' className=''/>
-</div>
-<div>
-<Card.Body className=''>
-<Card.Title className=''>{}</Card.Title>
-<Card.Text className=''>Prize:{}</Card.Text>
-<Card.Text className=''>Size:{}</Card.Text>
-<Card.Text >Material:</Card.Text>
 
-  </Card.Body>
-  </div>
- </Card>
-</Col>   
-</Row>
-</Container>
-        
+            <Col>
+              <Card className=''>
+                <div>
+                  <Card.Img variant="top" src='' className='' />
+                </div>
+                <div>
+                  <Card.Body className=''>
+                    <Card.Title className=''>{ }</Card.Title>
+                    <Card.Text className=''>Prize:{ }</Card.Text>
+                    <Card.Text className=''>Size:{ }</Card.Text>
+                    <Card.Text >Material:</Card.Text>
+
+                  </Card.Body>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+
       </div>
     </div>
   )

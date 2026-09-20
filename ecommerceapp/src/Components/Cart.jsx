@@ -17,7 +17,6 @@ const Cart = () => {
   const [address, setAddress] = useState({});
   const [newaddress, setNewaddress] = useState({});
   const [totalValue, setTotalValue] = useState(0);
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 

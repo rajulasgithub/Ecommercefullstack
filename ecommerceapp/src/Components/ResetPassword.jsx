@@ -17,14 +17,14 @@ const ResetPassword = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
-  
+
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   // 15 Minutes Countdown Timer (900 seconds)
   const [timeLeft, setTimeLeft] = useState(900);
   const [isExpired, setIsExpired] = useState(false);

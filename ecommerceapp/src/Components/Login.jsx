@@ -16,13 +16,13 @@ const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState({});
+  const [serverError, setServerError] = useState("");
   const [login, setLogin] = useState({
     email: "",
     password: "",
   });
 
-  const [error, setError] = useState({});
-  const [serverError, setServerError] = useState("");
 
   const handleChange = (event) => {
     setLogin({ ...login, [event.target.name]: event.target.value });
@@ -58,7 +58,6 @@ const Login = () => {
         localStorage.setItem("loginId", response.data.loginId);
         localStorage.setItem("role", response.data.role);
         localStorage.setItem("token", response.data.token);
-
         toast.success("Welcome back! Signed in successfully.");
         const userRole = String(response.data.role || '').toLowerCase();
         if (userRole === "seller" || userRole === "company" || userRole === "admin" || userRole.includes("seller")) {
@@ -194,7 +193,7 @@ const Login = () => {
                   )}
                 </Button>
               </div>
-              
+
               <div className="d-flex align-items-center my-4">
                 <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
                 <span style={{ margin: '0 10px', color: '#9ca3af', fontSize: '0.85rem' }}>OR</span>

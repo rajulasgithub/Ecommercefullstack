@@ -17,9 +17,10 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [error, setError] = useState({});
+  const [serverError, setServerError] = useState("");
 
   const [signup, setSignup] = useState({
     firstName: "",
@@ -35,8 +36,6 @@ const Signup = () => {
     confirmPassword: "",
   });
 
-  const [error, setError] = useState({});
-  const [serverError, setServerError] = useState("");
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -54,7 +53,7 @@ const Signup = () => {
 
   const Validate = () => {
     const errormessage = {};
-    
+
     const fnErr = validateName(signup.firstName, "First name");
     if (fnErr) errormessage.firstName = fnErr;
 
@@ -70,7 +69,7 @@ const Signup = () => {
     if (isEmpty(signup.state)) errormessage.state = "State is required";
     if (isEmpty(signup.district)) errormessage.district = "District is required";
     if (isEmpty(signup.place)) errormessage.place = "Place is required";
-    
+
     const pinErr = validatePincode(signup.pincode);
     if (pinErr) errormessage.pincode = pinErr;
 

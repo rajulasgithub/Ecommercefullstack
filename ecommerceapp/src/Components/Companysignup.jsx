@@ -39,10 +39,10 @@ const Companysignup = () => {
     if (companyNameErr) errormessage.companyName = companyNameErr;
     if (isEmpty(companysignup.state)) errormessage.state = "State is required";
     if (isEmpty(companysignup.district)) errormessage.district = "District is required";
-    
+
     const pinErr = validatePincode(companysignup.pincode);
     if (pinErr) errormessage.pincode = pinErr;
-    
+
     const contactErr = validatePhone(companysignup.contactNumber, "Contact number");
     if (contactErr) errormessage.contactNumber = contactErr;
 

@@ -1,7 +1,8 @@
 /* Global Design System & Glassmorphism Utilities */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-:root, [data-theme="dark"] {
+:root,
+[data-theme="dark"] {
   --app-bg: #0b0f19;
   --app-gradient-1: rgba(99, 102, 241, 0.15);
   --app-gradient-2: rgba(236, 72, 153, 0.08);
@@ -71,8 +72,8 @@ body {
 .page-container {
   min-height: 100vh;
   background: radial-gradient(circle at 50% 0%, var(--app-gradient-1) 0%, transparent 60%),
-              radial-gradient(circle at 100% 50%, var(--app-gradient-2) 0%, transparent 50%),
-              var(--app-bg);
+    radial-gradient(circle at 100% 50%, var(--app-gradient-2) 0%, transparent 50%),
+    var(--app-bg);
   padding-bottom: 5rem;
   transition: background 0.3s ease;
 }
@@ -84,8 +85,8 @@ body {
   justify-content: center;
   padding: 3rem 1rem;
   background: radial-gradient(circle at 50% 20%, var(--app-gradient-1) 0%, transparent 50%),
-              radial-gradient(circle at 20% 80%, var(--app-gradient-2) 0%, transparent 40%),
-              var(--app-bg);
+    radial-gradient(circle at 20% 80%, var(--app-gradient-2) 0%, transparent 40%),
+    var(--app-bg);
   transition: background 0.3s ease;
 }
 
@@ -107,7 +108,9 @@ body {
 }
 
 /* --- Form Controls --- */
-.glass-input, .form-control.glass-input, .form-select.glass-input {
+.glass-input,
+.form-control.glass-input,
+.form-select.glass-input {
   background: var(--app-input-bg) !important;
   border: 1px solid var(--app-input-border) !important;
   color: var(--app-input-text) !important;
@@ -388,19 +391,42 @@ body {
 
 /* --- Success Animations --- */
 @keyframes success-pop {
-  0% { transform: scale(0.8); opacity: 0; }
-  50% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes draw-check {
-  0% { stroke-dashoffset: 100; }
-  100% { stroke-dashoffset: 0; }
+  0% {
+    stroke-dashoffset: 100;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
 @keyframes fade-up {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .success-icon-container {
@@ -433,6 +459,7 @@ body {
   opacity: 0;
   animation: fade-up 0.6s ease forwards 0.6s;
 }
+
 .animate-fade-up-2 {
   opacity: 0;
   animation: fade-up 0.6s ease forwards 0.8s;

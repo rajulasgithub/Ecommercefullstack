@@ -50,7 +50,7 @@ describe('Authentication Flow', () => {
     test('shows validation errors for empty fields', async () => {
       render(<MockProviders><Login /></MockProviders>);
       const submitButton = screen.getByRole('button', { name: /Sign In/i });
-      
+
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -60,15 +60,15 @@ describe('Authentication Flow', () => {
     });
 
     test('submits valid form data to API', async () => {
-      api.post.mockResolvedValueOnce({ 
-        data: { success: true, loginId: '123', role: 'user', token: 'mockToken' } 
+      api.post.mockResolvedValueOnce({
+        data: { success: true, loginId: '123', role: 'user', token: 'mockToken' }
       });
 
       render(<MockProviders><Login /></MockProviders>);
 
       fireEvent.change(screen.getByPlaceholderText(/name@example.com/i), { target: { value: 'test@test.com' } });
       fireEvent.change(screen.getByPlaceholderText(/••••••••/i), { target: { value: 'Pass123!' } });
-      
+
       fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
       await waitFor(() => {
@@ -98,7 +98,7 @@ describe('Authentication Flow', () => {
       const passwordInputs = screen.getAllByPlaceholderText(/••••••••/i);
       fireEvent.change(passwordInputs[0], { target: { value: 'Pass123!' } });
       fireEvent.change(passwordInputs[1], { target: { value: 'Pass1234!' } });
-      
+
       fireEvent.click(screen.getByRole('button', { name: /Create Account/i }));
 
       await waitFor(() => {

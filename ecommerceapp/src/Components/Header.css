@@ -121,7 +121,8 @@
 }
 
 /* Role Indicator Badges */
-.role-user-badge, .role-seller-badge {
+.role-user-badge,
+.role-seller-badge {
   font-size: 0.8rem;
   font-weight: 600;
   padding: 0.35rem 0.75rem;
@@ -144,7 +145,8 @@
   border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
-.user-dot, .seller-dot {
+.user-dot,
+.seller-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;

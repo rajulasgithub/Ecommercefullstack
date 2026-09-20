@@ -16,7 +16,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  
+
   const [profile, setProfile] = useState({});
   const [formData, setFormData] = useState({});
   const [imageFile, setImageFile] = useState(null);
@@ -537,9 +537,9 @@ const Profile = () => {
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <Form.Label className="glass-label mb-0">Profile Bio</Form.Label>
                         {isEditing && (
-                          <Button 
-                            variant="outline-light" 
-                            size="sm" 
+                          <Button
+                            variant="outline-light"
+                            size="sm"
                             className="d-flex align-items-center gap-2"
                             onClick={handleGenerateBio}
                             disabled={generatingBio}

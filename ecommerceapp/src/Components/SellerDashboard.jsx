@@ -85,7 +85,7 @@ const SellerDashboard = () => {
         try {
           const parsed = JSON.parse(imgData);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed[0];
-        } catch (e) {}
+        } catch (e) { }
       }
       return imgData;
     }
