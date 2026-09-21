@@ -20,6 +20,19 @@ import './Style.css';
 const SellerDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('my-products');
+  const [sellerName, setSellerName] = useState('');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get('/auth/viewinfo');
+        if (res.data?.success && res.data?.data?.companyName) {
+          setSellerName(res.data.data.companyName);
+        }
+      } catch (err) {}
+    };
+    fetchProfile();
+  }, []);
 
   // Products state for My Products tab
   const [products, setProducts] = useState([]);
@@ -313,7 +326,7 @@ const SellerDashboard = () => {
           <div>
             <div className="seller-sidebar-header">
               <div className="seller-sidebar-title">
-                <span>🏪</span> Seller Portal
+                <span>🏪</span> {sellerName || 'Seller Portal'}
               </div>
               <div className="seller-sidebar-subtitle">Manage your inventory & sales</div>
             </div>
