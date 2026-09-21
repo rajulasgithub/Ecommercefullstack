@@ -31,11 +31,13 @@ const Companysignup = () => {
 
   const fileChange = (event) => {
     setCompanysignup({ ...companysignup, image: event.target.files[0] });
+    setError({ ...error, image: "" });
     setServerError("");
   };
 
   const Validate = () => {
     const errormessage = {};
+    if (!companysignup.image) errormessage.image = "Company logo/image is required";
     const companyNameErr = validateCompanyName(companysignup.companyName);
     if (companyNameErr) errormessage.companyName = companyNameErr;
     if (isEmpty(companysignup.state)) errormessage.state = "State is required";
@@ -166,6 +168,7 @@ const Companysignup = () => {
                       className="glass-input"
                       onChange={fileChange}
                     />
+                    {error.image && <span className="glass-error-badge">{error.image}</span>}
                   </Form.Group>
                 </Col>
 
