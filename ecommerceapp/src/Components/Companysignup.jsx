@@ -148,7 +148,7 @@ const Companysignup = () => {
       />
       <Header />
       <div className="auth-page-container">
-        <Container style={{ maxWidth: "700px" }}>
+        <Container style={{ maxWidth: "680px" }}>
           <div className="glass-card">
             <div className="text-center mb-4">
               <h1 className="page-title" style={{ fontSize: "2rem" }}>Company Registration</h1>
