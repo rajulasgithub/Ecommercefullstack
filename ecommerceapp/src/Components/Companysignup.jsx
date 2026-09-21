@@ -20,6 +20,7 @@ const Companysignup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [companysignup, setCompanysignup] = useState({});
+  const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState({});
   const [serverError, setServerError] = useState("");
 
@@ -30,9 +31,13 @@ const Companysignup = () => {
   };
 
   const fileChange = (event) => {
-    setCompanysignup({ ...companysignup, image: event.target.files[0] });
-    setError({ ...error, image: "" });
-    setServerError("");
+    const file = event.target.files[0];
+    if (file) {
+      setCompanysignup({ ...companysignup, image: file });
+      setImagePreview(URL.createObjectURL(file));
+      setError({ ...error, image: "" });
+      setServerError("");
+    }
   };
 
   const Validate = () => {
@@ -158,19 +163,43 @@ const Companysignup = () => {
             )}
 
             <Form onSubmit={handleSubmit} encType="multipart/form-data">
-              <Row className="g-3 mb-2">
-                <Col xs={12} sm={6}>
-                  <Form.Group>
-                    <Form.Label className="glass-label">Company Logo / Image</Form.Label>
-                    <Form.Control
-                      type="file"
-                      name="image"
-                      className="glass-input"
-                      onChange={fileChange}
-                    />
-                    {error.image && <span className="glass-error-badge">{error.image}</span>}
+              <Row className="g-3 mb-3 justify-content-center">
+                <Col xs={12} className="text-center">
+                  <Form.Group className="d-flex flex-column align-items-center">
+                    <Form.Label className="glass-label d-block mb-2">Company Logo / Image</Form.Label>
+                    <div className="position-relative" style={{ width: "100px", height: "100px" }}>
+                      <label htmlFor="company-logo-upload" style={{ cursor: "pointer", display: "block", width: "100%", height: "100%" }}>
+                        {imagePreview ? (
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,255,255,0.4)", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
+                          />
+                        ) : (
+                          <div style={{ width: "100%", height: "100%", borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.1)", border: "2px dashed rgba(255,255,255,0.4)", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s ease" }} className="avatar-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                              <polyline points="17 8 12 3 7 8"></polyline>
+                              <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                          </div>
+                        )}
+                      </label>
+                      <Form.Control
+                        id="company-logo-upload"
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={fileChange}
+                      />
+                    </div>
+                    {error.image && <span className="glass-error-badge mt-2">{error.image}</span>}
                   </Form.Group>
                 </Col>
+              </Row>
+
+              <Row className="g-3 mb-2">
 
                 <Col xs={12} sm={6}>
                   <Form.Group>

@@ -182,21 +182,31 @@ const Signup = () => {
             <Form onSubmit={handleSubmit}>
               <Row className="g-3 mb-3 justify-content-center">
                 <Col xs={12} className="text-center">
-                  <Form.Group>
-                    <Form.Label className="glass-label d-block">Profile Picture (Optional)</Form.Label>
-                    <div className="d-flex align-items-center justify-content-center gap-3">
-                      {imagePreview && (
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          style={{ width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,255,255,0.2)" }}
-                        />
-                      )}
+                  <Form.Group className="d-flex flex-column align-items-center">
+                    <Form.Label className="glass-label d-block mb-2">Profile Picture (Optional)</Form.Label>
+                    <div className="position-relative" style={{ width: "100px", height: "100px" }}>
+                      <label htmlFor="profile-upload" style={{ cursor: "pointer", display: "block", width: "100%", height: "100%" }}>
+                        {imagePreview ? (
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,255,255,0.4)", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
+                          />
+                        ) : (
+                          <div style={{ width: "100%", height: "100%", borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.1)", border: "2px dashed rgba(255,255,255,0.4)", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s ease" }} className="avatar-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                              <polyline points="17 8 12 3 7 8"></polyline>
+                              <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                          </div>
+                        )}
+                      </label>
                       <Form.Control
+                        id="profile-upload"
                         type="file"
                         accept="image/*"
-                        className="glass-input"
-                        style={{ maxWidth: "300px" }}
+                        style={{ display: "none" }}
                         onChange={handleFileChange}
                       />
                     </div>
