@@ -166,7 +166,6 @@ const Companysignup = () => {
               <Row className="g-3 mb-3 justify-content-center">
                 <Col xs={12} className="text-center">
                   <Form.Group className="d-flex flex-column align-items-center">
-                    <Form.Label className="glass-label d-block mb-2">Company Logo / Image</Form.Label>
                     <div className="position-relative" style={{ width: "100px", height: "100px" }}>
                       <label htmlFor="company-logo-upload" style={{ cursor: "pointer", display: "block", width: "100%", height: "100%" }}>
                         {imagePreview ? (
@@ -194,7 +193,8 @@ const Companysignup = () => {
                         onChange={fileChange}
                       />
                     </div>
-                    {error.image && <span className="glass-error-badge mt-2">{error.image}</span>}
+                    <Form.Label className="glass-label d-block mt-2 mb-0">Company Logo / Image</Form.Label>
+                    {error.image && <span className="glass-error-badge mt-1">{error.image}</span>}
                   </Form.Group>
                 </Col>
               </Row>

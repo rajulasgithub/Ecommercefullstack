@@ -324,7 +324,7 @@ const Signup = () => {
               </Row>
 
               <Row className="g-3 mb-2">
-                <Col xs={12} sm={12}>
+                <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">Pincode</Form.Label>
                     <Form.Control
@@ -337,10 +337,8 @@ const Signup = () => {
                     {error.pincode && <span className="glass-error-badge">{error.pincode}</span>}
                   </Form.Group>
                 </Col>
-              </Row>
 
-              <Row className="g-3 mb-2">
-                <Col xs={12}>
+                <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">Email Address</Form.Label>
                     <Form.Control
