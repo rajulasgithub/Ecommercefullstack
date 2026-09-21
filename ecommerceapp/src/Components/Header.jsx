@@ -212,6 +212,14 @@ const Header = () => {
                   <>
                     <Nav.Link
                       as={Link}
+                      to="/sellerdashboard"
+                      className={`header-nav-link ${isActive("/sellerdashboard") ? "active" : ""}`}
+                    >
+                      📊 Seller Dashboard
+                    </Nav.Link>
+
+                    <Nav.Link
+                      as={Link}
                       to="/cart"
                       className={`header-nav-link ${isActive("/cart") ? "active" : ""}`}
                     >
