@@ -3,6 +3,7 @@ import "./Header.css";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from "../utils/api";
 
@@ -67,22 +68,26 @@ const Header = () => {
 
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ms-auto align-items-lg-center gap-lg-2 py-2 py-lg-0">
-            {/* Primary Public Navigation Links (Always Visible) */}
-            <Nav.Link
-              as={Link}
-              to="/"
-              className={`header-nav-link ${isActive("/") || isActive("/home") ? "active" : ""}`}
-            >
-              Home
-            </Nav.Link>
+            {/* Primary Public Navigation Links (Always Visible unless Seller) */}
+            {role !== 'seller' && role !== 'company' && (
+              <Nav.Link
+                as={Link}
+                to="/"
+                className={`header-nav-link ${isActive("/") || isActive("/home") ? "active" : ""}`}
+              >
+                Home
+              </Nav.Link>
+            )}
 
-            <Nav.Link
-              as={Link}
-              to="/viewproduct"
-              className={`header-nav-link ${isActive("/viewproduct") ? "active" : ""}`}
-            >
-              Shop Catalog
-            </Nav.Link>
+            {role !== 'seller' && role !== 'company' && (
+              <Nav.Link
+                as={Link}
+                to="/viewproduct"
+                className={`header-nav-link ${isActive("/viewproduct") ? "active" : ""}`}
+              >
+                Shop Catalog
+              </Nav.Link>
+            )}
 
             {/* Conditional Navigation Links Based on Role */}
             {(() => {
@@ -207,32 +212,6 @@ const Header = () => {
                   <>
                     <Nav.Link
                       as={Link}
-                      to="/sellerdashboard"
-                      className={`header-nav-link ${isActive("/sellerdashboard") ? "active" : ""}`}
-                    >
-                      📊 Seller Dashboard
-                    </Nav.Link>
-
-                    <Nav.Link
-                      as={Link}
-                      to="/profile"
-                      className={`header-nav-link d-inline-flex align-items-center gap-1 ${isActive("/profile") ? "active" : ""}`}
-                    >
-                      {userImage ? (
-                        <img
-                          src={userImage}
-                          alt="Avatar"
-                          style={{ width: "22px", height: "22px", borderRadius: "50%", objectFit: "cover" }}
-                          onError={(e) => { e.target.style.display = "none"; }}
-                        />
-                      ) : (
-                        "👤 "
-                      )}
-                      My Profile
-                    </Nav.Link>
-
-                    <Nav.Link
-                      as={Link}
                       to="/cart"
                       className={`header-nav-link ${isActive("/cart") ? "active" : ""}`}
                     >
@@ -252,14 +231,33 @@ const Header = () => {
 
                     <div className="header-divider d-none d-lg-block mx-1"></div>
 
-                    <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0 ms-lg-2">
-                      <span className="role-seller-badge" onClick={() => navigate("/profile")} style={{ cursor: "pointer" }}>
-                        <span className="seller-dot"></span> Seller Portal
-                      </span>
-                      <button className="btn-header-logout" onClick={logout}>
+                    <NavDropdown
+                      title={
+                        <span className="role-seller-badge d-inline-flex align-items-center m-0" style={{ cursor: "pointer" }}>
+                          {userImage ? (
+                            <img
+                              src={userImage}
+                              alt="Avatar"
+                              style={{ width: "20px", height: "20px", borderRadius: "50%", objectFit: "cover", marginRight: "6px" }}
+                              onError={(e) => { e.target.style.display = "none"; }}
+                            />
+                          ) : (
+                            <span className="seller-dot me-2"></span>
+                          )}
+                          Seller Portal
+                        </span>
+                      }
+                      id="seller-nav-dropdown"
+                      align="end"
+                    >
+                      <NavDropdown.Item as="button" onClick={toggleTheme}>
+                        {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item as="button" onClick={logout} style={{ color: "#f87171", fontWeight: 600 }}>
                         Logout
-                      </button>
-                    </div>
+                      </NavDropdown.Item>
+                    </NavDropdown>
                   </>
                 );
               }
@@ -296,15 +294,17 @@ const Header = () => {
               );
             })()}
 
-            {/* Theme Toggle Button */}
-            <button
-              type="button"
-              className="btn-theme-toggle ms-lg-2 my-2 my-lg-0"
-              onClick={toggleTheme}
-              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-            >
-              {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
-            </button>
+            {/* Theme Toggle Button (Hidden for Sellers since it is in dropdown) */}
+            {role !== 'seller' && role !== 'company' && (
+              <button
+                type="button"
+                className="btn-theme-toggle ms-lg-2 my-2 my-lg-0"
+                onClick={toggleTheme}
+                title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+              >
+                {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+              </button>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

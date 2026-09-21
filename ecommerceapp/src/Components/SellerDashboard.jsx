@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
@@ -16,6 +17,7 @@ import './SellerDashboard.css';
 import './Style.css';
 
 const SellerDashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('my-products');
 
   // Products state for My Products tab
@@ -356,6 +358,22 @@ const SellerDashboard = () => {
                     </span>
                   )}
                 </div>
+              </button>
+
+              <div className="border-top border-secondary-subtle my-2 mx-2"></div>
+
+              <button
+                className="seller-nav-item"
+                onClick={() => navigate('/viewproduct')}
+              >
+                <span>🛍️</span> Shop Catalog
+              </button>
+
+              <button
+                className="seller-nav-item"
+                onClick={() => navigate('/profile')}
+              >
+                <span>👤</span> My Profile
               </button>
             </nav>
           </div>
