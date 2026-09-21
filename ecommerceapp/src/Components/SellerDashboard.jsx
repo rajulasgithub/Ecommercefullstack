@@ -70,7 +70,7 @@ const SellerDashboard = () => {
       fetchNotifications();
       toast.success('All notifications marked as read.');
     } catch (e) {
-      toast.error('Failed to update notifications.');
+      toast.error(e.response?.data?.message || 'Failed to update notifications.');
     }
   };
 
@@ -87,7 +87,7 @@ const SellerDashboard = () => {
       fetchNotifications();
       toast.success('Notification removed.');
     } catch (e) {
-      toast.error('Failed to remove notification.');
+      toast.error(e.response?.data?.message || 'Failed to remove notification.');
     }
   };
 

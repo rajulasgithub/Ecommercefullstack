@@ -65,7 +65,8 @@ const Vieworders = ({ hideHeader = false }) => {
         setOrder(order.map(item => item._id === id ? { ...item, status: 3 } : item));
       })
       .catch((error) => {
-        toast.error("Failed to cancel order.");
+        const msg = error.response?.data?.message || "Failed to cancel order.";
+        toast.error(msg);
         console.log(error);
       });
   };
@@ -77,7 +78,8 @@ const Vieworders = ({ hideHeader = false }) => {
         setOrder(order.map(item => item._id === id ? { ...item, status: parseInt(value) } : item));
       })
       .catch((error) => {
-        toast.error("Failed to update order status.");
+        const msg = error.response?.data?.message || "Failed to update order status.";
+        toast.error(msg);
         console.log(error);
       });
   };

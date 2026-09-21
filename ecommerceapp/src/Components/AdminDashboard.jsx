@@ -69,7 +69,7 @@ const AdminDashboard = () => {
       }
     } catch (err) {
       console.error('Failed to fetch users:', err);
-      toast.error('Failed to load user records.');
+      toast.error(err.response?.data?.message || 'Failed to load user records.');
     } finally {
       setLoadingUsers(false);
     }
@@ -85,7 +85,7 @@ const AdminDashboard = () => {
       }
     } catch (err) {
       console.error('Failed to fetch sellers:', err);
-      toast.error('Failed to load merchant records.');
+      toast.error(err.response?.data?.message || 'Failed to load merchant records.');
     } finally {
       setLoadingSellers(false);
     }

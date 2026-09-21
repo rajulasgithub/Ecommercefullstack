@@ -107,7 +107,8 @@ const Cart = () => {
         setAddress(response.data.data || {});
       })
       .catch((error) => {
-        toast.error("Failed to save address.");
+        const msg = error.response?.data?.message || "Failed to save address.";
+        toast.error(msg);
         console.log(error);
       });
   };
@@ -127,7 +128,8 @@ const Cart = () => {
         toast.success("Shipping address updated!");
       })
       .catch((error) => {
-        toast.error("Failed to update address.");
+        const msg = error.response?.data?.message || "Failed to update address.";
+        toast.error(msg);
         console.log(error);
       });
   };
@@ -146,7 +148,8 @@ const Cart = () => {
             setCartitem(cartitem.filter((data) => data._id !== id));
           })
           .catch((err) => {
-            toast.error("Failed to remove item.");
+            const msg = err.response?.data?.message || "Failed to remove item.";
+            toast.error(msg);
             console.log(err);
           });
       });

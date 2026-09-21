@@ -55,7 +55,8 @@ const OrderSummary = () => {
         navigate('/ordersuccess');
       })
       .catch((error) => {
-        toast.error("Failed to place order. Please try again.");
+        const msg = error.response?.data?.message || "Failed to place order. Please try again.";
+        toast.error(msg);
         console.log(error);
       });
   };
