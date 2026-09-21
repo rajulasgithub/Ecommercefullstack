@@ -90,6 +90,17 @@ const Login = () => {
       });
 
       if (response.data.success) {
+        if (!response.data.isProfileComplete) {
+          toast.info("Please complete your profile details to finish sign up.");
+          navigate('/complete-profile', {
+            state: {
+              googleToken: response.data.googleToken,
+              googleData: response.data.googleData,
+            },
+          });
+          return;
+        }
+
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.role);
         localStorage.setItem("loginId", response.data.loginId);

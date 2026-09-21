@@ -19,6 +19,8 @@ import {
   updateCompany,
   googleLogin,
   googleCompanyLogin,
+  googleCompleteUser,
+  googleCompleteCompany,
   forgotPassword,
   resetPassword,
   verifyOtp,
@@ -38,12 +40,10 @@ const passwordValidationRules = body("password")
   .matches(/[0-9]/).withMessage("Password must contain at least one number")
   .matches(/[^A-Za-z0-9]/).withMessage("Password must contain at least one special character");
 
-// User Signup Validation Rules
-const signupValidation = [
-  body("email").trim().isEmail().withMessage("Please provide a valid email address"),
-  passwordValidationRules,
+// User Profile Fields Validation (without password requirement for Google complete)
+const userProfileValidationRules = [
   body("firstName").trim().notEmpty().withMessage("First name is required").isLength({ min: 2, max: 50 })
-  .withMessage("First name must be between 2 and 50 characters").matches(/^[A-Za-z\s]+$/).withMessage("First name should only contain letters"),
+    .withMessage("First name must be between 2 and 50 characters").matches(/^[A-Za-z\s]+$/).withMessage("First name should only contain letters"),
   body("lastName")
     .trim()
     .notEmpty().withMessage("Last name is required")
@@ -72,6 +72,20 @@ const signupValidation = [
     .trim()
     .isLength({ max: 500 })
     .withMessage("Bio cannot exceed 500 characters"),
+];
+
+// User Signup Validation Rules
+const signupValidation = [
+  body("email").trim().isEmail().withMessage("Please provide a valid email address"),
+  passwordValidationRules,
+  ...userProfileValidationRules,
+  handleValidationErrors,
+];
+
+// Google User Complete Validation Rules
+const googleCompleteUserValidation = [
+  body("token").notEmpty().withMessage("Google token is required"),
+  ...userProfileValidationRules,
   handleValidationErrors,
 ];
 
@@ -82,10 +96,8 @@ const loginValidation = [
   handleValidationErrors,
 ];
 
-// Company Signup Validation Rules
-const companySignupValidation = [
-  body("email").trim().isEmail().withMessage("Please provide a valid email address"),
-  passwordValidationRules,
+// Seller Profile Fields Validation
+const companyProfileValidationRules = [
   body("companyName")
     .trim()
     .notEmpty().withMessage("Company name is required")
@@ -116,6 +128,20 @@ const companySignupValidation = [
     .trim()
     .isLength({ max: 500 })
     .withMessage("Bio cannot exceed 500 characters"),
+];
+
+// Company Signup Validation Rules
+const companySignupValidation = [
+  body("email").trim().isEmail().withMessage("Please provide a valid email address"),
+  passwordValidationRules,
+  ...companyProfileValidationRules,
+  handleValidationErrors,
+];
+
+// Google Seller Complete Validation Rules
+const googleCompleteCompanyValidation = [
+  body("token").notEmpty().withMessage("Google token is required"),
+  ...companyProfileValidationRules,
   handleValidationErrors,
 ];
 
@@ -130,9 +156,11 @@ authroutes.post('/login', loginValidation, login);
 
 // Google Login (User)
 authroutes.post('/google', googleLogin);
+authroutes.post('/google-complete-user', uploadProfileImage.single("image"), googleCompleteUserValidation, googleCompleteUser);
 
 // Google Login/Signup (Company / Seller)
 authroutes.post('/google-company', googleCompanyLogin);
+authroutes.post('/google-complete-company', uploadCompanyLogo.single("image"), googleCompleteCompanyValidation, googleCompleteCompany);
 
 // Forgot / Reset Password
 authroutes.post('/forgot-password', forgotPassword);

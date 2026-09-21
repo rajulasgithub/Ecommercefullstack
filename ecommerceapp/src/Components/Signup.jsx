@@ -143,6 +143,17 @@ const Signup = () => {
       });
 
       if (response.data && response.data.success) {
+        if (!response.data.isProfileComplete) {
+          toast.info("Please complete your profile details to finish sign up.");
+          navigate('/complete-profile', {
+            state: {
+              googleToken: response.data.googleToken,
+              googleData: response.data.googleData,
+            },
+          });
+          return;
+        }
+
         toast.success("🎉 Account created successfully with Google!");
         if (response.data.token) {
           localStorage.setItem("loginId", response.data.loginId);

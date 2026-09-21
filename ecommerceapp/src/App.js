@@ -23,6 +23,8 @@ import Wishlist from './Components/Wishlist';
 import Payment from './Components/Payment';
 import OrderSuccess from './Components/OrderSuccess';
 import Profile from './Components/Profile';
+import CompleteProfile from './Components/CompleteProfile';
+import CompleteCompanyProfile from './Components/CompleteCompanyProfile';
 import ProtectedRoute from './Components/ProtectedRoute';
 import NotFound from './Components/NotFound';
 import ROLES from './utils/roles';
@@ -49,6 +51,8 @@ function App() {
           <Route path='/home' element={<Home />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/complete-profile' element={<CompleteProfile />} />
+          <Route path='/complete-seller-profile' element={<CompleteCompanyProfile />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/reset-password' element={<ResetPassword />} />
           <Route path='/companysignup' element={<Companysignup />} />

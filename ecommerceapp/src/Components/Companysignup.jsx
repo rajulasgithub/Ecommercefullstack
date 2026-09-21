@@ -124,6 +124,17 @@ const Companysignup = () => {
         token: credentialResponse.credential,
       });
       if (response.data && response.data.success) {
+        if (!response.data.isProfileComplete) {
+          toast.info("Please complete your company details to finish seller setup.");
+          navigate('/complete-seller-profile', {
+            state: {
+              googleToken: response.data.googleToken,
+              googleData: response.data.googleData,
+            },
+          });
+          return;
+        }
+
         localStorage.setItem("loginId", response.data.loginId);
         localStorage.setItem("role", response.data.role);
         localStorage.setItem("token", response.data.token);
