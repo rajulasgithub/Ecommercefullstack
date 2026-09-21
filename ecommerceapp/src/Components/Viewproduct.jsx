@@ -576,9 +576,6 @@ const Viewproduct = () => {
       <Container className="py-4">
         {/* Page Header */}
         <div className="page-header">
-          <span className="status-pill ordered mb-2">Curated Fashion</span>
-          <h1 className="page-title">Explore Our Apparel Collection</h1>
-          <p className="page-subtitle">Discover handcrafted dresses, ethnic wear, and modern outfits</p>
         </div>
 
         {errorMsg && (

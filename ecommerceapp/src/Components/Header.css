@@ -56,6 +56,7 @@
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 .header-nav-link:hover {
@@ -85,6 +86,7 @@
   gap: 6px;
   backdrop-filter: blur(10px);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
 }
 
 .btn-theme-toggle:hover {
@@ -135,6 +137,7 @@
   align-items: center;
   gap: 6px;
   backdrop-filter: blur(10px);
+  white-space: nowrap;
 }
 
 .role-user-badge {
@@ -176,6 +179,7 @@
   border-radius: 10px;
   transition: all 0.25s ease;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
 }
 
 .header-login-btn:hover {
@@ -195,6 +199,7 @@
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(255, 255, 255, 0.15);
+  white-space: nowrap;
 }
 
 .header-cta-link:hover {
@@ -213,6 +218,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.25s ease;
+  white-space: nowrap;
 }
 
 .btn-header-logout:hover {
