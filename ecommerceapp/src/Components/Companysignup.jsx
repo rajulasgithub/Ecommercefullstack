@@ -101,7 +101,7 @@ const Companysignup = () => {
           localStorage.setItem("role", response.data.role);
           localStorage.setItem("token", response.data.token);
         }
-        navigate('/vieworders');
+        navigate('/sellerdashboard');
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Company registration failed. Please try again.";
