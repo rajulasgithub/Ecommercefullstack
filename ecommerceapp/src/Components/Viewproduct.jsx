@@ -263,7 +263,7 @@ const ProductCardItem = ({ item, role, navigate, handleShow, dltproduct, setStat
   );
 };
 
-const Viewproduct = () => {
+const Viewproduct = ({ hideHeader }) => {
   const role = localStorage.getItem("role");
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -571,7 +571,7 @@ const Viewproduct = () => {
         keywords={`trendlife, ${selectedCategory || 'fashion'}, ${selectedStyle || 'clothing'}, catalog, online shop`}
         structuredData={catalogStructuredData}
       />
-      <Header />
+      {!hideHeader && <Header />}
 
       <Container className="py-4">
         {/* Page Header */}

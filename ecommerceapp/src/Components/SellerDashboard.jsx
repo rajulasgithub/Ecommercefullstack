@@ -12,6 +12,7 @@ import Header from './Header';
 import SEO from './SEO';
 import Addproduct from './Addproduct';
 import Vieworders from './Vieworders';
+import Viewproduct from './Viewproduct';
 import { isNumeric, isEmpty, MATERIALS, STYLES } from '../utils/validation';
 import './SellerDashboard.css';
 import './Style.css';
@@ -360,13 +361,11 @@ const SellerDashboard = () => {
                 </div>
               </button>
 
-              <div className="border-top border-secondary-subtle my-2 mx-2"></div>
-
               <button
-                className="seller-nav-item"
-                onClick={() => navigate('/viewproduct')}
+                className={`seller-nav-item ${activeTab === 'all-products' ? 'active' : ''}`}
+                onClick={() => setActiveTab('all-products')}
               >
-                <span>🛍️</span> Shop Catalog
+                <span>🌐</span> All Products
               </button>
 
               <button
@@ -608,6 +607,19 @@ const SellerDashboard = () => {
                 </button>
               </div>
               <Vieworders hideHeader={true} />
+            </div>
+          )}
+
+          {/* TAB: ALL PRODUCTS */}
+          {activeTab === 'all-products' && (
+            <div>
+              <div className="seller-page-header">
+                <div className="seller-header-title">
+                  <h2>All Products Catalog</h2>
+                  <p>Browse all items available on the platform</p>
+                </div>
+              </div>
+              <Viewproduct hideHeader={true} />
             </div>
           )}
 
