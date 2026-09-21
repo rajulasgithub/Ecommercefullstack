@@ -11,6 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from './Header';
 import SEO from './SEO';
+import { GoogleLogin } from '@react-oauth/google';
 import { isValidEmail, isEmpty, validatePassword, validateConfirmPassword, validateName, validatePhone, GENDERS, validateGender, validatePincode } from '../utils/validation';
 
 const Signup = () => {
@@ -127,6 +128,31 @@ const Signup = () => {
       }
     } catch (err) {
       const msg = err.response?.data?.message || "Registration failed. Please try again.";
+      toast.error(msg);
+      setServerError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const response = await api.post("/auth/google", {
+        token: credentialResponse.credential,
+      });
+
+      if (response.data && response.data.success) {
+        toast.success("🎉 Account created successfully with Google!");
+        if (response.data.token) {
+          localStorage.setItem("loginId", response.data.loginId);
+          localStorage.setItem("role", response.data.role);
+          localStorage.setItem("token", response.data.token);
+        }
+        navigate('/viewproduct');
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Google Signup failed. Please try again.";
       toast.error(msg);
       setServerError(msg);
     } finally {
@@ -410,6 +436,27 @@ const Signup = () => {
                     "Create Account"
                   )}
                 </Button>
+              </div>
+
+              <div className="d-flex align-items-center my-4">
+                <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
+                <span style={{ margin: '0 10px', color: '#9ca3af', fontSize: '0.85rem' }}>OR</span>
+                <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
+              </div>
+
+              <div className="d-flex justify-content-center mb-3">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => {
+                    toast.error('Google Signup Failed');
+                    setServerError('Google Signup Failed');
+                  }}
+                  useOneTap
+                  theme="filled_black"
+                  shape="rectangular"
+                  text="signup_with"
+                  size="large"
+                />
               </div>
 
               <div className="text-center mt-3" style={{ fontSize: "0.875rem", color: "#9ca3af" }}>
