@@ -151,7 +151,6 @@ const Companysignup = () => {
         <Container style={{ maxWidth: "700px" }}>
           <div className="glass-card">
             <div className="text-center mb-4">
-              <span className="status-pill processing mb-2">Seller Portal</span>
               <h1 className="page-title" style={{ fontSize: "2rem" }}>Company Registration</h1>
               <p className="page-subtitle" style={{ fontSize: "0.9rem" }}>Partner with TrendLife to showcase your apparel collections</p>
             </div>
@@ -217,7 +216,7 @@ const Companysignup = () => {
               </Row>
 
               <Row className="g-3 mb-2">
-                <Col xs={12} sm={4}>
+                <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">State</Form.Label>
                     <Form.Control
@@ -231,7 +230,7 @@ const Companysignup = () => {
                   </Form.Group>
                 </Col>
 
-                <Col xs={12} sm={4}>
+                <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">District</Form.Label>
                     <Form.Control
@@ -242,20 +241,6 @@ const Companysignup = () => {
                       onChange={handleChange}
                     />
                     {error.district && <span className="glass-error-badge">{error.district}</span>}
-                  </Form.Group>
-                </Col>
-
-                <Col xs={12} sm={4}>
-                  <Form.Group>
-                    <Form.Label className="glass-label">Pincode</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Pincode"
-                      name="pincode"
-                      className="glass-input"
-                      onChange={handleChange}
-                    />
-                    {error.pincode && <span className="glass-error-badge">{error.pincode}</span>}
                   </Form.Group>
                 </Col>
               </Row>
@@ -305,7 +290,21 @@ const Companysignup = () => {
               </Row>
 
               <Row className="g-3 mb-2">
-                <Col xs={12}>
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Pincode</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Pincode"
+                      name="pincode"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.pincode && <span className="glass-error-badge">{error.pincode}</span>}
+                  </Form.Group>
+                </Col>
+
+                <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">Business Email</Form.Label>
                     <Form.Control
