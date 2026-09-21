@@ -168,9 +168,8 @@ const Signup = () => {
         <Container style={{ maxWidth: "680px" }}>
           <div className="glass-card">
             <div className="text-center mb-4">
-              <span className="status-pill ordered mb-2">Create Account</span>
               <h2 className="page-title" style={{ fontSize: "2rem" }}>Join TrendLife</h2>
-              <p className="page-subtitle" style={{ fontSize: "0.9rem" }}>Sign up to enjoy personalized shopping and fast checkout</p>
+              <p className="page-subtitle" style={{ fontSize: "0.9rem" }}>Sign up to enjoy personalized shopping</p>
             </div>
 
             {serverError && (
@@ -183,7 +182,6 @@ const Signup = () => {
               <Row className="g-3 mb-3 justify-content-center">
                 <Col xs={12} className="text-center">
                   <Form.Group className="d-flex flex-column align-items-center">
-                    <Form.Label className="glass-label d-block mb-2">Profile Picture (Optional)</Form.Label>
                     <div className="position-relative" style={{ width: "100px", height: "100px" }}>
                       <label htmlFor="profile-upload" style={{ cursor: "pointer", display: "block", width: "100%", height: "100%" }}>
                         {imagePreview ? (
@@ -210,6 +208,7 @@ const Signup = () => {
                         onChange={handleFileChange}
                       />
                     </div>
+                    <Form.Label className="glass-label d-block mt-2">Profile Picture (Optional)</Form.Label>
                   </Form.Group>
                 </Col>
               </Row>
