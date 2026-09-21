@@ -24,6 +24,7 @@ import Payment from './Components/Payment';
 import OrderSuccess from './Components/OrderSuccess';
 import Profile from './Components/Profile';
 import ProtectedRoute from './Components/ProtectedRoute';
+import NotFound from './Components/NotFound';
 import ROLES from './utils/roles';
 
 function App() {
@@ -153,6 +154,9 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* 404 Not Found */}
+          <Route path='*' element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </div>
