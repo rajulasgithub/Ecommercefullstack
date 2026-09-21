@@ -199,7 +199,6 @@ const Companysignup = () => {
               </Row>
 
               <Row className="g-3 mb-2">
-
                 <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">Company Name</Form.Label>
@@ -211,6 +210,20 @@ const Companysignup = () => {
                       onChange={handleChange}
                     />
                     {error.companyName && <span className="glass-error-badge">{error.companyName}</span>}
+                  </Form.Group>
+                </Col>
+
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="glass-label">Contact Number</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Contact Number"
+                      name="contactNumber"
+                      className="glass-input"
+                      onChange={handleChange}
+                    />
+                    {error.contactNumber && <span className="glass-error-badge">{error.contactNumber}</span>}
                   </Form.Group>
                 </Col>
               </Row>
@@ -246,21 +259,7 @@ const Companysignup = () => {
               </Row>
 
               <Row className="g-3 mb-2">
-                <Col xs={12} sm={4}>
-                  <Form.Group>
-                    <Form.Label className="glass-label">Contact Number</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Contact Number"
-                      name="contactNumber"
-                      className="glass-input"
-                      onChange={handleChange}
-                    />
-                    {error.contactNumber && <span className="glass-error-badge">{error.contactNumber}</span>}
-                  </Form.Group>
-                </Col>
-
-                <Col xs={12} sm={4}>
+                <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">Registration No.</Form.Label>
                     <Form.Control
@@ -274,7 +273,7 @@ const Companysignup = () => {
                   </Form.Group>
                 </Col>
 
-                <Col xs={12} sm={4}>
+                <Col xs={12} sm={6}>
                   <Form.Group>
                     <Form.Label className="glass-label">GST Number</Form.Label>
                     <Form.Control
