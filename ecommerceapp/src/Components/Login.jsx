@@ -63,7 +63,7 @@ const Login = () => {
           } else if (userRole === "seller" || userRole === "company") {
             navigate("/sellerdashboard");
           } else {
-            navigate("/");
+            navigate("/viewproduct");
           }
         }
       })
@@ -101,7 +101,7 @@ const Login = () => {
         } else if (userRole === "seller" || userRole === "company") {
           navigate("/sellerdashboard");
         } else {
-          navigate("/");
+          navigate("/viewproduct");
         }
       }
     } catch (err) {
