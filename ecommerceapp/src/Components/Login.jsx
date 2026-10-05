@@ -55,6 +55,7 @@ const Login = () => {
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("role", response.data.role);
           localStorage.setItem("loginId", response.data.loginId);
+          localStorage.setItem("isProfileComplete", response.data.isProfileComplete !== false ? "true" : "false");
 
           toast.success("Welcome back! Signed in successfully.");
           const userRole = String(response.data.role).toLowerCase();
@@ -90,21 +91,28 @@ const Login = () => {
       });
 
       if (response.data.success) {
-        if (!response.data.isProfileComplete) {
-          toast.info("Please complete your profile details to finish sign up.");
-          navigate('/complete-profile', {
-            state: {
-              googleToken: response.data.googleToken,
-              googleData: response.data.googleData,
-            },
-          });
-          return;
-        }
-
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.role);
         localStorage.setItem("loginId", response.data.loginId);
+        localStorage.setItem("isProfileComplete", response.data.isProfileComplete ? "true" : "false");
 
+        if (!response.data.isProfileComplete) {
+          const sessionData = {
+            googleToken: response.data.googleToken || credentialResponse.credential,
+            googleData: response.data.googleData,
+          };
+          sessionStorage.setItem("googleSignupData", JSON.stringify(sessionData));
+          toast.info("Please complete your profile details to finish sign up.");
+          const userRole = String(response.data.role).toLowerCase();
+          if (userRole === "seller" || userRole === "company") {
+            navigate('/complete-seller-profile', { state: sessionData });
+          } else {
+            navigate('/complete-profile', { state: sessionData });
+          }
+          return;
+        }
+
+        sessionStorage.removeItem("googleSignupData");
         toast.success("Google Login successful! Welcome.");
         const userRole = String(response.data.role).toLowerCase();
         if (userRole === "admin") {

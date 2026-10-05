@@ -123,6 +123,7 @@ const Signup = () => {
           localStorage.setItem("loginId", response.data.loginId);
           localStorage.setItem("role", response.data.role);
           localStorage.setItem("token", response.data.token);
+          localStorage.setItem("isProfileComplete", "true");
         }
         navigate('/viewproduct');
       }
@@ -143,23 +144,26 @@ const Signup = () => {
       });
 
       if (response.data && response.data.success) {
-        if (!response.data.isProfileComplete) {
-          toast.info("Please complete your profile details to finish sign up.");
-          navigate('/complete-profile', {
-            state: {
-              googleToken: response.data.googleToken,
-              googleData: response.data.googleData,
-            },
-          });
-          return;
-        }
-
-        toast.success("🎉 Account created successfully with Google!");
         if (response.data.token) {
           localStorage.setItem("loginId", response.data.loginId);
           localStorage.setItem("role", response.data.role);
           localStorage.setItem("token", response.data.token);
         }
+        localStorage.setItem("isProfileComplete", response.data.isProfileComplete ? "true" : "false");
+
+        if (!response.data.isProfileComplete) {
+          const sessionData = {
+            googleToken: response.data.googleToken || credentialResponse.credential,
+            googleData: response.data.googleData,
+          };
+          sessionStorage.setItem("googleSignupData", JSON.stringify(sessionData));
+          toast.info("Please complete your profile details to finish sign up.");
+          navigate('/complete-profile', { state: sessionData });
+          return;
+        }
+
+        sessionStorage.removeItem("googleSignupData");
+        toast.success("🎉 Account created successfully with Google!");
         navigate('/viewproduct');
       }
     } catch (err) {

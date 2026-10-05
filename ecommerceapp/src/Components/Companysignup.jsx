@@ -105,6 +105,7 @@ const Companysignup = () => {
           localStorage.setItem("loginId", response.data.loginId);
           localStorage.setItem("role", response.data.role);
           localStorage.setItem("token", response.data.token);
+          localStorage.setItem("isProfileComplete", "true");
         }
         navigate('/sellerdashboard');
       }
@@ -124,21 +125,25 @@ const Companysignup = () => {
         token: credentialResponse.credential,
       });
       if (response.data && response.data.success) {
+        if (response.data.token) {
+          localStorage.setItem("loginId", response.data.loginId);
+          localStorage.setItem("role", response.data.role);
+          localStorage.setItem("token", response.data.token);
+        }
+        localStorage.setItem("isProfileComplete", response.data.isProfileComplete ? "true" : "false");
+
         if (!response.data.isProfileComplete) {
+          const sessionData = {
+            googleToken: response.data.googleToken || credentialResponse.credential,
+            googleData: response.data.googleData,
+          };
+          sessionStorage.setItem("googleSignupData", JSON.stringify(sessionData));
           toast.info("Please complete your company details to finish seller setup.");
-          navigate('/complete-seller-profile', {
-            state: {
-              googleToken: response.data.googleToken,
-              googleData: response.data.googleData,
-            },
-          });
+          navigate('/complete-seller-profile', { state: sessionData });
           return;
         }
 
-        localStorage.setItem("loginId", response.data.loginId);
-        localStorage.setItem("role", response.data.role);
-        localStorage.setItem("token", response.data.token);
-
+        sessionStorage.removeItem("googleSignupData");
         toast.success("🎉 Welcome! Registered seller account with Google successfully.");
         navigate('/sellerdashboard');
       }

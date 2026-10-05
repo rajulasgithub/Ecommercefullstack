@@ -58,7 +58,7 @@ export const signup = async (req, res) => {
     const secret = process.env.JWT_SECRET || "encryptkey";
     const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
     const token = jwt.sign(
-      { loginId: loginResult._id, role: "user", email: loginResult.email },
+      { loginId: loginResult._id, role: "user", email: loginResult.email, isProfileComplete: true },
       secret,
       { expiresIn }
     );
@@ -78,6 +78,7 @@ export const signup = async (req, res) => {
     return res.status(200).json({
       success: true,
       error: false,
+      isProfileComplete: true,
       data: signupResult,
       token,
       role: "user",
@@ -140,6 +141,7 @@ export const login = async (req, res) => {
       return httpError(res, 400, "Invalid email or password");
     }
 
+    const isProfileComplete = user.isProfileComplete ?? true;
     const secret = process.env.JWT_SECRET || "encryptkey";
     const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
 
@@ -147,7 +149,8 @@ export const login = async (req, res) => {
       {
         loginId: user._id,
         role: user.role,
-        email: user.email
+        email: user.email,
+        isProfileComplete: isProfileComplete
       },
       secret,
       { expiresIn }
@@ -156,6 +159,7 @@ export const login = async (req, res) => {
     return res.status(200).json({
       success: true,
       error: false,
+      isProfileComplete: isProfileComplete,
       message: "Login successful",
       loginId: user._id,
       role: user.role,
@@ -183,36 +187,64 @@ export const googleLogin = async (req, res) => {
     const payload = ticket.getPayload();
     const { email, given_name, family_name, picture } = payload;
 
-    const existingLogin = await Login.findOne({ email, role: "user" });
-
-    if (existingLogin) {
-      const userProfile = await User.findOne({ loginId: existingLogin._id });
-      if (userProfile) {
-        const secret = process.env.JWT_SECRET || "encryptkey";
-        const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
-        const jwtToken = jwt.sign(
-          { loginId: existingLogin._id, role: existingLogin.role, email: existingLogin.email },
-          secret,
-          { expiresIn }
-        );
-
-        return res.status(200).json({
-          success: true,
-          error: false,
-          isProfileComplete: true,
-          message: "Google login successful",
-          loginId: existingLogin._id,
-          role: existingLogin.role,
-          token: jwtToken,
-        });
-      }
+    const existingOtherRole = await Login.findOne({ email, role: { $ne: "user" } });
+    if (existingOtherRole) {
+      return httpError(res, 400, `This email is already registered as a ${existingOtherRole.role}.`);
     }
+
+    let userLogin = await Login.findOne({ email, role: "user" });
+
+    if (!userLogin) {
+      const randomPassword = Math.random().toString(36).slice(-10) + "Aa1!";
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      userLogin = await Login.create({
+        email,
+        password: hashedPassword,
+        role: "user",
+        isProfileComplete: false,
+      });
+    }
+
+    const userProfile = await User.findOne({ loginId: userLogin._id });
+    const secret = process.env.JWT_SECRET || "encryptkey";
+    const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
+
+    if (userProfile) {
+      if (!userLogin.isProfileComplete) {
+        userLogin.isProfileComplete = true;
+        await userLogin.save();
+      }
+      const jwtToken = jwt.sign(
+        { loginId: userLogin._id, role: userLogin.role, email: userLogin.email, isProfileComplete: true },
+        secret,
+        { expiresIn }
+      );
+
+      return res.status(200).json({
+        success: true,
+        error: false,
+        isProfileComplete: true,
+        message: "Google login successful",
+        loginId: userLogin._id,
+        role: userLogin.role,
+        token: jwtToken,
+      });
+    }
+
+    const jwtToken = jwt.sign(
+      { loginId: userLogin._id, role: userLogin.role, email: userLogin.email, isProfileComplete: false },
+      secret,
+      { expiresIn }
+    );
 
     return res.status(200).json({
       success: true,
       error: false,
       isProfileComplete: false,
       message: "Please complete your profile details to finish registration",
+      token: jwtToken,
+      loginId: userLogin._id,
+      role: userLogin.role,
       googleToken: token,
       googleData: {
         email,
@@ -255,11 +287,14 @@ export const googleCompleteUser = async (req, res) => {
         email,
         password: hashedPassword,
         role: "user",
+        isProfileComplete: false,
       });
     }
 
     let existingProfile = await User.findOne({ loginId: userLogin._id });
     if (existingProfile) {
+      userLogin.isProfileComplete = true;
+      await userLogin.save();
       return httpError(res, 400, "Profile has already been completed. Please log in.");
     }
 
@@ -280,10 +315,13 @@ export const googleCompleteUser = async (req, res) => {
       bio: bio ? String(bio).trim() : "",
     });
 
+    userLogin.isProfileComplete = true;
+    await userLogin.save();
+
     const secret = process.env.JWT_SECRET || "encryptkey";
     const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
     const jwtToken = jwt.sign(
-      { loginId: userLogin._id, role: "user", email: userLogin.email },
+      { loginId: userLogin._id, role: "user", email: userLogin.email, isProfileComplete: true },
       secret,
       { expiresIn }
     );
@@ -329,30 +367,55 @@ export const googleCompanyLogin = async (req, res) => {
     const payload = ticket.getPayload();
     const { email, name, given_name, family_name, picture } = payload;
 
-    const existingLogin = await Login.findOne({ email, role: "seller" });
-
-    if (existingLogin) {
-      const companyProfile = await Company.findOne({ loginId: existingLogin._id });
-      if (companyProfile) {
-        const secret = process.env.JWT_SECRET || "encryptkey";
-        const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
-        const jwtToken = jwt.sign(
-          { loginId: existingLogin._id, role: existingLogin.role, email: existingLogin.email },
-          secret,
-          { expiresIn }
-        );
-
-        return res.status(200).json({
-          success: true,
-          error: false,
-          isProfileComplete: true,
-          message: "Google seller login successful",
-          loginId: existingLogin._id,
-          role: existingLogin.role,
-          token: jwtToken,
-        });
-      }
+    const existingOtherRole = await Login.findOne({ email, role: { $ne: "seller" } });
+    if (existingOtherRole) {
+      return httpError(res, 400, `This email is already registered as a ${existingOtherRole.role}.`);
     }
+
+    let sellerLogin = await Login.findOne({ email, role: "seller" });
+
+    if (!sellerLogin) {
+      const randomPassword = Math.random().toString(36).slice(-10) + "Aa1!";
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      sellerLogin = await Login.create({
+        email,
+        password: hashedPassword,
+        role: "seller",
+        isProfileComplete: false,
+      });
+    }
+
+    const companyProfile = await Company.findOne({ loginId: sellerLogin._id });
+    const secret = process.env.JWT_SECRET || "encryptkey";
+    const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
+
+    if (companyProfile) {
+      if (!sellerLogin.isProfileComplete) {
+        sellerLogin.isProfileComplete = true;
+        await sellerLogin.save();
+      }
+      const jwtToken = jwt.sign(
+        { loginId: sellerLogin._id, role: sellerLogin.role, email: sellerLogin.email, isProfileComplete: true },
+        secret,
+        { expiresIn }
+      );
+
+      return res.status(200).json({
+        success: true,
+        error: false,
+        isProfileComplete: true,
+        message: "Google seller login successful",
+        loginId: sellerLogin._id,
+        role: sellerLogin.role,
+        token: jwtToken,
+      });
+    }
+
+    const jwtToken = jwt.sign(
+      { loginId: sellerLogin._id, role: sellerLogin.role, email: sellerLogin.email, isProfileComplete: false },
+      secret,
+      { expiresIn }
+    );
 
     const suggestedCompanyName = name || (given_name ? `${given_name} ${family_name || ''}`.trim() : "");
     return res.status(200).json({
@@ -360,6 +423,9 @@ export const googleCompanyLogin = async (req, res) => {
       error: false,
       isProfileComplete: false,
       message: "Please complete your business profile to finish seller registration",
+      token: jwtToken,
+      loginId: sellerLogin._id,
+      role: sellerLogin.role,
       googleToken: token,
       googleData: {
         email,
@@ -401,11 +467,14 @@ export const googleCompleteCompany = async (req, res) => {
         email,
         password: hashedPassword,
         role: "seller",
+        isProfileComplete: false,
       });
     }
 
     let existingProfile = await Company.findOne({ loginId: sellerLogin._id });
     if (existingProfile) {
+      sellerLogin.isProfileComplete = true;
+      await sellerLogin.save();
       return httpError(res, 400, "Company profile has already been completed. Please log in.");
     }
 
@@ -425,10 +494,13 @@ export const googleCompleteCompany = async (req, res) => {
       bio: bio ? String(bio).trim() : "",
     });
 
+    sellerLogin.isProfileComplete = true;
+    await sellerLogin.save();
+
     const secret = process.env.JWT_SECRET || "encryptkey";
     const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
     const jwtToken = jwt.sign(
-      { loginId: sellerLogin._id, role: "seller", email: sellerLogin.email },
+      { loginId: sellerLogin._id, role: "seller", email: sellerLogin.email, isProfileComplete: true },
       secret,
       { expiresIn }
     );
@@ -479,6 +551,7 @@ export const viewProfile = async (req, res) => {
             ...company.toObject(),
             email: loginUser.email,
             role: loginUser.role,
+            isProfileComplete: loginUser.isProfileComplete ?? true,
           },
           message: "Seller profile loaded successfully",
         });
@@ -495,6 +568,7 @@ export const viewProfile = async (req, res) => {
           ...user.toObject(),
           email: loginUser.email,
           role: loginUser.role,
+          isProfileComplete: loginUser.isProfileComplete ?? true,
         },
         message: "User profile loaded successfully",
       });

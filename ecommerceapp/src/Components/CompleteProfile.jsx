@@ -24,8 +24,18 @@ const CompleteProfile = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const googleToken = location.state?.googleToken || "";
-  const googleData = location.state?.googleData || {};
+  const sessionData = (() => {
+    if (location.state?.googleToken) return location.state;
+    try {
+      const stored = sessionStorage.getItem("googleSignupData");
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  })();
+
+  const googleToken = sessionData.googleToken || "";
+  const googleData = sessionData.googleData || {};
 
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
@@ -120,6 +130,8 @@ const CompleteProfile = () => {
           localStorage.setItem("role", response.data.role);
           localStorage.setItem("token", response.data.token);
         }
+        localStorage.setItem("isProfileComplete", "true");
+        sessionStorage.removeItem("googleSignupData");
         navigate('/viewproduct');
       }
     } catch (err) {

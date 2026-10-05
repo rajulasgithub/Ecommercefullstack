@@ -35,7 +35,8 @@ const checkAuth = (req, res, next) => {
     req.userData = {
       loginId: decodeToken.loginId,
       role: decodeToken.role,
-      email: decodeToken.email
+      email: decodeToken.email,
+      isProfileComplete: decodeToken.isProfileComplete ?? true
     };
     next();
   } catch (error) {
